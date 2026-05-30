@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Changelog — WavesConverter</title>
+  <meta name="description" content="Historia wersji WavesConverter — wszystkie wydania, poprawki i nowe funkcje."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #05000d;
+      --bg2: #0a0118;
+      --p1: #7c3aed; --p2: #a855f7; --p3: #c084fc; --p4: #e9d5ff;
+      --acc: #d946ef; --acc2: #ec4899;
+      --text: #f0e6ff; --text2: #b8a0d4; --text3: #5c4478;
+      --card: rgba(255,255,255,0.03);
+      --card2: rgba(124,58,237,0.08);
+      --bord: rgba(168,85,247,0.15);
+      --bord2: rgba(168,85,247,0.28);
+      --glow: rgba(124,58,237,0.35);
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      line-height: 1.6;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    /* ── GRID OVERLAY ── */
+    .grid-overlay {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background-image:
+        linear-gradient(rgba(124,58,237,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(124,58,237,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
+    }
+
+    /* ── ORBS ── */
+    .orbs { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+    .orb {
+      position: absolute; border-radius: 50%; filter: blur(120px);
+      animation: orbDrift ease-in-out infinite;
+    }
+    .orb1 { width: 900px; height: 900px; background: radial-gradient(#7c3aed 0%, transparent 65%);
+      top: -300px; left: -200px; opacity: 0.12; animation-duration: 25s; }
+    .orb2 { width: 600px; height: 600px; background: radial-gradient(#d946ef 0%, transparent 65%);
+      bottom: -200px; right: -100px; opacity: 0.1; animation-duration: 18s; animation-delay: -9s; }
+    .orb3 { width: 500px; height: 500px; background: radial-gradient(#4f46e5 0%, transparent 65%);
+      top: 40%; left: 50%; transform: translate(-50%,-50%); opacity: 0.08; animation-duration: 30s; animation-delay: -15s; }
+    @keyframes orbDrift {
+      0%,100% { transform: translate(0,0) scale(1); }
+      25% { transform: translate(60px,-40px) scale(1.08); }
+      50% { transform: translate(-30px,50px) scale(0.94); }
+      75% { transform: translate(40px,30px) scale(1.04); }
+    }
+    .orb3 { animation-name: orbDrift3; }
+    @keyframes orbDrift3 {
+      0%,100% { transform: translate(-50%,-50%) scale(1); }
+      50% { transform: translate(calc(-50% + 40px), calc(-50% - 30px)) scale(1.1); }
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 56px; height: 66px;
+      background: rgba(5,0,13,0.6);
+      border-bottom: 1px solid var(--bord);
+      backdrop-filter: blur(28px) saturate(160%);
+      transition: background .3s;
+    }
+    nav.scrolled { background: rgba(5,0,13,0.88); }
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 17px; font-weight: 800; text-decoration: none;
+      background: linear-gradient(135deg,#c084fc,#e879f9);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      letter-spacing: -0.3px;
+    }
+    .nav-logo svg { flex-shrink: 0; }
+    .nav-links { display: flex; align-items: center; gap: 28px; }
+    .nav-links a {
+      color: var(--text2); text-decoration: none; font-size: 14px; font-weight: 500;
+      transition: color .2s; position: relative;
+    }
+    .nav-links a::after {
+      content: ''; position: absolute; bottom: -3px; left: 0; right: 0; height: 1px;
+      background: var(--p3); transform: scaleX(0); transition: transform .2s; transform-origin: left;
+    }
+    .nav-links a:hover { color: var(--p4); }
+    .nav-links a:hover::after { transform: scaleX(1); }
+    .nav-links a.active { color: var(--p3); }
+    .nav-links a.active::after { transform: scaleX(1); }
+    .nav-dl {
+      display: flex; align-items: center; gap: 8px;
+      padding: 9px 22px; background: linear-gradient(135deg,var(--p1),var(--acc));
+      border-radius: 9px; color: #fff; font-size: 13px; font-weight: 700;
+      text-decoration: none; box-shadow: 0 4px 24px var(--glow);
+      transition: opacity .15s, transform .15s, box-shadow .15s;
+      white-space: nowrap;
+    }
+    .nav-dl:hover { opacity: .88; transform: translateY(-1px); box-shadow: 0 8px 32px rgba(124,58,237,.6); }
+    .nav-dl::after { display: none !important; }
+
+    /* ── LANG TOGGLE ── */
+    .lang-toggle {
+      display: flex; align-items: center; gap: 0;
+      background: rgba(255,255,255,0.05); border: 1px solid var(--bord);
+      border-radius: 8px; overflow: hidden; flex-shrink: 0;
+    }
+    .lang-btn {
+      padding: 5px 11px; font-size: 12px; font-weight: 600;
+      background: transparent; border: none; color: var(--text3);
+      cursor: pointer; transition: background .15s, color .15s;
+      font-family: inherit;
+    }
+    .lang-btn.active { background: rgba(124,58,237,0.25); color: var(--p3); }
+    .lang-btn:hover:not(.active) { color: var(--text2); background: rgba(255,255,255,0.04); }
+
+    .nav-right { display: flex; align-items: center; gap: 14px; }
+
+    /* ── MAIN ── */
+    main {
+      position: relative; z-index: 1;
+      max-width: 780px; margin: 0 auto;
+      padding: 110px 24px 80px;
+    }
+
+    /* ── PAGE HEADER ── */
+    .page-header { text-align: center; margin-bottom: 64px; }
+    .page-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--p3); margin-bottom: 20px;
+      background: rgba(124,58,237,0.1); border: 1px solid rgba(124,58,237,0.25);
+      padding: 6px 14px; border-radius: 20px;
+    }
+    .page-title {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 900; letter-spacing: -0.03em; line-height: 1.1;
+      background: linear-gradient(135deg, var(--text) 0%, var(--p3) 60%, var(--acc) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      margin-bottom: 16px;
+    }
+    .page-sub {
+      color: var(--text2); font-size: 16px; max-width: 480px; margin: 0 auto;
+    }
+
+    /* ── SKELETON ── */
+    .skeleton-list { display: flex; flex-direction: column; gap: 24px; }
+    .skeleton-card {
+      background: var(--card); border: 1px solid var(--bord);
+      border-radius: 16px; padding: 28px 32px; overflow: hidden;
+    }
+    .skel {
+      background: linear-gradient(90deg, rgba(168,85,247,0.08) 25%, rgba(168,85,247,0.15) 50%, rgba(168,85,247,0.08) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.6s infinite;
+      border-radius: 6px;
+    }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    .skel-row { display: flex; gap: 10px; align-items: center; margin-bottom: 16px; }
+    .skel-badge { width: 72px; height: 26px; border-radius: 20px; }
+    .skel-latest { width: 52px; height: 22px; border-radius: 20px; }
+    .skel-date { width: 100px; height: 14px; }
+    .skel-title { height: 22px; width: 55%; margin-bottom: 20px; }
+    .skel-line { height: 13px; margin-bottom: 8px; }
+    .skel-line.w80 { width: 80%; }
+    .skel-line.w65 { width: 65%; }
+    .skel-line.w72 { width: 72%; }
+    .skel-section-head { height: 16px; width: 140px; margin-bottom: 10px; }
+
+    /* ── ERROR STATE ── */
+    .error-state {
+      text-align: center; padding: 64px 24px;
+      background: rgba(248,113,113,0.04); border: 1px solid rgba(248,113,113,0.18);
+      border-radius: 16px;
+    }
+    .error-icon { font-size: 40px; margin-bottom: 16px; }
+    .error-title { font-size: 20px; font-weight: 700; color: #f87171; margin-bottom: 8px; }
+    .error-sub { color: var(--text2); font-size: 14px; margin-bottom: 24px; }
+    .error-retry {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 22px; background: rgba(248,113,113,0.12); border: 1px solid rgba(248,113,113,0.3);
+      border-radius: 9px; color: #f87171; font-size: 13px; font-weight: 600;
+      cursor: pointer; font-family: inherit; transition: background .15s;
+    }
+    .error-retry:hover { background: rgba(248,113,113,0.2); }
+
+    /* ── RELEASES ── */
+    .releases-list { display: flex; flex-direction: column; gap: 24px; }
+
+    .release-card {
+      background: var(--card); border: 1px solid var(--bord);
+      border-radius: 16px; overflow: hidden;
+      transition: border-color .2s, box-shadow .2s;
+      animation: fadeUp .4s ease both;
+    }
+    .release-card:hover {
+      border-color: var(--bord2);
+      box-shadow: 0 0 32px rgba(124,58,237,0.12);
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .release-card:nth-child(1) { animation-delay: 0s; }
+    .release-card:nth-child(2) { animation-delay: .06s; }
+    .release-card:nth-child(3) { animation-delay: .12s; }
+    .release-card:nth-child(4) { animation-delay: .18s; }
+    .release-card:nth-child(n+5) { animation-delay: .22s; }
+
+    .release-card.is-latest { border-color: rgba(168,85,247,0.35); }
+
+    .release-header {
+      padding: 24px 28px 20px;
+      border-bottom: 1px solid var(--bord);
+      background: linear-gradient(135deg, rgba(124,58,237,0.06) 0%, transparent 60%);
+    }
+    .release-meta-row {
+      display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;
+    }
+    .ver-badge {
+      display: inline-flex; align-items: center;
+      padding: 4px 12px; border-radius: 20px;
+      background: linear-gradient(135deg, var(--p1), var(--acc));
+      color: #fff; font-size: 13px; font-weight: 700; letter-spacing: 0.02em;
+      box-shadow: 0 2px 12px rgba(124,58,237,0.35);
+    }
+    .latest-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 3px 10px; border-radius: 20px;
+      background: rgba(217,70,239,0.12); border: 1px solid rgba(217,70,239,0.35);
+      color: var(--acc); font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    }
+    .latest-dot {
+      width: 5px; height: 5px; border-radius: 50%; background: var(--acc);
+      animation: latestPulse 2s ease infinite;
+    }
+    @keyframes latestPulse {
+      0%,100% { box-shadow: 0 0 0 0 rgba(217,70,239,0.5); }
+      50% { box-shadow: 0 0 0 4px rgba(217,70,239,0); }
+    }
+    .release-date { color: var(--text3); font-size: 12px; font-weight: 500; margin-left: auto; }
+    .release-name {
+      font-size: 18px; font-weight: 700; color: var(--text);
+      letter-spacing: -0.02em; line-height: 1.3;
+    }
+    .release-name:empty { display: none; }
+
+    /* ── BODY ── */
+    .release-body { padding: 20px 28px 24px; }
+    .release-section { margin-bottom: 18px; }
+    .release-section:last-child { margin-bottom: 0; }
+    .release-section-title {
+      font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--p3); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;
+    }
+    .release-section-title::after {
+      content: ''; flex: 1; height: 1px; background: rgba(168,85,247,0.15); border-radius: 1px;
+    }
+    .release-items { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+    .release-items li {
+      display: flex; gap: 10px; align-items: flex-start;
+      font-size: 13.5px; color: var(--text2); line-height: 1.55;
+    }
+    .release-items li::before {
+      content: ''; flex-shrink: 0;
+      width: 5px; height: 5px; border-radius: 50%;
+      background: var(--p2); margin-top: 8px;
+    }
+    .release-raw {
+      font-size: 13.5px; color: var(--text2); line-height: 1.65;
+      white-space: pre-wrap; word-break: break-word;
+    }
+
+    /* ── DOWNLOADS ── */
+    .release-downloads { padding: 0 28px 24px; }
+    .downloads-label {
+      font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--text3); margin-bottom: 10px;
+    }
+    .downloads-row { display: flex; flex-wrap: wrap; gap: 8px; }
+    .dl-asset {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 8px 16px; border-radius: 9px; font-size: 12.5px; font-weight: 600;
+      text-decoration: none; transition: all .15s;
+      border: 1px solid var(--bord2);
+      background: rgba(124,58,237,0.1);
+      color: var(--p3);
+    }
+    .dl-asset:hover {
+      background: rgba(124,58,237,0.2); border-color: rgba(168,85,247,0.45);
+      transform: translateY(-1px); box-shadow: 0 4px 16px rgba(124,58,237,0.2);
+    }
+    .dl-asset svg { flex-shrink: 0; opacity: 0.8; }
+    .dl-asset-size { font-weight: 400; color: var(--text3); font-size: 11px; }
+
+    /* ── EMPTY BODY ── */
+    .no-notes { color: var(--text3); font-size: 13px; font-style: italic; padding: 4px 0; }
+
+    /* ── FOOTER ── */
+    footer {
+      position: relative; z-index: 1;
+      text-align: center; padding: 48px 24px 56px;
+      border-top: 1px solid var(--bord);
+    }
+    .flogo {
+      display: block; font-size: 18px; font-weight: 800;
+      background: linear-gradient(135deg, #c084fc, #e879f9);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      margin-bottom: 12px;
+    }
+    footer p { color: var(--text3); font-size: 13px; margin-bottom: 6px; }
+    footer a { color: var(--p3); text-decoration: none; }
+    footer a:hover { color: var(--p4); }
+
+    /* ── MOBILE NAV ── */
+    @media (max-width: 720px) {
+      nav { padding: 0 20px; }
+      .nav-links { display: none; }
+      .nav-right { gap: 10px; }
+      main { padding: 96px 16px 64px; }
+      .release-header { padding: 18px 20px 16px; }
+      .release-body { padding: 16px 20px 18px; }
+      .release-downloads { padding: 0 20px 18px; }
+      .release-date { font-size: 11px; }
+    }
+    @media (max-width: 480px) {
+      .page-title { font-size: 1.8rem; }
+      .release-meta-row { flex-wrap: wrap; }
+      .release-date { margin-left: 0; width: 100%; }
+    }
+  </style>
+</head>
+<body>
+<div class="grid-overlay"></div>
+<div class="orbs">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+</div>
+
+<!-- NAV -->
+<nav id="nav">
+  <a class="nav-logo" href="/wavesconvsite/">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+      <path d="M2 13 Q4 7 6 13 Q8 19 10 13 Q12 7 14 13 Q16 19 18 13 Q20 7 22 13"
+        stroke="url(#nlg)" stroke-width="2.5" stroke-linecap="round"/>
+      <defs><linearGradient id="nlg" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#c084fc"/><stop offset="100%" stop-color="#e879f9"/>
+      </linearGradient></defs>
+    </svg>
+    WavesConverter
+  </a>
+  <div class="nav-links">
+    <a href="/wavesconvsite/" data-i18n="nav.home">Strona główna</a>
+    <a href="/wavesconvsite/#features" data-i18n="nav.features">Funkcje</a>
+    <a href="/wavesconvsite/#download" data-i18n="nav.download">Pobierz</a>
+    <a href="/wavesconvsite/changelog.html" class="active" data-i18n="nav.changelog">Changelog</a>
+  </div>
+  <div class="nav-right">
+    <div class="lang-toggle">
+      <button class="lang-btn" id="btnPL" onclick="setLang('pl')">PL</button>
+      <button class="lang-btn" id="btnEN" onclick="setLang('en')">EN</button>
+    </div>
+    <a class="nav-dl" href="/wavesconvsite/#download" data-i18n="nav.cta">Pobierz za darmo</a>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main>
+  <div class="page-header">
+    <div class="page-eyebrow">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+      </svg>
+      <span data-i18n="cl.eyebrow">Historia wersji</span>
+    </div>
+    <h1 class="page-title" data-i18n="cl.title">Changelog</h1>
+    <p class="page-sub" data-i18n="cl.sub">Wszystkie wydania, poprawki i nowe funkcje WavesConverter.</p>
+  </div>
+
+  <div id="releases-container">
+    <!-- skeleton -->
+    <div class="skeleton-list" id="skeleton">
+      <div class="skeleton-card">
+        <div class="skel-row">
+          <div class="skel skel-badge"></div>
+          <div class="skel skel-latest"></div>
+          <div class="skel skel-date" style="margin-left:auto"></div>
+        </div>
+        <div class="skel skel-title"></div>
+        <div class="skel skel-section-head"></div>
+        <div class="skel skel-line w80"></div>
+        <div class="skel skel-line w65"></div>
+        <div class="skel skel-line w72"></div>
+      </div>
+      <div class="skeleton-card">
+        <div class="skel-row">
+          <div class="skel skel-badge"></div>
+          <div class="skel skel-date" style="margin-left:auto"></div>
+        </div>
+        <div class="skel skel-title" style="width:40%"></div>
+        <div class="skel skel-section-head"></div>
+        <div class="skel skel-line w72"></div>
+        <div class="skel skel-line w80"></div>
+      </div>
+      <div class="skeleton-card">
+        <div class="skel-row">
+          <div class="skel skel-badge"></div>
+          <div class="skel skel-date" style="margin-left:auto"></div>
+        </div>
+        <div class="skel skel-title" style="width:48%"></div>
+        <div class="skel skel-line w65"></div>
+        <div class="skel skel-line w80"></div>
+        <div class="skel skel-line w72"></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <span class="flogo">WavesConverter</span>
+  <p><span data-i18n="footer.built">Zbudowane z yt-dlp, ffmpeg i Electron</span> · <a href="https://github.com/idunnowhytf/wavesconvsite" target="_blank" data-i18n="footer.src">Kod na GitHub</a></p>
+  <p data-i18n="footer.copy">© 2025 WavesConverter · Darmowe i Open Source</p>
+</footer>
+
+<script>
+/* ══════════════════════════════════════════
+   i18n
+══════════════════════════════════════════ */
+const T = {
+  pl: {
+    'nav.home': 'Strona główna',
+    'nav.features': 'Funkcje',
+    'nav.download': 'Pobierz',
+    'nav.changelog': 'Changelog',
+    'nav.cta': 'Pobierz za darmo',
+    'cl.eyebrow': 'Historia wersji',
+    'cl.title': 'Changelog',
+    'cl.sub': 'Wszystkie wydania, poprawki i nowe funkcje WavesConverter.',
+    'footer.built': 'Zbudowane z yt-dlp, ffmpeg i Electron',
+    'footer.src': 'Kod na GitHub',
+    'footer.copy': '© 2025 WavesConverter · Darmowe i Open Source',
+    'err.title': 'Nie można załadować wydań',
+    'err.sub': 'Sprawdź połączenie z internetem i spróbuj ponownie.',
+    'err.retry': 'Spróbuj ponownie',
+    'dl.label': 'Pobierz',
+    'no.notes': 'Brak opisu wydania.',
+    'latest': 'Najnowszy',
+    'released': 'Wydano',
+  },
+  en: {
+    'nav.home': 'Home',
+    'nav.features': 'Features',
+    'nav.download': 'Download',
+    'nav.changelog': 'Changelog',
+    'nav.cta': 'Download free',
+    'cl.eyebrow': 'Release history',
+    'cl.title': 'Changelog',
+    'cl.sub': 'All releases, fixes and new features for WavesConverter.',
+    'footer.built': 'Built with yt-dlp, ffmpeg and Electron',
+    'footer.src': 'Source on GitHub',
+    'footer.copy': '© 2025 WavesConverter · Free and Open Source',
+    'err.title': 'Failed to load releases',
+    'err.sub': 'Check your internet connection and try again.',
+    'err.retry': 'Try again',
+    'dl.label': 'Download',
+    'no.notes': 'No release notes.',
+    'latest': 'Latest',
+    'released': 'Released',
+  }
+};
+
+let lang = localStorage.getItem('wc-lang') || 'pl';
+
+function t(key) { return (T[lang] && T[lang][key]) || (T.pl[key]) || key; }
+
+function applyLang() {
+  document.documentElement.lang = lang;
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.getAttribute('data-i18n');
+    const val = t(k);
+    if (val) el.textContent = val;
+  });
+  document.getElementById('btnPL').classList.toggle('active', lang === 'pl');
+  document.getElementById('btnEN').classList.toggle('active', lang === 'en');
+}
+
+function setLang(l) {
+  lang = l;
+  localStorage.setItem('wc-lang', l);
+  applyLang();
+  // re-render releases if already loaded
+  if (window._releases) renderReleases(window._releases);
+}
+
+/* ══════════════════════════════════════════
+   Nav scroll effect
+══════════════════════════════════════════ */
+window.addEventListener('scroll', () => {
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 20);
+}, { passive: true });
+
+/* ══════════════════════════════════════════
+   Markdown parser (minimal)
+══════════════════════════════════════════ */
+function parseBody(md) {
+  if (!md || !md.trim()) return null;
+
+  const sections = [];
+  // split by ### headers
+  const parts = md.split(/^###\s+/m);
+
+  if (parts.length === 1) {
+    // No ### headers — try to parse as bullet list
+    const bullets = parseBullets(md.trim());
+    if (bullets.length > 0) {
+      sections.push({ title: null, items: bullets });
+    } else {
+      sections.push({ title: null, raw: md.trim() });
+    }
+    return sections;
+  }
+
+  // First part before any header (if non-empty)
+  if (parts[0].trim()) {
+    const bullets = parseBullets(parts[0].trim());
+    if (bullets.length > 0) sections.push({ title: null, items: bullets });
+    else sections.push({ title: null, raw: parts[0].trim() });
+  }
+
+  for (let i = 1; i < parts.length; i++) {
+    const lines = parts[i].split('\n');
+    const title = lines[0].trim();
+    const rest = lines.slice(1).join('\n').trim();
+    const bullets = parseBullets(rest);
+    sections.push({ title, items: bullets.length ? bullets : null, raw: bullets.length ? null : rest });
+  }
+  return sections;
+}
+
+function parseBullets(text) {
+  const lines = text.split('\n');
+  const items = [];
+  for (const line of lines) {
+    const m = line.match(/^[-*+]\s+(.*)/);
+    if (m) items.push(m[1].trim());
+  }
+  return items;
+}
+
+/* ══════════════════════════════════════════
+   Format helpers
+══════════════════════════════════════════ */
+function formatDate(iso) {
+  const d = new Date(iso);
+  const opts = { year: 'numeric', month: 'long', day: 'numeric' };
+  const locale = lang === 'pl' ? 'pl-PL' : 'en-US';
+  return d.toLocaleDateString(locale, opts);
+}
+
+function formatSize(bytes) {
+  if (!bytes) return '';
+  if (bytes >= 1024 * 1024) return ' · ' + (bytes / 1024 / 1024).toFixed(1) + ' MB';
+  if (bytes >= 1024) return ' · ' + (bytes / 1024).toFixed(0) + ' KB';
+  return ' · ' + bytes + ' B';
+}
+
+function getAssetIcon(name) {
+  if (/\.dmg$/i.test(name)) return `<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>`;
+  if (/\.exe$/i.test(name)) return `<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/></svg>`;
+  return `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`;
+}
+
+/* ══════════════════════════════════════════
+   Render
+══════════════════════════════════════════ */
+function renderReleases(releases) {
+  const container = document.getElementById('releases-container');
+  if (!releases || releases.length === 0) {
+    container.innerHTML = `<div class="error-state">
+      <div class="error-icon">📭</div>
+      <div class="error-title">${lang === 'pl' ? 'Brak wydań' : 'No releases found'}</div>
+      <div class="error-sub">${lang === 'pl' ? 'Nie znaleziono żadnych wydań na GitHub.' : 'No releases were found on GitHub.'}</div>
+    </div>`;
+    return;
+  }
+
+  let html = '<div class="releases-list">';
+  releases.forEach((rel, idx) => {
+    const isLatest = idx === 0;
+    const sections = parseBody(rel.body);
+    const assets = (rel.assets || []).filter(a => !/\.yml$/i.test(a.name) && !/\.blockmap$/i.test(a.name));
+
+    html += `<div class="release-card${isLatest ? ' is-latest' : ''}">`;
+
+    // Header
+    html += `<div class="release-header">
+      <div class="release-meta-row">
+        <span class="ver-badge">${escHtml(rel.tag_name)}</span>
+        ${isLatest ? `<span class="latest-badge"><span class="latest-dot"></span>${t('latest')}</span>` : ''}
+        <span class="release-date">${t('released')} ${formatDate(rel.published_at)}</span>
+      </div>`;
+
+    if (rel.name && rel.name !== rel.tag_name) {
+      html += `<div class="release-name">${escHtml(rel.name)}</div>`;
+    }
+    html += `</div>`;
+
+    // Body
+    if (sections && sections.length > 0) {
+      html += `<div class="release-body">`;
+      sections.forEach(sec => {
+        html += `<div class="release-section">`;
+        if (sec.title) {
+          html += `<div class="release-section-title">${escHtml(sec.title)}</div>`;
+        }
+        if (sec.items && sec.items.length) {
+          html += `<ul class="release-items">`;
+          sec.items.forEach(item => {
+            html += `<li>${escHtml(item)}</li>`;
+          });
+          html += `</ul>`;
+        } else if (sec.raw) {
+          html += `<div class="release-raw">${escHtml(sec.raw)}</div>`;
+        }
+        html += `</div>`;
+      });
+      html += `</div>`;
+    } else {
+      html += `<div class="release-body"><p class="no-notes">${t('no.notes')}</p></div>`;
+    }
+
+    // Downloads
+    if (assets.length > 0) {
+      html += `<div class="release-downloads">
+        <div class="downloads-label">${t('dl.label')}</div>
+        <div class="downloads-row">`;
+      assets.forEach(asset => {
+        const icon = getAssetIcon(asset.name);
+        const size = formatSize(asset.size);
+        html += `<a class="dl-asset" href="${escHtml(asset.browser_download_url)}" target="_blank" rel="noopener">
+          ${icon}
+          ${escHtml(asset.name)}<span class="dl-asset-size">${size}</span>
+        </a>`;
+      });
+      html += `</div></div>`;
+    }
+
+    html += `</div>`; // release-card
+  });
+  html += `</div>`;
+  container.innerHTML = html;
+}
+
+function renderError() {
+  const container = document.getElementById('releases-container');
+  container.innerHTML = `<div class="error-state">
+    <div class="error-icon">⚠️</div>
+    <div class="error-title">${t('err.title')}</div>
+    <div class="error-sub">${t('err.sub')}</div>
+    <button class="error-retry" onclick="fetchReleases()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/>
+      </svg>
+      ${t('err.retry')}
+    </button>
+  </div>`;
+}
+
+function escHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+/* ══════════════════════════════════════════
+   Fetch
+══════════════════════════════════════════ */
+async function fetchReleases() {
+  // show skeleton again on retry
+  document.getElementById('releases-container').innerHTML = document.getElementById('releases-container').innerHTML
+    || '<div class="skeleton-list" id="skeleton"></div>';
+
+  try {
+    const res = await fetch('https://api.github.com/repos/idunnowhytf/wavesconvsite/releases', {
+      headers: { 'Accept': 'application/vnd.github+json' }
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const releases = await res.json();
+    window._releases = releases;
+    renderReleases(releases);
+  } catch (e) {
+    console.error('Failed to fetch releases:', e);
+    renderError();
+  }
+}
+
+/* ══════════════════════════════════════════
+   Init
+══════════════════════════════════════════ */
+applyLang();
+fetchReleases();
+</script>
+</body>
+</html>
