@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>WavesConverter — Dokumentacja</title>
+  <meta name="description" content="Instrukcja obsługi WavesConverter — instalacja, pobieranie filmów, playlist, konwersja plików i więcej."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #05000d;
+      --bg2: #0a0118;
+      --p1: #7c3aed; --p2: #a855f7; --p3: #c084fc; --p4: #e9d5ff;
+      --acc: #d946ef; --acc2: #ec4899;
+      --text: #f0e6ff; --text2: #b8a0d4; --text3: #5c4478;
+      --card: rgba(255,255,255,0.03);
+      --card2: rgba(124,58,237,0.08);
+      --bord: rgba(168,85,247,0.15);
+      --bord2: rgba(168,85,247,0.28);
+      --glow: rgba(124,58,237,0.35);
+      --sidebar-w: 260px;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── CANVAS PARTICLES ── */
+    #particles { position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.4; }
+
+    /* ── GRID OVERLAY ── */
+    .grid-overlay {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background-image:
+        linear-gradient(rgba(124,58,237,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(124,58,237,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
+    }
+
+    /* ── ORBS ── */
+    .orbs { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+    .orb {
+      position: absolute; border-radius: 50%; filter: blur(120px);
+      animation: orbDrift ease-in-out infinite;
+    }
+    .orb1 { width: 900px; height: 900px; background: radial-gradient(#7c3aed 0%, transparent 65%);
+      top: -300px; left: -200px; opacity: 0.12; animation-duration: 25s; }
+    .orb2 { width: 600px; height: 600px; background: radial-gradient(#d946ef 0%, transparent 65%);
+      bottom: -200px; right: -100px; opacity: 0.10; animation-duration: 18s; animation-delay: -9s; }
+    .orb3 { width: 500px; height: 500px; background: radial-gradient(#4f46e5 0%, transparent 65%);
+      top: 40%; left: 50%; transform: translate(-50%,-50%); opacity: 0.08; animation-duration: 30s; animation-delay: -15s; }
+    @keyframes orbDrift {
+      0%,100% { transform: translate(0,0) scale(1); }
+      25% { transform: translate(60px,-40px) scale(1.08); }
+      50% { transform: translate(-30px,50px) scale(0.94); }
+      75% { transform: translate(40px,30px) scale(1.04); }
+    }
+    .orb3 { animation-name: orbDrift3; }
+    @keyframes orbDrift3 {
+      0%,100% { transform: translate(-50%,-50%) scale(1); }
+      50% { transform: translate(calc(-50% + 40px), calc(-50% - 30px)) scale(1.1); }
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 40px; height: 62px;
+      background: rgba(5,0,13,0.65);
+      border-bottom: 1px solid var(--bord);
+      backdrop-filter: blur(28px) saturate(160%);
+      transition: background .3s;
+    }
+    nav.scrolled { background: rgba(5,0,13,0.9); }
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 16px; font-weight: 800; text-decoration: none;
+      background: linear-gradient(135deg,#c084fc,#e879f9);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      letter-spacing: -0.3px; flex-shrink: 0;
+    }
+    .nav-logo svg { flex-shrink: 0; }
+    .nav-center { display: flex; align-items: center; gap: 6px; }
+    .nav-badge {
+      font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .6px;
+      color: var(--p3); padding: 3px 10px; border-radius: 20px;
+      background: rgba(124,58,237,.12); border: 1px solid rgba(124,58,237,.25);
+    }
+    .nav-links { display: flex; align-items: center; gap: 22px; }
+    .nav-links a {
+      color: var(--text2); text-decoration: none; font-size: 13.5px; font-weight: 500;
+      transition: color .2s; white-space: nowrap;
+    }
+    .nav-links a:hover { color: var(--p4); }
+    .nav-right { display: flex; align-items: center; gap: 10px; }
+    .btn-lang {
+      display: flex; align-items: center; gap: 6px; padding: 6px 12px;
+      background: rgba(255,255,255,.05); border: 1px solid rgba(168,85,247,.25);
+      border-radius: 8px; color: var(--text2); font-size: 13px; font-weight: 600;
+      cursor: pointer; transition: all .18s; font-family: inherit;
+    }
+    .btn-lang:hover { background: rgba(124,58,237,.12); border-color: var(--p2); color: var(--p4); }
+    .nav-dl {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 18px; background: linear-gradient(135deg,var(--p1),var(--acc));
+      border-radius: 8px; color: #fff; font-size: 13px; font-weight: 700;
+      text-decoration: none; box-shadow: 0 4px 20px var(--glow);
+      transition: opacity .15s, transform .15s; white-space: nowrap;
+    }
+    .nav-dl:hover { opacity: .88; transform: translateY(-1px); }
+
+    /* ── LAYOUT ── */
+    .page-wrap {
+      display: flex; padding-top: 62px; min-height: 100vh; position: relative; z-index: 1;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: var(--sidebar-w); flex-shrink: 0;
+      position: sticky; top: 62px; height: calc(100vh - 62px);
+      overflow-y: auto; padding: 32px 0 40px;
+      border-right: 1px solid var(--bord);
+      background: rgba(5,0,13,0.5);
+      backdrop-filter: blur(16px);
+      scrollbar-width: thin; scrollbar-color: rgba(168,85,247,.2) transparent;
+    }
+    .sidebar::-webkit-scrollbar { width: 4px; }
+    .sidebar::-webkit-scrollbar-thumb { background: rgba(168,85,247,.2); border-radius: 2px; }
+
+    .sidebar-label {
+      font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px;
+      color: var(--text3); padding: 0 24px 10px; margin-top: 6px;
+    }
+    .toc-list { list-style: none; margin-bottom: 8px; }
+    .toc-list a {
+      display: flex; align-items: center; gap: 8px;
+      padding: 7px 24px; font-size: 13.5px; font-weight: 500;
+      color: var(--text2); text-decoration: none;
+      border-left: 2px solid transparent;
+      transition: color .18s, border-color .18s, background .18s;
+    }
+    .toc-list a:hover { color: var(--p3); background: rgba(124,58,237,.06); }
+    .toc-list a.active {
+      color: var(--p3); border-left-color: var(--p2);
+      background: rgba(124,58,237,.08);
+    }
+    .toc-num {
+      font-size: 10px; font-weight: 700; min-width: 18px; height: 18px;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(124,58,237,.18); border-radius: 4px;
+      color: var(--p3); flex-shrink: 0;
+    }
+
+    /* ── MAIN CONTENT ── */
+    .main-content {
+      flex: 1; min-width: 0;
+      padding: 48px 56px 80px;
+      max-width: 860px;
+    }
+
+    /* ── PAGE HEADER ── */
+    .page-header { margin-bottom: 56px; }
+    .page-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 5px 14px; margin-bottom: 20px;
+      background: rgba(124,58,237,.1); border: 1px solid rgba(124,58,237,.22);
+      border-radius: 100px; font-size: 11px; font-weight: 700;
+      color: var(--p3); letter-spacing: .5px; text-transform: uppercase;
+    }
+    .page-header h1 {
+      font-size: clamp(30px, 4vw, 50px); font-weight: 900;
+      letter-spacing: -1.5px; line-height: 1.06; margin-bottom: 14px;
+    }
+    .grad {
+      background: linear-gradient(135deg,#c084fc 0%,#e879f9 40%,#a78bfa 80%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .page-header p { font-size: 16px; color: var(--text2); max-width: 560px; line-height: 1.7; }
+
+    /* ── DOC SECTIONS ── */
+    .doc-section {
+      padding-top: 32px; padding-bottom: 48px;
+      border-bottom: 1px solid var(--bord);
+      scroll-margin-top: 82px;
+    }
+    .doc-section:last-child { border-bottom: none; }
+
+    .doc-section h2 {
+      font-size: 22px; font-weight: 800; letter-spacing: -0.5px;
+      margin-bottom: 18px; display: flex; align-items: center; gap: 12px;
+      color: var(--text);
+    }
+    .section-icon {
+      width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+      background: linear-gradient(135deg,rgba(124,58,237,.25),rgba(217,70,239,.12));
+      border: 1px solid rgba(168,85,247,.22);
+      display: flex; align-items: center; justify-content: center; font-size: 16px;
+    }
+
+    .doc-section h3 {
+      font-size: 15px; font-weight: 700; margin: 24px 0 10px; color: var(--p3);
+    }
+    .doc-section p { font-size: 14.5px; color: var(--text2); line-height: 1.75; margin-bottom: 12px; }
+    .doc-section p:last-child { margin-bottom: 0; }
+
+    /* ── CARDS / STEPS ── */
+    .step-list { display: flex; flex-direction: column; gap: 12px; margin: 16px 0; }
+    .step-item {
+      display: flex; gap: 14px; align-items: flex-start;
+      background: var(--card); border: 1px solid var(--bord);
+      border-radius: 12px; padding: 16px 18px;
+      transition: border-color .2s;
+    }
+    .step-item:hover { border-color: var(--bord2); }
+    .step-n {
+      width: 28px; height: 28px; border-radius: 8px; flex-shrink: 0;
+      background: linear-gradient(135deg,rgba(124,58,237,.35),rgba(217,70,239,.2));
+      border: 1px solid rgba(168,85,247,.3);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 800; color: var(--p3); margin-top: 1px;
+    }
+    .step-body p { margin-bottom: 0; }
+    .step-body strong { color: var(--text); font-weight: 600; }
+
+    /* ── TIPS ── */
+    .tip {
+      display: flex; gap: 12px; align-items: flex-start;
+      background: rgba(124,58,237,.08); border: 1px solid rgba(124,58,237,.22);
+      border-radius: 10px; padding: 14px 16px; margin: 16px 0;
+      font-size: 13.5px; color: var(--text2); line-height: 1.65;
+    }
+    .tip-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+    .tip strong { color: var(--p3); font-weight: 600; }
+
+    .note {
+      display: flex; gap: 12px; align-items: flex-start;
+      background: rgba(217,70,239,.06); border: 1px solid rgba(217,70,239,.2);
+      border-radius: 10px; padding: 14px 16px; margin: 16px 0;
+      font-size: 13.5px; color: var(--text2); line-height: 1.65;
+    }
+    .note-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+    .note strong { color: #e879f9; font-weight: 600; }
+
+    /* ── PLATFORM CARDS ── */
+    .platform-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 20px 0; }
+    @media(max-width: 600px) { .platform-cards { grid-template-columns: 1fr; } }
+    .pcard {
+      background: var(--card); border: 1px solid var(--bord);
+      border-radius: 14px; padding: 22px; position: relative; overflow: hidden;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .pcard:hover { border-color: var(--bord2); box-shadow: 0 8px 32px rgba(124,58,237,.12); }
+    .pcard-os {
+      font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .8px;
+      color: var(--p3); margin-bottom: 8px;
+    }
+    .pcard h3 { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 12px; margin-top: 0; }
+    .pcard p { font-size: 13.5px; color: var(--text2); line-height: 1.7; margin-bottom: 0; }
+
+    /* ── KEYBOARD TABLE ── */
+    .kb-table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+    .kb-table th {
+      text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .7px; color: var(--text3); padding: 8px 14px;
+      border-bottom: 1px solid var(--bord);
+    }
+    .kb-table td {
+      padding: 11px 14px; font-size: 13.5px; color: var(--text2);
+      border-bottom: 1px solid rgba(168,85,247,.07);
+      vertical-align: middle;
+    }
+    .kb-table tr:last-child td { border-bottom: none; }
+    .kb-table tr:hover td { background: rgba(124,58,237,.04); }
+    .kbd {
+      display: inline-flex; align-items: center; gap: 3px;
+      font-size: 12px; font-weight: 700; font-family: inherit;
+      background: rgba(124,58,237,.15); border: 1px solid rgba(168,85,247,.3);
+      border-radius: 5px; padding: 2px 8px; color: var(--p3);
+      white-space: nowrap;
+    }
+
+    /* ── FAQ ── */
+    .faq-list { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
+    .faq-item {
+      background: var(--card); border: 1px solid var(--bord);
+      border-radius: 12px; overflow: hidden; transition: border-color .2s;
+    }
+    .faq-item:hover { border-color: var(--bord2); }
+    .faq-q {
+      width: 100%; background: none; border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 18px; color: var(--text); font-size: 14px; font-weight: 600;
+      font-family: inherit; text-align: left; gap: 12px;
+      transition: color .2s;
+    }
+    .faq-q:hover { color: var(--p3); }
+    .faq-arrow {
+      width: 20px; height: 20px; display: flex; align-items: center;
+      justify-content: center; flex-shrink: 0; transition: transform .25s;
+      color: var(--text3);
+    }
+    .faq-item.open .faq-arrow { transform: rotate(180deg); color: var(--p3); }
+    .faq-item.open .faq-q { color: var(--p3); }
+    .faq-a {
+      max-height: 0; overflow: hidden; transition: max-height .3s ease;
+    }
+    .faq-a-inner {
+      padding: 0 18px 18px; font-size: 13.5px; color: var(--text2); line-height: 1.75;
+      border-top: 1px solid var(--bord);
+      padding-top: 14px;
+    }
+
+    /* ── INLINE CODE ── */
+    code {
+      font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+      font-size: 12.5px; background: rgba(124,58,237,.13);
+      border: 1px solid rgba(168,85,247,.2); border-radius: 5px;
+      padding: 1px 6px; color: var(--p3);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      position: relative; z-index: 1;
+      display: flex; flex-direction: column; align-items: center;
+      gap: 10px; padding: 40px 24px;
+      border-top: 1px solid var(--bord);
+      background: rgba(5,0,13,.5);
+      text-align: center;
+    }
+    .flogo {
+      font-size: 15px; font-weight: 800;
+      background: linear-gradient(135deg,#c084fc,#e879f9);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      margin-bottom: 4px;
+    }
+    footer p { font-size: 13px; color: var(--text3); }
+    footer a { color: var(--p3); text-decoration: none; transition: color .15s; }
+    footer a:hover { color: var(--p4); }
+
+    /* ── MOBILE SIDEBAR TOGGLE ── */
+    .mob-toc-btn {
+      display: none; position: fixed; bottom: 24px; right: 20px; z-index: 300;
+      width: 48px; height: 48px; border-radius: 14px;
+      background: linear-gradient(135deg,var(--p1),var(--acc));
+      border: none; color: #fff; font-size: 20px; cursor: pointer;
+      box-shadow: 0 6px 28px rgba(124,58,237,.5);
+      align-items: center; justify-content: center;
+      transition: transform .15s, box-shadow .15s;
+    }
+    .mob-toc-btn:hover { transform: scale(1.06); }
+
+    .mob-drawer {
+      display: none; position: fixed; inset: 0; z-index: 250; pointer-events: none;
+    }
+    .mob-drawer.open { pointer-events: auto; }
+    .mob-overlay {
+      position: absolute; inset: 0; background: rgba(0,0,0,.6);
+      opacity: 0; transition: opacity .25s; backdrop-filter: blur(4px);
+    }
+    .mob-drawer.open .mob-overlay { opacity: 1; }
+    .mob-panel {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: var(--bg2); border-top: 1px solid var(--bord);
+      border-radius: 18px 18px 0 0;
+      padding: 12px 0 40px;
+      max-height: 70vh; overflow-y: auto;
+      transform: translateY(100%); transition: transform .3s cubic-bezier(.16,1,.3,1);
+    }
+    .mob-drawer.open .mob-panel { transform: translateY(0); }
+    .mob-panel-handle {
+      width: 40px; height: 4px; border-radius: 2px; background: rgba(168,85,247,.3);
+      margin: 0 auto 16px;
+    }
+    .mob-panel .sidebar-label { padding: 0 20px 8px; }
+    .mob-panel .toc-list a { padding: 9px 20px; font-size: 14px; }
+
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .mob-toc-btn { display: flex; }
+      .mob-drawer { display: block; }
+      .main-content { padding: 32px 24px 80px; }
+      nav { padding: 0 20px; }
+      .nav-links { display: none; }
+    }
+    @media (max-width: 600px) {
+      .page-header h1 { font-size: 28px; }
+      .main-content { padding: 24px 16px 80px; }
+    }
+
+    @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+    .page-header { animation: fadeUp .6s ease both; }
+  </style>
+</head>
+<body>
+
+<canvas id="particles"></canvas>
+<div class="grid-overlay"></div>
+<div class="orbs">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+</div>
+
+<!-- NAV -->
+<nav id="navbar">
+  <div style="display:flex;align-items:center;gap:14px;">
+    <a class="nav-logo" href="/wavesconvsite/">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <path d="M2 13 Q4 7 6 13 Q8 19 10 13 Q12 7 14 13 Q16 19 18 13 Q20 7 22 13"
+              stroke="url(#ng1)" stroke-width="2.2" stroke-linecap="round"/>
+        <defs><linearGradient id="ng1" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#c084fc"/>
+          <stop offset="100%" stop-color="#e879f9"/>
+        </linearGradient></defs>
+      </svg>
+      WavesConverter
+    </a>
+    <span class="nav-badge" data-i18n="nav.badge">Dokumentacja</span>
+  </div>
+  <div class="nav-links">
+    <a href="/wavesconvsite/" data-i18n="nav.home">Strona główna</a>
+    <a href="/wavesconvsite/changelog.html" data-i18n="nav.changelog">Changelog</a>
+    <a href="https://github.com/idunnowhytf/wavesconvsite" target="_blank">GitHub ↗</a>
+  </div>
+  <div class="nav-right">
+    <button class="btn-lang" id="lang-toggle" onclick="toggleLang()" aria-label="Switch language">
+      <span id="lang-flag">🇬🇧</span>
+      <span id="lang-label">EN</span>
+    </button>
+    <a class="nav-dl" href="/wavesconvsite/#download">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+        <polyline points="7 10 12 15 17 10"/>
+        <line x1="12" y1="15" x2="12" y2="3"/>
+      </svg>
+      <span data-i18n="nav.dl">Pobierz</span>
+    </a>
+  </div>
+</nav>
+
+<!-- LAYOUT -->
+<div class="page-wrap">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-label" data-i18n="toc.label">Spis treści</div>
+    <ul class="toc-list" id="toc-list">
+      <li><a href="#instalacja"><span class="toc-num">1</span><span data-i18n="toc.1">Instalacja</span></a></li>
+      <li><a href="#pobieranie"><span class="toc-num">2</span><span data-i18n="toc.2">Pobieranie filmów</span></a></li>
+      <li><a href="#playlisty"><span class="toc-num">3</span><span data-i18n="toc.3">Pobieranie playlist</span></a></li>
+      <li><a href="#batch"><span class="toc-num">4</span><span data-i18n="toc.4">Batch paste</span></a></li>
+      <li><a href="#konwerter"><span class="toc-num">5</span><span data-i18n="toc.5">Konwerter plików</span></a></li>
+      <li><a href="#kolejka"><span class="toc-num">6</span><span data-i18n="toc.6">Kolejka i ETA</span></a></li>
+      <li><a href="#historia"><span class="toc-num">7</span><span data-i18n="toc.7">Historia</span></a></li>
+      <li><a href="#skroty"><span class="toc-num">8</span><span data-i18n="toc.8">Skróty klawiszowe</span></a></li>
+      <li><a href="#ustawienia"><span class="toc-num">9</span><span data-i18n="toc.9">Ustawienia</span></a></li>
+      <li><a href="#faq"><span class="toc-num">10</span><span data-i18n="toc.10">FAQ</span></a></li>
+    </ul>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main-content">
+    <div class="page-header">
+      <div class="page-eyebrow" data-i18n="header.eyebrow">Instrukcja obsługi</div>
+      <h1><span class="grad">WavesConverter</span><br/><span data-i18n="header.sub">Dokumentacja</span></h1>
+      <p data-i18n="header.desc">Wszystko co musisz wiedzieć — od instalacji po zaawansowane funkcje. Wybierz temat po lewej lub przewijaj od góry.</p>
+    </div>
+
+    <!-- 1. INSTALACJA -->
+    <section class="doc-section" id="instalacja">
+      <h2><span class="section-icon">💿</span><span data-i18n="s1.title">Instalacja</span></h2>
+
+      <div class="platform-cards">
+        <div class="pcard">
+          <div class="pcard-os">macOS</div>
+          <h3 data-i18n="s1.mac.h">macOS 12 Monterey+</h3>
+          <p data-i18n="s1.mac.p">Pobierz plik <strong>.dmg</strong>, otwórz go i przeciągnij ikonę WavesConverter do folderu Applications. Przy pierwszym uruchomieniu kliknij prawym przyciskiem myszy ikonę → <strong>Otwórz</strong> → ponownie <strong>Otwórz</strong> w oknie Gatekeepera.</p>
+        </div>
+        <div class="pcard">
+          <div class="pcard-os">Windows</div>
+          <h3 data-i18n="s1.win.h">Windows 10+ (64-bit)</h3>
+          <p data-i18n="s1.win.p">Pobierz plik <strong>.exe</strong> i uruchom instalator. Jeśli pojawi się niebieskie okno SmartScreen, kliknij <strong>Więcej informacji</strong> → <strong>Uruchom mimo to</strong>. Instalacja zajmuje kilka sekund.</p>
+        </div>
+      </div>
+
+      <div class="tip">
+        <span class="tip-icon">🍎</span>
+        <div><strong data-i18n="tip">Wskazówka macOS:</strong> <span data-i18n="s1.mac.tip">Jeśli Gatekeeper blokuje aplikację, przejdź do Preferencji systemowych → Prywatność i bezpieczeństwo → kliknij „Otwórz mimo to". Wystarczy zrobić to raz.</span></div>
+      </div>
+      <div class="note">
+        <span class="note-icon">🛡️</span>
+        <div><strong data-i18n="note">Dlaczego SmartScreen?</strong> <span data-i18n="s1.win.note">WavesConverter jest bezpieczny i open source, ale nie jest jeszcze podpisany płatnym certyfikatem Microsoft. To normalne dla nowego oprogramowania indie. Kod źródłowy jest publiczny na GitHub.</span></div>
+      </div>
+    </section>
+
+    <!-- 2. POBIERANIE FILMÓW -->
+    <section class="doc-section" id="pobieranie">
+      <h2><span class="section-icon">🎬</span><span data-i18n="s2.title">Pobieranie filmów</span></h2>
+      <p data-i18n="s2.intro">Aby pobrać pojedynczy film z YouTube, wykonaj poniższe kroki:</p>
+      <div class="step-list">
+        <div class="step-item">
+          <div class="step-n">1</div>
+          <div class="step-body"><p data-i18n="s2.step1"><strong>Wklej URL</strong> — skopiuj link do filmu (youtube.com/watch, youtu.be lub Shorts) i naciśnij <kbd class="kbd">⌘V</kbd> (macOS) lub <kbd class="kbd">Ctrl+V</kbd> (Windows). Link automatycznie pojawi się w polu i zacznie się pobieranie metadanych.</p></div>
+        </div>
+        <div class="step-item">
+          <div class="step-n">2</div>
+          <div class="step-body"><p data-i18n="s2.step2"><strong>Kliknij Fetch</strong> — aplikacja pobierze tytuł, miniaturę i dostępne formaty z YouTube.</p></div>
+        </div>
+        <div class="step-item">
+          <div class="step-n">3</div>
+          <div class="step-body"><p data-i18n="s2.step3"><strong>Wybierz format i jakość</strong> — przełącz między Video / Audio, wybierz format (MP4, MKV, MOV, WebM dla wideo; MP3, WAV, FLAC, M4A dla audio) oraz rozdzielczość lub bitrate.</p></div>
+        </div>
+        <div class="step-item">
+          <div class="step-n">4</div>
+          <div class="step-body"><p data-i18n="s2.step4"><strong>Dodaj do kolejki</strong> — kliknij <strong>Add to Queue</strong> lub naciśnij <kbd class="kbd">⌘D</kbd>. Film trafi do zakładki Queue.</p></div>
+        </div>
+        <div class="step-item">
+          <div class="step-n">5</div>
+          <div class="step-body"><p data-i18n="s2.step5"><strong>Start</strong> — przejdź do zakładki Queue i kliknij <strong>Start All</strong> lub <kbd class="kbd">Spacja</kbd>. Obserwuj postęp i ETA.</p></div>
+        </div>
+      </div>
+      <div class="tip">
+        <span class="tip-icon">⌨️</span>
+        <div><strong data-i18n="tip2">Skrót ⌘V:</strong> <span data-i18n="s2.tip">Wystarczy skopiować link do schowka — po kliknięciu okna aplikacji link zostanie automatycznie wklejony i natychmiast zostanie wywołany Fetch. Nie musisz ręcznie klikać w pole URL.</span></div>
+      </div>
+    </section>
+
+    <!-- 3. PLAYLISTY -->
+    <section class="doc-section" id="playlisty">
+      <h2><span class="section-icon">📋</span><span data-i18n="s3.title">Pobieranie playlist</span></h2>
+      <p data-i18n="s3.intro">WavesConverter obsługuje pełne playlisty YouTube — możesz pobrać wszystkie filmy lub wybrać konkretne pozycje.</p>
+      <div class="step-list">
+        <div class="step-item">
+          <div class="step-n">1</div>
+          <div class="step-body"><p data-i18n="s3.step1"><strong>Wklej URL playlisty</strong> — link musi zawierać parametr <code>list=</code> (np. <code>youtube.com/playlist?list=PL…</code>). Naciśnij Fetch.</p></div>
+        </div>
+        <div class="step-item">
+          <div class="step-n">2</div>
+          <div class="step-body"><p data-i18n="s3.step2"><strong>Wybierz pozycje</strong> — aplikacja wyświetli listę wszystkich filmów. Zaznacz lub odznacz poszczególne filmy. Przyciski <strong>All / None</strong> zaznaczają lub odznaczają wszystkie.</p></div>
+        </div>
+        <div class="step-item">
+          <div class="step-n">3</div>
+          <div class="step-body"><p data-i18n="s3.step3"><strong>Ustaw globalne ustawienia</strong> — format, jakość i folder docelowy w sekcji <em>Global settings</em> zostaną zastosowane do wszystkich zaznaczonych filmów.</p></div>
+        </div>
+        <div class="step-item">
+          <div class="step-n">4</div>
+          <div class="step-body"><p data-i18n="s3.step4"><strong>Nadpisz pojedyncze filmy</strong> — kliknij ikonę ustawień przy konkretnym filmie, aby zmienić format lub jakość tylko dla niego. Ustawienie per-item ma pierwszeństwo nad globalnym.</p></div>
+        </div>
+        <div class="step-item">
+          <div class="step-n">5</div>
+          <div class="step-body"><p data-i18n="s3.step5"><strong>Add Selected to Queue</strong> — kliknij przycisk, aby dodać wszystkie zaznaczone filmy do kolejki.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. BATCH -->
+    <section class="doc-section" id="batch">
+      <h2><span class="section-icon">📦</span><span data-i18n="s4.title">Batch paste</span></h2>
+      <p data-i18n="s4.intro">Batch paste pozwala wkleić wiele linków YouTube naraz — każdy w osobnej linii. Aplikacja wykrywa wiele URLi i automatycznie przełącza się w tryb batch.</p>
+      <div class="step-list">
+        <div class="step-item">
+          <div class="step-n">1</div>
+          <div class="step-body"><p data-i18n="s4.step1"><strong>Skopiuj wiele URLi</strong> — każdy link w osobnej linii (oddzielone znakiem nowej linii). Wklej do pola URL (<kbd class="kbd">⌘V</kbd>).</p></div>
+        </div>
+        <div class="step-item">
+          <div class="step-n">2</div>
+          <div class="step-body"><p data-i18n="s4.step2"><strong>Panel Batch pojawi się automatycznie</strong> — zobaczysz listę wykrytych URLi z nagłówkiem informującym o ich liczbie. Tytuły zostaną pobrane dopiero podczas pobierania.</p></div>
+        </div>
+        <div class="step-item">
+          <div class="step-n">3</div>
+          <div class="step-body"><p data-i18n="s4.step3"><strong>Ustaw format dla wszystkich</strong> — w sekcji <em>Batch settings</em> wybierz typ (Video / Audio), format, jakość i folder wyjściowy. Te ustawienia zostaną zastosowane do całego batcha.</p></div>
+        </div>
+        <div class="step-item">
+          <div class="step-n">4</div>
+          <div class="step-body"><p data-i18n="s4.step4"><strong>Add All to Queue</strong> — kliknij przycisk, aby dodać wszystkie URL do kolejki jednocześnie.</p></div>
+        </div>
+      </div>
+      <div class="tip">
+        <span class="tip-icon">💡</span>
+        <div data-i18n="s4.tip">Batch paste sprawdza się idealnie gdy masz listę ulubionych filmów lub chcesz pobrać kilka konkretnych wideo z różnych kanałów naraz — bez potrzeby fetchowania każdego z osobna.</div>
+      </div>
+    </section>
+
+    <!-- 5. KONWERTER -->
+    <section class="doc-section" id="konwerter">
+      <h2><span class="section-icon">🔄</span><span data-i18n="s5.title">Konwerter plików</span></h2>
+      <p data-i18n="s5.intro">Zakładka <strong>Convert</strong> pozwala konwertować dowolny lokalny plik multimedialny na inny format. Wszystko odbywa się lokalnie przy użyciu ffmpeg — żadnego uploadu.</p>
+      <div class="step-list">
+        <div class="step-item">
+          <div class="step-n">1</div>
+          <div class="step-body"><p data-i18n="s5.step1"><strong>Wybierz plik</strong> — przeciągnij plik na obszar drop zone lub kliknij <strong>Browse</strong> i wybierz plik z dysku. Obsługiwane wejście: MP4, MKV, MOV, AVI, WebM, MP3, WAV, FLAC, M4A, AAC, OGG i inne.</p></div>
+        </div>
+        <div class="step-item">
+          <div class="step-n">2</div>
+          <div class="step-body"><p data-i18n="s5.step2"><strong>Wybierz format wyjściowy</strong> — z listy dostępnych formatów. Dla wideo możesz też zmienić rozdzielczość i bitrate audio.</p></div>
+        </div>
+        <div class="step-item">
+          <div class="step-n">3</div>
+          <div class="step-body"><p data-i18n="s5.step3"><strong>Konwertuj</strong> — kliknij przycisk Convert. Postęp jest widoczny w czasie rzeczywistym. Przekonwertowany plik zostanie zapisany w tym samym folderze co oryginał (lub w wybranym folderze wyjściowym).</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. KOLEJKA -->
+    <section class="doc-section" id="kolejka">
+      <h2><span class="section-icon">⚡</span><span data-i18n="s6.title">Kolejka i ETA</span></h2>
+      <p data-i18n="s6.intro">Zakładka <strong>Queue</strong> to centrum operacyjne WavesConverter — tu zarządzasz wszystkimi pobieraniami.</p>
+      <h3 data-i18n="s6.h.concurrent">Równoległe pobierania</h3>
+      <p data-i18n="s6.p.concurrent">Aplikacja może pobierać kilka plików jednocześnie. Limit równoległych pobierań ustawiasz w Ustawieniach → Concurrent Downloads (domyślnie: 3). Każde pobieranie ma własny pasek postępu, ETA i aktualną prędkość.</p>
+      <h3 data-i18n="s6.h.controls">Sterowanie kolejką</h3>
+      <div class="step-list">
+        <div class="step-item">
+          <div class="step-n">▶</div>
+          <div class="step-body"><p data-i18n="s6.start"><strong>Start All</strong> — uruchamia wszystkie oczekujące pobierania (do limitu współbieżności). Skrót: <kbd class="kbd">Spacja</kbd>.</p></div>
+        </div>
+        <div class="step-item">
+          <div class="step-n">⏸</div>
+          <div class="step-body"><p data-i18n="s6.pause"><strong>Pause / Resume</strong> — zatrzymuje i wznawia pobieranie. Częściowo pobrane dane są zachowane.</p></div>
+        </div>
+        <div class="step-item">
+          <div class="step-n">↺</div>
+          <div class="step-body"><p data-i18n="s6.retry"><strong>Retry</strong> — ponawia pobieranie które zakończyło się błędem. Kliknij ikonę przy pozycji lub użyj przycisku Retry Failed.</p></div>
+        </div>
+        <div class="step-item">
+          <div class="step-n">✕</div>
+          <div class="step-body"><p data-i18n="s6.remove"><strong>Usuń</strong> — usuwa pozycję z kolejki. Nie usuwa pobranego pliku z dysku.</p></div>
+        </div>
+      </div>
+      <div class="tip">
+        <span class="tip-icon">⏱️</span>
+        <div data-i18n="s6.tip">ETA (szacowany czas do końca) i prędkość pobierania aktualizują się na żywo. Przy wolnym połączeniu ETA może być niedokładne na początku — stabilizuje się po kilku sekundach.</div>
+      </div>
+    </section>
+
+    <!-- 7. HISTORIA -->
+    <section class="doc-section" id="historia">
+      <h2><span class="section-icon">📖</span><span data-i18n="s7.title">Historia</span></h2>
+      <p data-i18n="s7.intro">Zakładka <strong>History</strong> zapisuje wszystkie ukończone pobierania — tytuł, format, rozdzielczość, datę i ścieżkę pliku.</p>
+      <h3 data-i18n="s7.h.open">Otwieranie pliku z historii</h3>
+      <p data-i18n="s7.p.open">Kliknij ikonę folderu przy dowolnej pozycji, aby otworzyć folder zawierający pobrany plik w Finderze (macOS) lub Eksploratorze plików (Windows). Możesz też kliknąć tytuł, aby otworzyć plik bezpośrednio.</p>
+      <h3 data-i18n="s7.h.clear">Czyszczenie historii</h3>
+      <p data-i18n="s7.p.clear">Przycisk <strong>Clear History</strong> usuwa całą historię z aplikacji. Pliki na dysku pozostają nienaruszone.</p>
+    </section>
+
+    <!-- 8. SKRÓTY -->
+    <section class="doc-section" id="skroty">
+      <h2><span class="section-icon">⌨️</span><span data-i18n="s8.title">Skróty klawiszowe</span></h2>
+      <p data-i18n="s8.intro">WavesConverter jest zoptymalizowany pod kątem klawiatury. Poniżej pełna lista skrótów:</p>
+      <table class="kb-table">
+        <thead>
+          <tr>
+            <th data-i18n="kb.shortcut">Skrót</th>
+            <th data-i18n="kb.action">Akcja</th>
+          </tr>
+        </thead>
+        <tbody id="kb-tbody">
+          <!-- filled by JS -->
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 9. USTAWIENIA -->
+    <section class="doc-section" id="ustawienia">
+      <h2><span class="section-icon">⚙️</span><span data-i18n="s9.title">Ustawienia</span></h2>
+      <p data-i18n="s9.intro">Zakładka <strong>Settings</strong> pozwala dostosować zachowanie aplikacji do własnych potrzeb.</p>
+      <h3 data-i18n="s9.h.folder">Folder domyślny</h3>
+      <p data-i18n="s9.p.folder">Ustaw domyślny folder pobierania — każde nowe pobieranie trafi tam automatycznie, chyba że zmienisz folder ręcznie przy konkretnym pobraniu.</p>
+      <h3 data-i18n="s9.h.concurrent">Limit równoległych pobierań</h3>
+      <p data-i18n="s9.p.concurrent">Określa ile plików może być pobieranych jednocześnie (1–10). Wyższa wartość = szybciej przy szybkim łączu, ale też większe zużycie zasobów. Domyślnie: 3.</p>
+      <h3 data-i18n="s9.h.formats">Domyślny format i jakość</h3>
+      <p data-i18n="s9.p.formats">Ustaw domyślny typ (Video/Audio), format (MP4, MP3 itp.) i jakość. Możesz je nadpisywać przy każdym pobieraniu osobno.</p>
+      <h3 data-i18n="s9.h.template">Szablon nazwy pliku</h3>
+      <p data-i18n="s9.p.template">Wybierz schemat nazewnictwa: <code>%(title)s</code> (samo tytuł), <code>%(uploader)s - %(title)s</code> (autor i tytuł), <code>%(title)s [%(id)s]</code> (z ID) lub wpisz własny wzorzec kompatybilny z yt-dlp.</p>
+    </section>
+
+    <!-- 10. FAQ -->
+    <section class="doc-section" id="faq">
+      <h2><span class="section-icon">❓</span><span data-i18n="s10.title">FAQ</span></h2>
+      <div class="faq-list" id="faq-list">
+        <!-- filled by JS -->
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <span class="flogo">WavesConverter</span>
+  <p><span data-i18n="footer.built">Zbudowane z yt-dlp, ffmpeg i Electron</span> · <a href="https://github.com/idunnowhytf/wavesconvsite" target="_blank" data-i18n="footer.src">Kod na GitHub</a></p>
+  <p data-i18n="footer.copy">© 2025 WavesConverter · Darmowe i Open Source</p>
+</footer>
+
+<!-- MOBILE DRAWER -->
+<button class="mob-toc-btn" id="mob-toc-btn" aria-label="Spis treści">≡</button>
+<div class="mob-drawer" id="mob-drawer">
+  <div class="mob-overlay" id="mob-overlay"></div>
+  <div class="mob-panel">
+    <div class="mob-panel-handle"></div>
+    <div class="sidebar-label" data-i18n="toc.label">Spis treści</div>
+    <ul class="toc-list" id="toc-list-mob">
+      <li><a href="#instalacja"><span class="toc-num">1</span><span data-i18n="toc.1">Instalacja</span></a></li>
+      <li><a href="#pobieranie"><span class="toc-num">2</span><span data-i18n="toc.2">Pobieranie filmów</span></a></li>
+      <li><a href="#playlisty"><span class="toc-num">3</span><span data-i18n="toc.3">Pobieranie playlist</span></a></li>
+      <li><a href="#batch"><span class="toc-num">4</span><span data-i18n="toc.4">Batch paste</span></a></li>
+      <li><a href="#konwerter"><span class="toc-num">5</span><span data-i18n="toc.5">Konwerter plików</span></a></li>
+      <li><a href="#kolejka"><span class="toc-num">6</span><span data-i18n="toc.6">Kolejka i ETA</span></a></li>
+      <li><a href="#historia"><span class="toc-num">7</span><span data-i18n="toc.7">Historia</span></a></li>
+      <li><a href="#skroty"><span class="toc-num">8</span><span data-i18n="toc.8">Skróty klawiszowe</span></a></li>
+      <li><a href="#ustawienia"><span class="toc-num">9</span><span data-i18n="toc.9">Ustawienia</span></a></li>
+      <li><a href="#faq"><span class="toc-num">10</span><span data-i18n="toc.10">FAQ</span></a></li>
+    </ul>
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════
+   TRANSLATIONS
+══════════════════════════════════════════ */
+const T = {
+  pl: {
+    'nav.badge': 'Dokumentacja',
+    'nav.home': 'Strona główna',
+    'nav.changelog': 'Changelog',
+    'nav.dl': 'Pobierz',
+    'toc.label': 'Spis treści',
+    'toc.1': 'Instalacja',
+    'toc.2': 'Pobieranie filmów',
+    'toc.3': 'Pobieranie playlist',
+    'toc.4': 'Batch paste',
+    'toc.5': 'Konwerter plików',
+    'toc.6': 'Kolejka i ETA',
+    'toc.7': 'Historia',
+    'toc.8': 'Skróty klawiszowe',
+    'toc.9': 'Ustawienia',
+    'toc.10': 'FAQ',
+    'header.eyebrow': 'Instrukcja obsługi',
+    'header.sub': 'Dokumentacja',
+    'header.desc': 'Wszystko co musisz wiedzieć — od instalacji po zaawansowane funkcje. Wybierz temat po lewej lub przewijaj od góry.',
+    's1.title': 'Instalacja',
+    's1.mac.h': 'macOS 12 Monterey+',
+    's1.mac.p': 'Pobierz plik <strong>.dmg</strong>, otwórz go i przeciągnij ikonę WavesConverter do folderu Applications. Przy pierwszym uruchomieniu kliknij prawym przyciskiem myszy ikonę → <strong>Otwórz</strong> → ponownie <strong>Otwórz</strong> w oknie Gatekeepera.',
+    's1.win.h': 'Windows 10+ (64-bit)',
+    's1.win.p': 'Pobierz plik <strong>.exe</strong> i uruchom instalator. Jeśli pojawi się niebieskie okno SmartScreen, kliknij <strong>Więcej informacji</strong> → <strong>Uruchom mimo to</strong>. Instalacja zajmuje kilka sekund.',
+    'tip': 'Wskazówka macOS:',
+    's1.mac.tip': 'Jeśli Gatekeeper blokuje aplikację, przejdź do Preferencji systemowych → Prywatność i bezpieczeństwo → kliknij „Otwórz mimo to". Wystarczy zrobić to raz.',
+    'note': 'Dlaczego SmartScreen?',
+    's1.win.note': 'WavesConverter jest bezpieczny i open source, ale nie jest jeszcze podpisany płatnym certyfikatem Microsoft. To normalne dla nowego oprogramowania indie. Kod źródłowy jest publiczny na GitHub.',
+    's2.title': 'Pobieranie filmów',
+    's2.intro': 'Aby pobrać pojedynczy film z YouTube, wykonaj poniższe kroki:',
+    's2.step1': '<strong>Wklej URL</strong> — skopiuj link do filmu (youtube.com/watch, youtu.be lub Shorts) i naciśnij <kbd class="kbd">⌘V</kbd> (macOS) lub <kbd class="kbd">Ctrl+V</kbd> (Windows). Link automatycznie pojawi się w polu i zacznie się pobieranie metadanych.',
+    's2.step2': '<strong>Kliknij Fetch</strong> — aplikacja pobierze tytuł, miniaturę i dostępne formaty z YouTube.',
+    's2.step3': '<strong>Wybierz format i jakość</strong> — przełącz między Video / Audio, wybierz format (MP4, MKV, MOV, WebM dla wideo; MP3, WAV, FLAC, M4A dla audio) oraz rozdzielczość lub bitrate.',
+    's2.step4': '<strong>Dodaj do kolejki</strong> — kliknij <strong>Add to Queue</strong> lub naciśnij <kbd class="kbd">⌘D</kbd>. Film trafi do zakładki Queue.',
+    's2.step5': '<strong>Start</strong> — przejdź do zakładki Queue i kliknij <strong>Start All</strong> lub <kbd class="kbd">Spacja</kbd>. Obserwuj postęp i ETA.',
+    'tip2': 'Skrót ⌘V:',
+    's2.tip': 'Wystarczy skopiować link do schowka — po kliknięciu okna aplikacji link zostanie automatycznie wklejony i natychmiast zostanie wywołany Fetch. Nie musisz ręcznie klikać w pole URL.',
+    's3.title': 'Pobieranie playlist',
+    's3.intro': 'WavesConverter obsługuje pełne playlisty YouTube — możesz pobrać wszystkie filmy lub wybrać konkretne pozycje.',
+    's3.step1': '<strong>Wklej URL playlisty</strong> — link musi zawierać parametr <code>list=</code> (np. <code>youtube.com/playlist?list=PL…</code>). Naciśnij Fetch.',
+    's3.step2': '<strong>Wybierz pozycje</strong> — aplikacja wyświetli listę wszystkich filmów. Zaznacz lub odznacz poszczególne filmy. Przyciski <strong>All / None</strong> zaznaczają lub odznaczają wszystkie.',
+    's3.step3': '<strong>Ustaw globalne ustawienia</strong> — format, jakość i folder docelowy w sekcji <em>Global settings</em> zostaną zastosowane do wszystkich zaznaczonych filmów.',
+    's3.step4': '<strong>Nadpisz pojedyncze filmy</strong> — kliknij ikonę ustawień przy konkretnym filmie, aby zmienić format lub jakość tylko dla niego. Ustawienie per-item ma pierwszeństwo nad globalnym.',
+    's3.step5': '<strong>Add Selected to Queue</strong> — kliknij przycisk, aby dodać wszystkie zaznaczone filmy do kolejki.',
+    's4.title': 'Batch paste',
+    's4.intro': 'Batch paste pozwala wkleić wiele linków YouTube naraz — każdy w osobnej linii. Aplikacja wykrywa wiele URLi i automatycznie przełącza się w tryb batch.',
+    's4.step1': '<strong>Skopiuj wiele URLi</strong> — każdy link w osobnej linii (oddzielone znakiem nowej linii). Wklej do pola URL (<kbd class="kbd">⌘V</kbd>).',
+    's4.step2': '<strong>Panel Batch pojawi się automatycznie</strong> — zobaczysz listę wykrytych URLi z nagłówkiem informującym o ich liczbie. Tytuły zostaną pobrane dopiero podczas pobierania.',
+    's4.step3': '<strong>Ustaw format dla wszystkich</strong> — w sekcji <em>Batch settings</em> wybierz typ (Video / Audio), format, jakość i folder wyjściowy. Te ustawienia zostaną zastosowane do całego batcha.',
+    's4.step4': '<strong>Add All to Queue</strong> — kliknij przycisk, aby dodać wszystkie URL do kolejki jednocześnie.',
+    's4.tip': 'Batch paste sprawdza się idealnie gdy masz listę ulubionych filmów lub chcesz pobrać kilka konkretnych wideo z różnych kanałów naraz — bez potrzeby fetchowania każdego z osobna.',
+    's5.title': 'Konwerter plików',
+    's5.intro': 'Zakładka <strong>Convert</strong> pozwala konwertować dowolny lokalny plik multimedialny na inny format. Wszystko odbywa się lokalnie przy użyciu ffmpeg — żadnego uploadu.',
+    's5.step1': '<strong>Wybierz plik</strong> — przeciągnij plik na obszar drop zone lub kliknij <strong>Browse</strong> i wybierz plik z dysku. Obsługiwane wejście: MP4, MKV, MOV, AVI, WebM, MP3, WAV, FLAC, M4A, AAC, OGG i inne.',
+    's5.step2': '<strong>Wybierz format wyjściowy</strong> — z listy dostępnych formatów. Dla wideo możesz też zmienić rozdzielczość i bitrate audio.',
+    's5.step3': '<strong>Konwertuj</strong> — kliknij przycisk Convert. Postęp jest widoczny w czasie rzeczywistym. Przekonwertowany plik zostanie zapisany w tym samym folderze co oryginał (lub w wybranym folderze wyjściowym).',
+    's6.title': 'Kolejka i ETA',
+    's6.intro': 'Zakładka <strong>Queue</strong> to centrum operacyjne WavesConverter — tu zarządzasz wszystkimi pobieraniami.',
+    's6.h.concurrent': 'Równoległe pobierania',
+    's6.p.concurrent': 'Aplikacja może pobierać kilka plików jednocześnie. Limit równoległych pobierań ustawiasz w Ustawieniach → Concurrent Downloads (domyślnie: 3). Każde pobieranie ma własny pasek postępu, ETA i aktualną prędkość.',
+    's6.h.controls': 'Sterowanie kolejką',
+    's6.start': '<strong>Start All</strong> — uruchamia wszystkie oczekujące pobierania (do limitu współbieżności). Skrót: <kbd class="kbd">Spacja</kbd>.',
+    's6.pause': '<strong>Pause / Resume</strong> — zatrzymuje i wznawia pobieranie. Częściowo pobrane dane są zachowane.',
+    's6.retry': '<strong>Retry</strong> — ponawia pobieranie które zakończyło się błędem. Kliknij ikonę przy pozycji lub użyj przycisku Retry Failed.',
+    's6.remove': '<strong>Usuń</strong> — usuwa pozycję z kolejki. Nie usuwa pobranego pliku z dysku.',
+    's6.tip': 'ETA (szacowany czas do końca) i prędkość pobierania aktualizują się na żywo. Przy wolnym połączeniu ETA może być niedokładne na początku — stabilizuje się po kilku sekundach.',
+    's7.title': 'Historia',
+    's7.intro': 'Zakładka <strong>History</strong> zapisuje wszystkie ukończone pobierania — tytuł, format, rozdzielczość, datę i ścieżkę pliku.',
+    's7.h.open': 'Otwieranie pliku z historii',
+    's7.p.open': 'Kliknij ikonę folderu przy dowolnej pozycji, aby otworzyć folder zawierający pobrany plik w Finderze (macOS) lub Eksploratorze plików (Windows). Możesz też kliknąć tytuł, aby otworzyć plik bezpośrednio.',
+    's7.h.clear': 'Czyszczenie historii',
+    's7.p.clear': 'Przycisk <strong>Clear History</strong> usuwa całą historię z aplikacji. Pliki na dysku pozostają nienaruszone.',
+    's8.title': 'Skróty klawiszowe',
+    's8.intro': 'WavesConverter jest zoptymalizowany pod kątem klawiatury. Poniżej pełna lista skrótów:',
+    'kb.shortcut': 'Skrót',
+    'kb.action': 'Akcja',
+    'kb.rows': [
+      ['⌘V / Ctrl+V', 'Auto-wklej URL i uruchom Fetch'],
+      ['⌘D / Ctrl+D', 'Dodaj do kolejki (Add to Queue)'],
+      ['⌘1', 'Przejdź do zakładki Download'],
+      ['⌘2', 'Przejdź do zakładki Convert'],
+      ['⌘3', 'Przejdź do zakładki Queue'],
+      ['⌘4', 'Przejdź do zakładki History'],
+      ['⌘5', 'Przejdź do zakładki Settings'],
+      ['Spacja', 'Start / Pause wszystkich pobierań w kolejce'],
+      ['⌘⇧C', 'Wyczyść ukończone pozycje z kolejki'],
+      ['⌘K', 'Wyczyść pole URL'],
+      ['⌘↵', 'Potwierdź / Fetch (gdy kursor w polu URL)'],
+    ],
+    's9.title': 'Ustawienia',
+    's9.intro': 'Zakładka <strong>Settings</strong> pozwala dostosować zachowanie aplikacji do własnych potrzeb.',
+    's9.h.folder': 'Folder domyślny',
+    's9.p.folder': 'Ustaw domyślny folder pobierania — każde nowe pobieranie trafi tam automatycznie, chyba że zmienisz folder ręcznie przy konkretnym pobraniu.',
+    's9.h.concurrent': 'Limit równoległych pobierań',
+    's9.p.concurrent': 'Określa ile plików może być pobieranych jednocześnie (1–10). Wyższa wartość = szybciej przy szybkim łączu, ale też większe zużycie zasobów. Domyślnie: 3.',
+    's9.h.formats': 'Domyślny format i jakość',
+    's9.p.formats': 'Ustaw domyślny typ (Video/Audio), format (MP4, MP3 itp.) i jakość. Możesz je nadpisywać przy każdym pobieraniu osobno.',
+    's9.h.template': 'Szablon nazwy pliku',
+    's9.p.template': 'Wybierz schemat nazewnictwa: <code>%(title)s</code> (samo tytuł), <code>%(uploader)s - %(title)s</code> (autor i tytuł), <code>%(title)s [%(id)s]</code> (z ID) lub wpisz własny wzorzec kompatybilny z yt-dlp.',
+    's10.title': 'FAQ',
+    'faq.items': [
+      ['Czy to legalne?', 'Pobieranie filmów na własny użytek prywatny jest w wielu krajach legalne, jednak zależy to od lokalnych przepisów. WavesConverter jest narzędziem technicznym — użytkownik ponosi odpowiedzialność za zgodność z prawem i regulaminem YouTube w swoim kraju.'],
+      ['Dlaczego SmartScreen blokuje instalator?', 'WavesConverter nie jest jeszcze podpisany płatnym certyfikatem Microsoft EV. To normalne dla oprogramowania indie. Możesz kliknąć „Więcej informacji" → „Uruchom mimo to", aby zainstalować. Kod jest w pełni open source i audytowalny na GitHub.'],
+      ['Skąd pochodzi ffmpeg i yt-dlp?', 'Obie biblioteki są dołączone do aplikacji (bundled). Nie musisz niczego instalować osobno. ffmpeg to projekt open source licencjonowany na LGPL/GPL, yt-dlp to open source na licencji Unlicense. Żadne dane nie są wysyłane do zewnętrznych serwerów.'],
+      ['Jak zaktualizować WavesConverter?', 'Aplikacja automatycznie sprawdza dostępność aktualizacji przez GitHub Releases. Gdy nowa wersja jest gotowa, pojawia się baner w górnej części okna z przyciskiem „Install". Kliknij go, a aktualizacja zostanie pobrana i zainstalowana automatycznie.'],
+      ['Co zrobić jeśli pobieranie się nie udaje?', 'Najpierw sprawdź czy masz aktywne połączenie internetowe. Jeśli błąd dotyczy konkretnego URL, upewnij się że film jest publiczny (nie prywatny lub age-gated). Spróbuj też zaktualizować aplikację — nowa wersja yt-dlp może rozwiązać problem. W razie powtarzających się błędów zgłoś issue na GitHub.'],
+    ],
+    'footer.built': 'Zbudowane z yt-dlp, ffmpeg i Electron',
+    'footer.src': 'Kod na GitHub',
+    'footer.copy': '© 2025 WavesConverter · Darmowe i Open Source',
+  },
+  en: {
+    'nav.badge': 'Documentation',
+    'nav.home': 'Home',
+    'nav.changelog': 'Changelog',
+    'nav.dl': 'Download',
+    'toc.label': 'Table of Contents',
+    'toc.1': 'Installation',
+    'toc.2': 'Downloading Videos',
+    'toc.3': 'Downloading Playlists',
+    'toc.4': 'Batch Paste',
+    'toc.5': 'File Converter',
+    'toc.6': 'Queue & ETA',
+    'toc.7': 'History',
+    'toc.8': 'Keyboard Shortcuts',
+    'toc.9': 'Settings',
+    'toc.10': 'FAQ',
+    'header.eyebrow': 'User Guide',
+    'header.sub': 'Documentation',
+    'header.desc': 'Everything you need to know — from installation to advanced features. Pick a topic on the left or scroll from the top.',
+    's1.title': 'Installation',
+    's1.mac.h': 'macOS 12 Monterey+',
+    's1.mac.p': 'Download the <strong>.dmg</strong> file, open it, and drag the WavesConverter icon into the Applications folder. On first launch, right-click the icon → <strong>Open</strong> → click <strong>Open</strong> again in the Gatekeeper dialog.',
+    's1.win.h': 'Windows 10+ (64-bit)',
+    's1.win.p': 'Download the <strong>.exe</strong> installer and run it. If a blue SmartScreen window appears, click <strong>More info</strong> → <strong>Run anyway</strong>. Installation takes just a few seconds.',
+    'tip': 'macOS tip:',
+    's1.mac.tip': 'If Gatekeeper still blocks the app, go to System Preferences → Privacy & Security → click "Open Anyway". You only need to do this once.',
+    'note': 'Why SmartScreen?',
+    's1.win.note': 'WavesConverter is safe and open source, but it is not yet signed with a paid Microsoft certificate. This is normal for new indie software. The source code is publicly available on GitHub.',
+    's2.title': 'Downloading Videos',
+    's2.intro': 'To download a single YouTube video, follow these steps:',
+    's2.step1': '<strong>Paste the URL</strong> — copy a video link (youtube.com/watch, youtu.be, or Shorts) and press <kbd class="kbd">⌘V</kbd> (macOS) or <kbd class="kbd">Ctrl+V</kbd> (Windows). The link will auto-fill and metadata fetching will begin.',
+    's2.step2': '<strong>Click Fetch</strong> — the app will retrieve the title, thumbnail, and available formats from YouTube.',
+    's2.step3': '<strong>Choose format & quality</strong> — toggle between Video / Audio, pick a format (MP4, MKV, MOV, WebM for video; MP3, WAV, FLAC, M4A for audio) and resolution or bitrate.',
+    's2.step4': '<strong>Add to Queue</strong> — click <strong>Add to Queue</strong> or press <kbd class="kbd">⌘D</kbd>. The video will appear in the Queue tab.',
+    's2.step5': '<strong>Start</strong> — switch to the Queue tab and click <strong>Start All</strong> or press <kbd class="kbd">Space</kbd>. Watch the progress bars and ETA.',
+    'tip2': '⌘V shortcut:',
+    's2.tip': 'Just copy the link to your clipboard — when you click the app window, the link auto-pastes and Fetch fires immediately. No need to click the URL field manually.',
+    's3.title': 'Downloading Playlists',
+    's3.intro': 'WavesConverter supports full YouTube playlists — download all videos or cherry-pick specific ones.',
+    's3.step1': '<strong>Paste the playlist URL</strong> — the link must contain the <code>list=</code> parameter (e.g. <code>youtube.com/playlist?list=PL…</code>). Press Fetch.',
+    's3.step2': '<strong>Select items</strong> — the app will show all videos in the playlist. Check or uncheck individual items. Use <strong>All / None</strong> to toggle everything.',
+    's3.step3': '<strong>Set global settings</strong> — format, quality, and output folder in the <em>Global settings</em> section will apply to all checked videos.',
+    's3.step4': '<strong>Override individual items</strong> — click the settings icon next to a specific video to change its format or quality independently. Per-item settings take priority over global ones.',
+    's3.step5': '<strong>Add Selected to Queue</strong> — click the button to queue all selected videos at once.',
+    's4.title': 'Batch Paste',
+    's4.intro': 'Batch paste lets you paste multiple YouTube links at once — one per line. The app detects multiple URLs and automatically switches to batch mode.',
+    's4.step1': '<strong>Copy multiple URLs</strong> — one link per line (separated by newlines). Paste into the URL field (<kbd class="kbd">⌘V</kbd>).',
+    's4.step2': '<strong>The Batch panel appears automatically</strong> — you\'ll see a list of detected URLs with a header showing the count. Titles will be resolved during download.',
+    's4.step3': '<strong>Set format for all</strong> — in the <em>Batch settings</em> section choose type (Video / Audio), format, quality, and output folder. These apply to the entire batch.',
+    's4.step4': '<strong>Add All to Queue</strong> — click the button to add all URLs to the queue simultaneously.',
+    's4.tip': 'Batch paste is perfect when you have a list of favorite videos or want to download several specific clips from different channels at once — no need to fetch each one separately.',
+    's5.title': 'File Converter',
+    's5.intro': 'The <strong>Convert</strong> tab lets you convert any local media file to another format. Everything runs locally via ffmpeg — no upload required.',
+    's5.step1': '<strong>Select a file</strong> — drag and drop a file onto the drop zone or click <strong>Browse</strong> to pick one. Supported input: MP4, MKV, MOV, AVI, WebM, MP3, WAV, FLAC, M4A, AAC, OGG, and more.',
+    's5.step2': '<strong>Pick the output format</strong> — choose from the available format list. For video you can also change resolution and audio bitrate.',
+    's5.step3': '<strong>Convert</strong> — click the Convert button. Progress is shown in real time. The converted file is saved in the same folder as the original (or in your chosen output folder).',
+    's6.title': 'Queue & ETA',
+    's6.intro': 'The <strong>Queue</strong> tab is the operations center of WavesConverter — manage all your downloads here.',
+    's6.h.concurrent': 'Concurrent Downloads',
+    's6.p.concurrent': 'The app can download multiple files at the same time. Set the concurrency limit in Settings → Concurrent Downloads (default: 3). Each download shows its own progress bar, ETA, and live speed.',
+    's6.h.controls': 'Queue Controls',
+    's6.start': '<strong>Start All</strong> — starts all queued downloads (up to the concurrency limit). Shortcut: <kbd class="kbd">Space</kbd>.',
+    's6.pause': '<strong>Pause / Resume</strong> — stops and resumes a download. Partial data is kept.',
+    's6.retry': '<strong>Retry</strong> — retries a failed download. Click the icon next to the item or use the Retry Failed button.',
+    's6.remove': '<strong>Remove</strong> — removes an item from the queue. Does not delete the file from disk.',
+    's6.tip': 'ETA and download speed update in real time. On slow connections, ETA may be inaccurate at first — it stabilizes after a few seconds.',
+    's7.title': 'History',
+    's7.intro': 'The <strong>History</strong> tab logs all completed downloads — title, format, resolution, date, and file path.',
+    's7.h.open': 'Opening a file from history',
+    's7.p.open': 'Click the folder icon next to any entry to reveal the downloaded file in Finder (macOS) or File Explorer (Windows). You can also click the title to open the file directly.',
+    's7.h.clear': 'Clearing history',
+    's7.p.clear': 'The <strong>Clear History</strong> button removes all entries from the app. Files on disk are not affected.',
+    's8.title': 'Keyboard Shortcuts',
+    's8.intro': 'WavesConverter is keyboard-optimised. Here is the full shortcut reference:',
+    'kb.shortcut': 'Shortcut',
+    'kb.action': 'Action',
+    'kb.rows': [
+      ['⌘V / Ctrl+V', 'Auto-paste URL and trigger Fetch'],
+      ['⌘D / Ctrl+D', 'Add to Queue'],
+      ['⌘1', 'Switch to Download tab'],
+      ['⌘2', 'Switch to Convert tab'],
+      ['⌘3', 'Switch to Queue tab'],
+      ['⌘4', 'Switch to History tab'],
+      ['⌘5', 'Switch to Settings tab'],
+      ['Space', 'Start / Pause all downloads in the queue'],
+      ['⌘⇧C', 'Clear completed items from queue'],
+      ['⌘K', 'Clear the URL field'],
+      ['⌘↵', 'Confirm / Fetch (when focused on URL field)'],
+    ],
+    's9.title': 'Settings',
+    's9.intro': 'The <strong>Settings</strong> tab lets you customise app behaviour to fit your workflow.',
+    's9.h.folder': 'Default folder',
+    's9.p.folder': 'Set the default download folder — every new download will go there automatically unless you override it per download.',
+    's9.h.concurrent': 'Concurrent download limit',
+    's9.p.concurrent': 'Sets how many files can download at once (1–10). Higher = faster on fast connections, but uses more resources. Default: 3.',
+    's9.h.formats': 'Default format & quality',
+    's9.p.formats': 'Set the default type (Video/Audio), format (MP4, MP3, etc.), and quality. These can be overridden per individual download.',
+    's9.h.template': 'Filename template',
+    's9.p.template': 'Choose a naming scheme: <code>%(title)s</code> (title only), <code>%(uploader)s - %(title)s</code> (author and title), <code>%(title)s [%(id)s]</code> (with ID), or enter a custom yt-dlp-compatible template.',
+    's10.title': 'FAQ',
+    'faq.items': [
+      ['Is this legal?', 'Downloading videos for personal private use is legal in many countries, but this depends on local law. WavesConverter is a technical tool — the user is responsible for compliance with applicable laws and YouTube\'s Terms of Service in their region.'],
+      ['Why does SmartScreen block the installer?', 'WavesConverter is not yet signed with a paid Microsoft EV certificate. This is expected for indie software. Click "More info" → "Run anyway" to proceed. The full source code is open and auditable on GitHub.'],
+      ['Where do ffmpeg and yt-dlp come from?', 'Both libraries are bundled inside the app — no separate installation required. ffmpeg is open source (LGPL/GPL) and yt-dlp is open source (Unlicense). No data is sent to external servers.'],
+      ['How do I update WavesConverter?', 'The app automatically checks for updates via GitHub Releases. When a new version is available, a banner appears at the top of the window with an "Install" button. Click it and the update will download and install itself.'],
+      ['What should I do if a download fails?', 'First check your internet connection. If the error is URL-specific, make sure the video is public (not private or age-restricted). Try updating the app — a newer yt-dlp version often fixes compatibility issues. For persistent errors, open an issue on GitHub.'],
+    ],
+    'footer.built': 'Built with yt-dlp, ffmpeg & Electron',
+    'footer.src': 'Source on GitHub',
+    'footer.copy': '© 2025 WavesConverter · Free & Open Source',
+  }
+};
+
+let currentLang = 'pl';
+
+function renderKbTable(lang) {
+  const t = T[lang];
+  const tbody = document.getElementById('kb-tbody');
+  if (!tbody) return;
+  tbody.innerHTML = t['kb.rows'].map(([k, a]) =>
+    `<tr><td><span class="kbd">${k}</span></td><td>${a}</td></tr>`
+  ).join('');
+}
+
+function renderFaq(lang) {
+  const t = T[lang];
+  const list = document.getElementById('faq-list');
+  if (!list) return;
+  list.innerHTML = t['faq.items'].map((item, i) => `
+    <div class="faq-item" id="faq-${i}">
+      <button class="faq-q" onclick="toggleFaq(${i})">
+        <span>${item[0]}</span>
+        <span class="faq-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></span>
+      </button>
+      <div class="faq-a" id="faq-a-${i}">
+        <div class="faq-a-inner">${item[1]}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function applyLang(lang) {
+  const t = T[lang];
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (t[key] !== undefined) el.innerHTML = t[key];
+  });
+  document.getElementById('lang-flag').textContent = lang === 'pl' ? '🇬🇧' : '🇵🇱';
+  document.getElementById('lang-label').textContent = lang === 'pl' ? 'EN' : 'PL';
+  document.documentElement.lang = lang;
+  renderKbTable(lang);
+  renderFaq(lang);
+}
+
+function toggleLang() {
+  currentLang = currentLang === 'pl' ? 'en' : 'pl';
+  localStorage.setItem('wc-lang', currentLang);
+  applyLang(currentLang);
+}
+
+// Init lang
+(function () {
+  const saved = localStorage.getItem('wc-lang');
+  const browser = navigator.language.startsWith('pl') ? 'pl' : 'en';
+  currentLang = saved || browser;
+  if (currentLang !== 'pl') applyLang(currentLang);
+  else { renderKbTable('pl'); renderFaq('pl'); }
+})();
+
+/* ── FAQ ACCORDION ── */
+function toggleFaq(i) {
+  const item = document.getElementById('faq-' + i);
+  const ans = document.getElementById('faq-a-' + i);
+  const open = item.classList.toggle('open');
+  ans.style.maxHeight = open ? ans.scrollHeight + 'px' : '0';
+}
+
+/* ── NAV SCROLL ── */
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 20);
+}, { passive: true });
+
+/* ── SCROLL SPY ── */
+const sections = ['instalacja','pobieranie','playlisty','batch','konwerter','kolejka','historia','skroty','ustawienia','faq'];
+const allTocLinks = () => document.querySelectorAll('.toc-list a');
+
+const spy = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const id = e.target.id;
+      allTocLinks().forEach(a => {
+        a.classList.toggle('active', a.getAttribute('href') === '#' + id);
+      });
+    }
+  });
+}, { rootMargin: '-62px 0px -60% 0px', threshold: 0 });
+
+sections.forEach(id => {
+  const el = document.getElementById(id);
+  if (el) spy.observe(el);
+});
+
+/* ── MOBILE DRAWER ── */
+const mobBtn = document.getElementById('mob-toc-btn');
+const drawer = document.getElementById('mob-drawer');
+const overlay = document.getElementById('mob-overlay');
+
+mobBtn.addEventListener('click', () => drawer.classList.toggle('open'));
+overlay.addEventListener('click', () => drawer.classList.remove('open'));
+document.querySelectorAll('#toc-list-mob a').forEach(a => {
+  a.addEventListener('click', () => drawer.classList.remove('open'));
+});
+
+/* ── PARTICLES ── */
+(function () {
+  const canvas = document.getElementById('particles');
+  const ctx = canvas.getContext('2d');
+  let W, H, pts = [];
+  function resize() { W = canvas.width = innerWidth; H = canvas.height = innerHeight; }
+  resize();
+  window.addEventListener('resize', resize, { passive: true });
+  const COUNT = 60;
+  for (let i = 0; i < COUNT; i++) pts.push({
+    x: Math.random() * 1920, y: Math.random() * 1080,
+    vx: (Math.random() - .5) * .25, vy: (Math.random() - .5) * .25,
+    r: Math.random() * 1.4 + .4, a: Math.random()
+  });
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    pts.forEach(p => {
+      p.x += p.vx; p.y += p.vy; p.a += .003;
+      if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
+      if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(168,85,247,${.18 + .12 * Math.sin(p.a)})`;
+      ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+</script>
+</body>
+</html>
