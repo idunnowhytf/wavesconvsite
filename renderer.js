@@ -1,15 +1,20 @@
 let queue=[], fetchedItems=[], isPlaylist=false, qRunning=false, qPaused=false;
 let settings={ outputDir:'', concurrent:2, videoFormat:'mp4', audioFormat:'mp3', quality:'best', filenameTemplate:'%(title)s' };
+let downloadHistory=[];
 
 window.addEventListener('DOMContentLoaded', async () => {
   settings.outputDir = await window.api.getDefaultDir();
   loadSettings();
-  initWindowControls(); initTabs(); initDownloadTab(); initConvertTab(); initQueueTab(); initSettingsTab(); initIpc();
-  checkStatus(); renderQueue(); applySettings();
+  loadHistory();
+  initWindowControls(); initTabs(); initDownloadTab(); initConvertTab(); initQueueTab(); initHistoryTab(); initSettingsTab(); initIpc();
+  initKeyboardShortcuts(); initDragDrop();
+  checkStatus(); renderQueue(); renderHistory(); applySettings();
   const v = await window.api.getVersion().catch(()=>'1.0.0');
   document.getElementById('versionTag').textContent = 'v'+v;
+  requestNotificationPermission();
 });
 
+/* ─── Window Controls ─── */
 function initWindowControls() {
   document.getElementById('btnMin').onclick   = () => window.api.minimize();
   document.getElementById('btnMax').onclick   = () => window.api.maximize();
@@ -17,17 +22,19 @@ function initWindowControls() {
   window.api.onWindowState(s => { document.getElementById('btnMax').title = s==='maximized'?'Restore':'Maximize'; });
 }
 
+/* ─── Tabs ─── */
+const TAB_ORDER = ['download','convert','queue','history','settings'];
 function initTabs() {
   document.querySelectorAll('.tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-      document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
-      tab.classList.add('active');
-      document.getElementById('tab-'+tab.dataset.tab).classList.add('active');
-    });
+    tab.addEventListener('click', () => switchTab(tab.dataset.tab));
   });
 }
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===name));
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.toggle('active', c.id==='tab-'+name));
+}
 
+/* ─── Toast ─── */
 function toast(msg, type='info') {
   const stack = document.getElementById('toastStack');
   const el = document.createElement('div');
@@ -37,6 +44,20 @@ function toast(msg, type='info') {
   setTimeout(() => { el.classList.add('out'); setTimeout(()=>el.remove(), 280); }, 3200);
 }
 
+/* ─── System Notifications ─── */
+function requestNotificationPermission() {
+  if (typeof Notification !== 'undefined' && Notification.permission === 'default') {
+    Notification.requestPermission();
+  }
+}
+function sysNotify(title, body) {
+  if (typeof Notification === 'undefined') return;
+  if (Notification.permission === 'granted') {
+    new Notification(title, { body, silent: false });
+  }
+}
+
+/* ─── Status ─── */
 async function checkStatus() {
   const [hasYt, hasFf] = await Promise.all([window.api.checkYtdlp(), window.api.checkFfmpeg()]);
   const yt = document.getElementById('statusYtdlp'), ff = document.getElementById('statusFfmpeg');
@@ -48,6 +69,79 @@ async function checkStatus() {
   });
 }
 
+/* ─── Keyboard Shortcuts ─── */
+function initKeyboardShortcuts() {
+  document.addEventListener('keydown', e => {
+    const isMac = navigator.platform.includes('Mac');
+    const mod = isMac ? e.metaKey : e.ctrlKey;
+    if (!mod) {
+      // Space = start/pause queue if queue tab is active
+      if (e.code === 'Space' && document.getElementById('tab-queue').classList.contains('active') && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+        e.preventDefault();
+        if (!qRunning) startQueue(); else pauseQueue();
+      }
+      return;
+    }
+    // Cmd+1-5 → switch tabs
+    const tabKeys = {'1':'download','2':'convert','3':'queue','4':'history','5':'settings'};
+    if (tabKeys[e.key]) { e.preventDefault(); switchTab(tabKeys[e.key]); return; }
+
+    switch(e.key) {
+      case 'v':
+      case 'V':
+        // If not in a text field, auto-focus URL input and let paste land there
+        if (document.activeElement !== document.getElementById('urlInput') &&
+            document.activeElement.tagName !== 'INPUT' &&
+            document.activeElement.tagName !== 'TEXTAREA') {
+          e.preventDefault();
+          switchTab('download');
+          const inp = document.getElementById('urlInput');
+          inp.focus();
+          // Read clipboard and paste
+          navigator.clipboard.readText().then(text => {
+            if (text && (text.includes('youtube.com') || text.includes('youtu.be'))) {
+              inp.value = text;
+              setTimeout(() => doFetch(), 100);
+              toast('URL pasted — fetching…', 'info');
+            }
+          }).catch(()=>{});
+        }
+        break;
+      case 'Enter':
+        if (document.getElementById('tab-download').classList.contains('active')) {
+          e.preventDefault(); doFetch();
+        }
+        break;
+      case 'd':
+      case 'D':
+        e.preventDefault();
+        if (fetchedItems.length) {
+          if (isPlaylist) addPlaylistToQueue(); else addSingleToQueue();
+        } else {
+          toast('Fetch a video first','warning');
+        }
+        break;
+      case 'K':
+      case 'k':
+        e.preventDefault();
+        // Cmd+K = focus URL input
+        switchTab('download');
+        document.getElementById('urlInput').focus();
+        document.getElementById('urlInput').select();
+        break;
+      case 'Shift':
+        break;
+    }
+    // Cmd+Shift+C = clear done
+    if (e.shiftKey && (e.key === 'C' || e.key === 'c')) {
+      e.preventDefault();
+      queue = queue.filter(j=>!['done','error','cancelled'].includes(j.status));
+      renderQueue(); bumpBadge(); toast('Cleared done items','info');
+    }
+  });
+}
+
+/* ─── Download Tab ─── */
 function initDownloadTab() {
   const inp = document.getElementById('urlInput');
   document.getElementById('btnFetch').addEventListener('click', doFetch);
@@ -152,7 +246,7 @@ function addSingleToQueue() {
   if(!fetchedItems.length) return toast('Fetch a video first','warning');
   const item=fetchedItems[0], type=getPillVal('singleTypePills');
   pushJob(buildJob(item,{ type, fmt:document.getElementById('singleFormat').value, quality:document.getElementById('singleQuality').value, bitrate:document.getElementById('singleBitrate').value, filename:getFilename('singleFilenameTemplate','singleCustomFilename'), outputDir:document.getElementById('singleOutputDir').value||settings.outputDir, url:item.url||item.webpage_url||document.getElementById('urlInput').value.trim() }));
-  toast('Added to queue','success'); goQueue();
+  toast('Added to queue ⌘3 to view','success'); goQueue();
 }
 
 function addPlaylistToQueue() {
@@ -172,12 +266,55 @@ function buildJob(item,opts) {
 }
 function getFilename(selId,inputId) { const v=document.getElementById(selId).value; return v==='custom'?document.getElementById(inputId).value.trim()||'%(title)s':v; }
 function pushJob(job) { queue.push(job); renderQueue(); bumpBadge(); }
-function goQueue() { document.querySelector('[data-tab="queue"]').click(); }
+function goQueue() { switchTab('queue'); }
 
+/* ─── Convert Tab ─── */
 function initConvertTab() {
-  document.getElementById('btnChooseFile').addEventListener('click', async()=>{ const f=await window.api.chooseFile(); if(f) document.getElementById('convertInput').value=f; });
+  document.getElementById('btnChooseFile').addEventListener('click', async()=>{ const f=await window.api.chooseFile(); if(f) setConvertInput(f); });
   document.getElementById('btnConvertBrowse').addEventListener('click', async()=>{ const d=await window.api.chooseFolder(); if(d) document.getElementById('convertOutputDir').value=d; });
   document.getElementById('btnConvert').addEventListener('click', runConvert);
+}
+
+function setConvertInput(path) {
+  document.getElementById('convertInput').value = path;
+  const zone = document.getElementById('convertDropZone');
+  const name = path.split('/').pop();
+  zone.classList.add('has-file');
+  zone.innerHTML = `<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg><span>${escHtml(name)}</span><span class="drop-hint">Drop another file to replace</span>`;
+}
+
+/* ─── Drag & Drop ─── */
+function initDragDrop() {
+  const zone = document.getElementById('convertDropZone');
+  const mediaExts = /\.(mp4|mkv|avi|mov|webm|mp3|wav|flac|aac|m4a|ogg|m4v|ts|wmv)$/i;
+
+  zone.addEventListener('dragenter', e=>{ e.preventDefault(); zone.classList.add('drag-over'); });
+  zone.addEventListener('dragover',  e=>{ e.preventDefault(); e.dataTransfer.dropEffect='copy'; zone.classList.add('drag-over'); });
+  zone.addEventListener('dragleave', e=>{ if(!zone.contains(e.relatedTarget)) zone.classList.remove('drag-over'); });
+  zone.addEventListener('drop', e=>{
+    e.preventDefault(); zone.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (!file) return;
+    if (!mediaExts.test(file.name)) return toast('Not a recognised media file','warning');
+    // Electron gives us a real path via file.path
+    const filePath = file.path || file.name;
+    setConvertInput(filePath);
+    // Switch to convert tab if not already there
+    switchTab('convert');
+    toast(`File loaded: ${file.name}`,'success');
+  });
+
+  // Also allow dropping anywhere in the app to open convert tab
+  document.addEventListener('dragover', e=>e.preventDefault());
+  document.addEventListener('drop', e=>{
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+    if (!file || !mediaExts.test(file.name)) return;
+    const filePath = file.path || file.name;
+    setConvertInput(filePath);
+    switchTab('convert');
+    toast(`File loaded — ready to convert`,'success');
+  });
 }
 
 async function runConvert() {
@@ -193,10 +330,12 @@ async function runConvert() {
   try {
     await window.api.convertFile({ id:`conv-${Date.now()}`, inputPath:input, outputPath, bitrate, videoBitrate:vBitrate, resolution });
     bar.style.width='100%'; lbl.textContent='✓ Done — '+outputPath; toast('Conversion complete!','success');
+    sysNotify('WavesConverter', `✓ Conversion complete: ${name}.${fmt}`);
   } catch(e) { lbl.textContent='✗ Error: '+e.message; toast('Conversion failed','error'); }
   finally { btn.disabled=false; }
 }
 
+/* ─── Queue Tab ─── */
 function initQueueTab() {
   document.getElementById('btnStartQueue').addEventListener('click', startQueue);
   document.getElementById('btnPauseQueue').addEventListener('click', pauseQueue);
@@ -206,14 +345,14 @@ function initQueueTab() {
 
 function renderQueue() {
   const list=document.getElementById('queueList');
-  if(!queue.length) { list.innerHTML=`<div class="empty-queue"><svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3" cy="6" r="1" fill="currentColor"/><circle cx="3" cy="12" r="1" fill="currentColor"/><circle cx="3" cy="18" r="1" fill="currentColor"/></svg><p>Queue is empty</p><span>Add videos from the Download tab</span></div>`; updateQueueStats(); return; }
+  if(!queue.length) { list.innerHTML=`<div class="empty-queue"><svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3" cy="6" r="1" fill="currentColor"/><circle cx="3" cy="12" r="1" fill="currentColor"/><circle cx="3" cy="18" r="1" fill="currentColor"/></svg><p>Queue is empty</p><span>Add videos from the Download tab · <kbd style="font-size:10px;padding:1px 5px;background:rgba(124,58,237,0.15);border:1px solid rgba(168,85,247,0.25);border-radius:4px;color:#a78bfa">⌘1</kbd> to go there</span></div>`; updateQueueStats(); return; }
   list.innerHTML='';
   queue.forEach(job=>{
     const div=document.createElement('div'); div.className=`qitem ${job.status}`; div.id=`qitem-${job.id}`;
     const tags=[job.audioOnly?'🎵 Audio':'🎬 Video',(job.outputFormat||'?').toUpperCase(),job.quality&&!job.audioOnly?job.quality:'',job.bitrate||''].filter(Boolean).join(' · ');
     const actions=[];
     if(job.status==='downloading') actions.push(`<button class="btn-ghost-sm danger" onclick="cancelJob('${job.id}')">Cancel</button>`);
-    if(job.status==='done') actions.push(`<button class="btn-ghost-sm" onclick="openJobFolder('${escHtml(job.outputDir)}')">Open Folder</button>`);
+    if(job.status==='done') actions.push(`<button class="btn-ghost-sm" onclick="openJobFolder('${escAttr(job.outputDir)}')">Open Folder</button>`);
     if(['error','cancelled'].includes(job.status)) actions.push(`<button class="btn-ghost-sm" onclick="retryJob('${job.id}')">Retry</button>`);
     if(['pending','error','cancelled'].includes(job.status)) actions.push(`<button class="btn-ghost-sm danger" onclick="removeJob('${job.id}')">Remove</button>`);
     div.innerHTML=`<div class="qitem-header">${job.thumbnail?`<img class="qitem-thumb" src="${job.thumbnail}" onerror="this.style.display='none'" alt="">`:'<div class="qitem-thumb"></div>'}<div class="qitem-info"><div class="qitem-title">${escHtml(job.title)}</div><div class="qitem-meta"><span class="qbadge ${job.status}">${capFirst(job.status)}</span><span class="qitem-tags">${escHtml(tags)}</span></div></div><div class="qitem-actions">${actions.join('')}</div></div>
@@ -249,12 +388,21 @@ function pauseQueue() {
 async function processQueue() {
   while(qRunning) {
     if(qPaused) { await sleep(400); continue; }
-    const maxC=parseInt(settings.concurrent)||2, active=queue.filter(j=>j.status==='downloading').length;
-    if(active>=maxC) { await sleep(400); continue; }
+    const maxC=parseInt(settings.concurrent)||2, activeCount=queue.filter(j=>j.status==='downloading').length;
+    if(activeCount>=maxC) { await sleep(400); continue; }
     const next=queue.find(j=>j.status==='pending');
     if(!next) { if(!queue.some(j=>j.status==='downloading')) { qRunning=false; break; } await sleep(400); continue; }
     next.status='downloading'; renderQueue(); bumpBadge();
-    window.api.startDownload(next).then(()=>{ next.status='done'; next.progress=100; renderQueue(); bumpBadge(); toast(`✓ ${next.title}`,'success'); }).catch(e=>{ next.status='error'; next.error=e.message; renderQueue(); bumpBadge(); toast(`✗ ${next.title}`,'error'); });
+    window.api.startDownload(next).then(()=>{
+      next.status='done'; next.progress=100; renderQueue(); bumpBadge();
+      toast(`✓ ${next.title}`,'success');
+      sysNotify('Download complete', next.title);
+      addToHistory(next);
+    }).catch(e=>{
+      next.status='error'; next.error=e.message; renderQueue(); bumpBadge();
+      toast(`✗ ${next.title}`,'error');
+      sysNotify('Download failed', next.title);
+    });
     await sleep(200);
   }
 }
@@ -264,6 +412,63 @@ window.removeJob=id=>{ queue=queue.filter(x=>x.id!==id); renderQueue(); bumpBadg
 window.retryJob=id=>{ const j=queue.find(x=>x.id===id); if(j){ j.status='pending'; j.progress=0; j.log=''; j.error=''; renderQueue(); if(!qRunning) startQueue(); } };
 window.openJobFolder=dir=>window.api.openFolder(dir);
 
+/* ─── History Tab ─── */
+function initHistoryTab() {
+  document.getElementById('btnClearHistory').addEventListener('click', ()=>{
+    if(!downloadHistory.length) return;
+    downloadHistory=[]; saveHistory(); renderHistory();
+    toast('History cleared','info');
+  });
+}
+
+function addToHistory(job) {
+  const entry = {
+    id: job.id,
+    title: job.title,
+    thumbnail: job.thumbnail,
+    outputFormat: job.outputFormat,
+    quality: job.quality,
+    audioOnly: job.audioOnly,
+    outputDir: job.outputDir,
+    date: new Date().toISOString()
+  };
+  downloadHistory.unshift(entry);
+  if(downloadHistory.length > 200) downloadHistory = downloadHistory.slice(0,200);
+  saveHistory(); renderHistory();
+}
+
+function renderHistory() {
+  const list = document.getElementById('historyList');
+  const badge = document.getElementById('historyBadge');
+  if(!downloadHistory.length) {
+    list.innerHTML=`<div class="empty-history"><svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg><p>No downloads yet</p><span>Completed downloads will appear here</span></div>`;
+    badge.style.display='none';
+    document.getElementById('historyStats').textContent='';
+    return;
+  }
+  badge.style.display='inline-flex';
+  badge.textContent = downloadHistory.length > 99 ? '99+' : downloadHistory.length;
+  document.getElementById('historyStats').textContent = `${downloadHistory.length} download${downloadHistory.length!==1?'s':''}`;
+  list.innerHTML='';
+  downloadHistory.forEach(entry=>{
+    const div=document.createElement('div'); div.className='hitem';
+    const tags=[entry.audioOnly?'🎵 Audio':'🎬 Video',(entry.outputFormat||'?').toUpperCase(),entry.quality&&!entry.audioOnly?entry.quality:''].filter(Boolean).join(' · ');
+    const dateStr=fmtDate(entry.date);
+    div.innerHTML=`${entry.thumbnail?`<img class="hitem-thumb" src="${entry.thumbnail}" onerror="this.style.display='none'" alt="">`:'<div class="hitem-thumb"></div>'}
+      <div class="hitem-info">
+        <div class="hitem-title">${escHtml(entry.title)}</div>
+        <div class="hitem-meta"><span>${escHtml(tags)}</span><span>${escHtml(entry.outputDir||'')}</span></div>
+      </div>
+      <div class="hitem-date">${escHtml(dateStr)}</div>
+      <button class="btn-ghost-sm" onclick="window.api.openFolder('${escAttr(entry.outputDir)}')">Open</button>`;
+    list.appendChild(div);
+  });
+}
+
+function saveHistory() { try{ localStorage.setItem('wc2_history',JSON.stringify(downloadHistory)); }catch(_){} }
+function loadHistory() { try{ const h=localStorage.getItem('wc2_history'); if(h) downloadHistory=JSON.parse(h); }catch(_){} }
+
+/* ─── Settings Tab ─── */
 function initSettingsTab() {
   document.getElementById('btnSettingsDir').addEventListener('click', async()=>{ const d=await window.api.chooseFolder(); if(d) document.getElementById('settingsDir').value=d; });
   document.getElementById('btnSaveSettings').addEventListener('click', saveAndApply);
@@ -294,6 +499,7 @@ function applySettings() {
 function saveSettings() { try{ localStorage.setItem('wc2_settings',JSON.stringify(settings)); }catch(_){} }
 function loadSettings() { try{ const s=localStorage.getItem('wc2_settings'); if(s) Object.assign(settings,JSON.parse(s)); }catch(_){} }
 
+/* ─── IPC ─── */
 function initIpc() {
   window.api.onProgress(({id,progress})=>{ const j=queue.find(x=>x.id===id); if(!j) return; j.progress=progress; const f=document.querySelector(`#qitem-${id} .qprog-fill`); if(f) f.style.width=progress+'%'; const l=document.querySelector(`#qitem-${id} .qprog-label span`); if(l) l.textContent=progress.toFixed(1)+'%'; });
   window.api.onLog(({id,line})=>{ const j=queue.find(x=>x.id===id); if(j) j.log=line; const el=document.getElementById(`log-${id}`); if(el) el.textContent=line; });
@@ -308,9 +514,12 @@ function initIpc() {
   });
 }
 
+/* ─── Helpers ─── */
 function escHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function escAttr(s){ return String(s||'').replace(/'/g,"\\'").replace(/\\/g,'\\\\'); }
 function fmtDur(s){ if(!s) return ''; const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sec=Math.floor(s%60); return h?`${h}:${p(m)}:${p(sec)}`:`${m}:${p(sec)}`; function p(n){return String(n).padStart(2,'0');} }
 function fmtN(n){ if(!n) return ''; if(n>=1e9) return (n/1e9).toFixed(1)+'B'; if(n>=1e6) return (n/1e6).toFixed(1)+'M'; if(n>=1e3) return (n/1e3).toFixed(1)+'K'; return String(n); }
+function fmtDate(iso){ try{ const d=new Date(iso); const now=new Date(); const diff=now-d; if(diff<60000) return 'Just now'; if(diff<3600000) return Math.floor(diff/60000)+'m ago'; if(diff<86400000) return Math.floor(diff/3600000)+'h ago'; if(diff<604800000) return Math.floor(diff/86400000)+'d ago'; return d.toLocaleDateString(); }catch(_){ return ''; } }
 function capFirst(s){ return s?s[0].toUpperCase()+s.slice(1):''; }
 function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
 function show(id){ document.getElementById(id).classList.remove('hidden'); }

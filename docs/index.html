@@ -133,10 +133,11 @@
     .win-coming { display:flex; flex-direction:column; align-items:center; text-align:center; padding:12px 0 4px; }
 
     /* stats */
-    .stats { display:flex; gap:48px; justify-content:center; flex-wrap:wrap; margin:60px auto; max-width:700px; }
+    .stats { display:flex; gap:48px; justify-content:center; flex-wrap:wrap; margin:60px auto; max-width:800px; }
     .stat { text-align:center; }
     .stat-n { font-size:40px; font-weight:800; background:linear-gradient(135deg,#c084fc,#e879f9); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
     .stat-l { font-size:14px; color:var(--text3); margin-top:4px; }
+    .stat-n.loading { opacity:0.4; }
 
     /* footer */
     footer { border-top:1px solid var(--bord); padding:32px 48px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px; }
@@ -237,10 +238,10 @@
 
 <!-- STATS -->
 <div class="stats">
+  <div class="stat"><div class="stat-n" id="dlCount">…</div><div class="stat-l">Total downloads</div></div>
   <div class="stat"><div class="stat-n">11</div><div class="stat-l">Output formats</div></div>
   <div class="stat"><div class="stat-n">4K</div><div class="stat-l">Max resolution</div></div>
   <div class="stat"><div class="stat-n">320k</div><div class="stat-l">Max audio bitrate</div></div>
-  <div class="stat"><div class="stat-n">∞</div><div class="stat-l">Queue size</div></div>
 </div>
 
 <!-- FEATURES -->
@@ -341,6 +342,27 @@ function switchOS(os) {
 }
 // Auto-detect OS
 if(navigator.userAgent.includes('Win')) switchOS('win');
+
+// Download counter via GitHub Releases API
+async function loadDownloadCount() {
+  try {
+    const res = await fetch('https://api.github.com/repos/idunnowhytf/wavesconvsite/releases', {
+      headers: { 'Accept': 'application/vnd.github.v3+json' }
+    });
+    if (!res.ok) return;
+    const releases = await res.json();
+    let total = 0;
+    releases.forEach(r => r.assets && r.assets.forEach(a => { total += a.download_count || 0; }));
+    const el = document.getElementById('dlCount');
+    if (!el) return;
+    if (total === 0) { el.textContent = 'Early'; return; }
+    el.textContent = total >= 1000 ? (total/1000).toFixed(1)+'k' : total;
+  } catch(e) {
+    const el = document.getElementById('dlCount');
+    if (el) el.textContent = 'Early';
+  }
+}
+loadDownloadCount();
 </script>
 </body>
 </html>

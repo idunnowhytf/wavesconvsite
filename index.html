@@ -30,6 +30,7 @@
   <button class="tab active" data-tab="download"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg><span>Download</span></button>
   <button class="tab" data-tab="convert"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 014-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg><span>Convert</span></button>
   <button class="tab" data-tab="queue"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3" cy="6" r="1" fill="currentColor"/><circle cx="3" cy="12" r="1" fill="currentColor"/><circle cx="3" cy="18" r="1" fill="currentColor"/></svg><span>Queue</span><span class="tab-badge" id="queueBadge">0</span></button>
+  <button class="tab" data-tab="history"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg><span>History</span><span class="tab-badge" id="historyBadge" style="display:none"></span></button>
   <button class="tab" data-tab="settings"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg><span>Settings</span></button>
 </nav>
 
@@ -89,7 +90,12 @@
 <!-- CONVERT -->
 <div class="tab-content" id="tab-convert"><div class="section"><div class="glass-card">
   <div class="card-label">Local File Converter</div>
-  <div class="folder-row"><div class="ig flex1"><label>Input file</label><div class="folder-input"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><polyline points="13 2 13 9 20 9"/></svg><input type="text" id="convertInput" readonly placeholder="Select a media file…"/><button class="btn-ghost-sm" id="btnChooseFile">Browse</button></div></div></div>
+  <div id="convertDropZone" class="convert-drop-zone">
+    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+    <span>Drop a media file here</span>
+    <span class="drop-hint">or use Browse below</span>
+  </div>
+  <div class="folder-row"><div class="ig flex1"><label>Input file</label><div class="folder-input"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><polyline points="13 2 13 9 20 9"/></svg><input type="text" id="convertInput" readonly placeholder="Select a media file or drop above…"/><button class="btn-ghost-sm" id="btnChooseFile">Browse</button></div></div></div>
   <div class="options-row">
     <div class="ig"><label>Output format</label><select id="convertFormat"><option value="mp4">MP4</option><option value="mkv">MKV</option><option value="mov">MOV</option><option value="avi">AVI</option><option value="webm">WebM</option><option value="mp3">MP3</option><option value="wav">WAV</option><option value="flac">FLAC</option><option value="aac">AAC</option><option value="m4a">M4A</option><option value="ogg">OGG</option></select></div>
     <div class="ig"><label>Resolution</label><select id="convertResolution"><option value="original">Original</option><option value="2160p">4K</option><option value="1440p">1440p</option><option value="1080p">1080p</option><option value="720p">720p</option><option value="480p">480p</option><option value="360p">360p</option></select></div>
@@ -113,6 +119,16 @@
     <div class="queue-stat-pill" id="queueStats"></div>
   </div>
   <div id="queueList" class="queue-list"></div>
+</div></div>
+
+<!-- HISTORY -->
+<div class="tab-content" id="tab-history"><div class="section">
+  <div class="queue-toolbar">
+    <div class="queue-stat-pill" id="historyStats"></div>
+    <div class="spacer"></div>
+    <button class="btn-ghost-sm danger" id="btnClearHistory">Clear History</button>
+  </div>
+  <div id="historyList" class="queue-list"></div>
 </div></div>
 
 <!-- SETTINGS -->
@@ -140,6 +156,17 @@
   <div class="glass-card">
     <div class="card-label">Updates</div>
     <div class="update-status-row"><div id="updateStatusText" class="update-status-text">—</div><button class="btn-ghost-sm" id="btnCheckUpdate">Check now</button></div>
+  </div>
+  <div class="glass-card">
+    <div class="card-label">Keyboard Shortcuts</div>
+    <div class="shortcuts-grid">
+      <div class="shortcut-row"><kbd>⌘V</kbd><span>Paste URL &amp; auto-fetch</span></div>
+      <div class="shortcut-row"><kbd>⌘↵</kbd><span>Fetch URL</span></div>
+      <div class="shortcut-row"><kbd>⌘D</kbd><span>Add to queue</span></div>
+      <div class="shortcut-row"><kbd>⌘1–5</kbd><span>Switch tabs</span></div>
+      <div class="shortcut-row"><kbd>⌘⇧C</kbd><span>Clear done items</span></div>
+      <div class="shortcut-row"><kbd>Space</kbd><span>Start / pause queue (in Queue tab)</span></div>
+    </div>
   </div>
 </div></div>
 
