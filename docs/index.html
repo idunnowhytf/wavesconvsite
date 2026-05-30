@@ -516,32 +516,43 @@
     WavesConverter
   </a>
   <div class="nav-links">
-    <a href="#features">Funkcje</a>
-    <a href="#how">Jak działa</a>
-    <a href="#formats">Formaty</a>
-    <a href="#download">Pobierz</a>
+    <a href="#features" data-i18n="nav.features">Funkcje</a>
+    <a href="#how" data-i18n="nav.how">Jak działa</a>
+    <a href="#formats" data-i18n="nav.formats">Formaty</a>
+    <a href="#download" data-i18n="nav.download">Pobierz</a>
     <a href="https://github.com/idunnowhytf/wavesconvsite" target="_blank">GitHub ↗</a>
   </div>
-  <a class="nav-dl" href="#download">
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-      <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
-      <polyline points="7 10 12 15 17 10"/>
-      <line x1="12" y1="15" x2="12" y2="3"/>
-    </svg>
-    Pobierz za darmo
-  </a>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <button id="lang-toggle" onclick="toggleLang()" aria-label="Switch language" style="
+      display:flex;align-items:center;gap:6px;padding:7px 13px;
+      background:rgba(255,255,255,.05);border:1px solid rgba(168,85,247,.25);
+      border-radius:8px;color:var(--text2);font-size:13px;font-weight:600;
+      cursor:pointer;transition:all .18s;font-family:inherit;
+    ">
+      <span style="font-size:15px" id="lang-flag">🇬🇧</span>
+      <span id="lang-label">EN</span>
+    </button>
+    <a class="nav-dl" href="#download">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+        <polyline points="7 10 12 15 17 10"/>
+        <line x1="12" y1="15" x2="12" y2="3"/>
+      </svg>
+      <span data-i18n="nav.cta">Pobierz za darmo</span>
+    </a>
+  </div>
 </nav>
 
 <!-- HERO -->
 <section class="hero">
   <div class="hero-eyebrow">
     <span class="bdot"></span>
-    Early Access v1.1.0 · Darmowe i Open Source · 100% Offline
+    <span data-i18n="hero.eyebrow">Early Access v1.1.0 · Darmowe i Open Source · 100% Offline</span>
   </div>
 
-  <h1>Pobierz wszystko.<br/><span class="grad">Konwertuj cokolwiek.</span></h1>
+  <h1 data-i18n="hero.h1.a">Pobierz wszystko.<br/><span class="grad" data-i18n="hero.h1.b">Konwertuj cokolwiek.</span></h1>
 
-  <p class="hero-sub">
+  <p class="hero-sub" data-i18n="hero.sub">
     Aplikacja desktopowa na macOS i Windows do pobierania filmów i playlist z YouTube
     oraz konwersji plików multimedialnych — bez internetu, bez konta, całkowicie za darmo.
   </p>
@@ -553,16 +564,16 @@
         <polyline points="7 10 12 15 17 10"/>
         <line x1="12" y1="15" x2="12" y2="3"/>
       </svg>
-      Pobierz za darmo
+      <span data-i18n="hero.btn.dl">Pobierz za darmo</span>
     </a>
     <a class="btn-h sec" href="https://github.com/idunnowhytf/wavesconvsite" target="_blank">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
         <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
       </svg>
-      Zobacz na GitHub
+      <span data-i18n="hero.btn.gh">Zobacz na GitHub</span>
     </a>
   </div>
-  <p class="hero-meta">macOS 12+ · Windows 10+ · Bez telemetrii · Bez subskrypcji</p>
+  <p class="hero-meta" data-i18n="hero.meta">macOS 12+ · Windows 10+ · Bez telemetrii · Bez subskrypcji</p>
 
   <!-- APP MOCKUP -->
   <div class="mockup-wrap">
@@ -574,14 +585,14 @@
       </div>
       <div class="mbody">
         <div class="mtabs">
-          <div class="mtab a">⬇ Pobierz</div>
-          <div class="mtab">🔄 Konwertuj</div>
-          <div class="mtab">📋 Historia</div>
-          <div class="mtab">⚙ Ustawienia</div>
+          <div class="mtab a" data-i18n="mock.tab1">⬇ Pobierz</div>
+          <div class="mtab" data-i18n="mock.tab2">🔄 Konwertuj</div>
+          <div class="mtab" data-i18n="mock.tab3">📋 Historia</div>
+          <div class="mtab" data-i18n="mock.tab4">⚙ Ustawienia</div>
         </div>
         <div class="murl">
           <span class="murlp">https://www.youtube.com/watch?v=dQw4w9WgXcQ</span>
-          <div class="murlb">Pobierz →</div>
+          <div class="murlb" data-i18n="mock.fetch">Pobierz →</div>
         </div>
         <div class="mvideo">
           <div class="mthumb">
@@ -589,7 +600,7 @@
           </div>
           <div class="minfo">
             <div class="mvt">Never Gonna Give You Up (Official Music Video)</div>
-            <div class="mvm"><span>👤 Rick Astley</span><span>⏱ 3:33</span><span>👁 1,5 mld wyświetleń</span></div>
+            <div class="mvm"><span>👤 Rick Astley</span><span>⏱ 3:33</span><span data-i18n="mock.views">👁 1,5 mld wyświetleń</span></div>
           </div>
         </div>
         <div class="mopts">
@@ -626,34 +637,34 @@
 
 <!-- STATS -->
 <div class="stats-strip reveal">
-  <div class="stats-inner">
+  <div class="stats-inner" id="stats-inner">
     <div class="stat-item">
       <span class="stat-n" id="dlCount">–</span>
-      <div class="stat-l">Łączne pobrania</div>
+      <div class="stat-l" data-i18n="stats.dl">Łączne pobrania</div>
     </div>
     <div class="stat-item">
       <span class="stat-n">11</span>
-      <div class="stat-l">Formaty wyjściowe</div>
+      <div class="stat-l" data-i18n="stats.formats">Formaty wyjściowe</div>
     </div>
     <div class="stat-item">
       <span class="stat-n">4K</span>
-      <div class="stat-l">Maks. rozdzielczość</div>
+      <div class="stat-l" data-i18n="stats.res">Maks. rozdzielczość</div>
     </div>
     <div class="stat-item">
       <span class="stat-n">320k</span>
-      <div class="stat-l">Maks. bitrate audio</div>
+      <div class="stat-l" data-i18n="stats.bitrate">Maks. bitrate audio</div>
     </div>
   </div>
 </div>
 
 <!-- FEATURES -->
 <section class="section features-section" id="features">
-  <div class="section-head">
+  <div class="section-head" id="features-head">
     <div class="s-label reveal">✦ Funkcje</div>
     <h2 class="s-title reveal reveal-delay-1">Wszystko czego potrzebujesz.<br/>Nic zbędnego.</h2>
     <p class="s-sub reveal reveal-delay-2">Zbudowane z myślą o szybkości, prywatności i pełnej kontroli. Żadnych subskrypcji. Żadnej chmury. Żadnego śledzenia.</p>
   </div>
-  <div class="fgrid">
+  <div class="fgrid" id="fgrid">
     <div class="fcard reveal"><div class="ficon">📋</div><h3>Obsługa playlist</h3><p>Pobieraj całe playlisty lub wybieraj poszczególne filmy. Ustaw globalne ustawienia lub nadpisuj format i jakość dla każdego filmu osobno.</p></div>
     <div class="fcard reveal reveal-delay-1"><div class="ficon">⚡</div><h3>Równoległa kolejka</h3><p>Dodaj wiele pobrań do kolejki i uruchom je jednocześnie. Pauzuj, wznawiaj lub ponawiaj nieudane — pełna kontrola jednym kliknięciem.</p></div>
     <div class="fcard reveal reveal-delay-2"><div class="ficon">🎛️</div><h3>Pełna kontrola jakości</h3><p>Wybieraj rozdzielczość od 360p do 4K i audio od 96 do 320 kbps. Ustawiaj globalnie lub osobno dla każdego filmu.</p></div>
@@ -669,12 +680,12 @@
 <!-- HOW IT WORKS -->
 <section class="how-section" id="how">
   <div style="max-width:900px;margin:0 auto;">
-    <div class="section-head" style="text-align:left;align-items:flex-start;">
+    <div class="section-head" id="how-head" style="text-align:left;align-items:flex-start;">
       <div class="s-label reveal">✦ Jak działa</div>
       <h2 class="s-title reveal reveal-delay-1">Trzy kroki.<br/>I tyle.</h2>
       <p class="s-sub reveal reveal-delay-2">Żadnych kont, rozszerzeń do przeglądarki ani komplikacji.</p>
     </div>
-    <div class="steps">
+    <div class="steps" id="how-steps">
       <div class="step reveal">
         <div class="step-num">1</div>
         <div class="step-body">
@@ -703,7 +714,7 @@
 <!-- FORMATS -->
 <section class="formats-section" id="formats">
   <div class="formats-inner">
-    <div class="section-head">
+    <div class="section-head" id="formats-head">
       <div class="s-label reveal">✦ Formaty</div>
       <h2 class="s-title reveal reveal-delay-1">Każdy format jakiego potrzebujesz.</h2>
       <p class="s-sub reveal reveal-delay-2">Pobieraj jako wideo, wyciągaj audio lub konwertuj dowolny plik lokalny.</p>
@@ -736,9 +747,9 @@
 <!-- DOWNLOAD -->
 <section class="dl-section" id="download">
   <div class="dl-card reveal">
-    <div class="s-label" style="margin:0 auto 20px;">⬇ Pobierz</div>
-    <h2 class="s-title">Pobierz <span class="grad">WavesConverter</span></h2>
-    <p>Instalacja jednym kliknięciem. macOS i Windows. Zawsze za darmo.</p>
+    <div class="s-label" style="margin:0 auto 20px;" data-i18n="dl.label">⬇ Pobierz</div>
+    <h2 class="s-title" id="dl-title">Pobierz <span class="grad">WavesConverter</span></h2>
+    <p data-i18n="dl.sub">Instalacja jednym kliknięciem. macOS i Windows. Zawsze za darmo.</p>
 
     <div class="os-tabs">
       <div class="os-tab active" id="tab-mac" onclick="switchOS('mac',this)">
@@ -761,7 +772,7 @@
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
         macOS — Intel (x64)
       </a>
-      <p class="dl-note">Wymaga macOS 12 Monterey lub nowszego · Darmowe na zawsze · Bez telemetrii</p>
+      <p class="dl-note" data-i18n="dl.mac.note">Wymaga macOS 12 Monterey lub nowszego · Darmowe na zawsze · Bez telemetrii</p>
     </div>
 
     <!-- Windows -->
@@ -770,51 +781,23 @@
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/></svg>
         Windows — Instalator 64-bit (.exe)
       </a>
-      <p class="dl-note">Wymaga Windows 10 lub nowszego · Darmowe na zawsze · Bez telemetrii</p>
+      <p class="dl-note" data-i18n="dl.win.note">Wymaga Windows 10 lub nowszego · Darmowe na zawsze · Bez telemetrii</p>
 
       <!-- SmartScreen Tutorial -->
       <div class="smartscreen-box" style="width:100%;max-width:420px;">
         <div class="ss-toggle" onclick="toggleSS(this)">
           <span class="ss-icon">⚠️</span>
-          <span>Windows może pokazać ostrzeżenie SmartScreen — oto jak je ominąć</span>
+          <span data-i18n="ss.toggle">Windows może pokazać ostrzeżenie SmartScreen — oto jak je ominąć</span>
           <span class="ss-arrow" id="ss-arrow">▼</span>
         </div>
         <div class="ss-body" id="ss-body">
-          <div class="ss-inner">
-            <p>
-              WavesConverter jest bezpieczny i open source, ale ponieważ nie jest jeszcze podpisany płatnym certyfikatem Microsoft,
-              Windows Defender SmartScreen może oznaczyć go jako nieznaną aplikację. Jest to normalne dla nowego oprogramowania indie.
-              Wykonaj poniższe kroki, żeby zainstalować:
-            </p>
-            <div class="ss-steps">
-              <div class="ss-step">
-                <div class="ss-step-num">1</div>
-                <div class="ss-step-text">Pobierz plik <strong>.exe</strong> i kliknij go dwukrotnie, żeby uruchomić instalator.</div>
-              </div>
-              <div class="ss-step">
-                <div class="ss-step-num">2</div>
-                <div class="ss-step-text">Pojawi się niebieskie okno SmartScreen z napisem <strong>„Ten komputer jest chroniony przez system Windows"</strong>. Nie zamykaj go.</div>
-              </div>
-              <div class="ss-step">
-                <div class="ss-step-num">3</div>
-                <div class="ss-step-text">Kliknij <strong>„Więcej informacji"</strong> (mały link pod głównym tekstem). Okno się rozszerzy.</div>
-              </div>
-              <div class="ss-step">
-                <div class="ss-step-num">4</div>
-                <div class="ss-step-text">Kliknij przycisk <strong>„Uruchom mimo to"</strong>, który pojawi się na dole. Instalacja rozpocznie się normalnie.</div>
-              </div>
-            </div>
-            <div class="ss-safe">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-              Możesz w każdej chwili zweryfikować kod źródłowy na GitHub — wszystko jest jawne i audytowalne.
-            </div>
-          </div>
+          <div class="ss-inner" id="ss-inner">
         </div>
       </div>
     </div>
 
     <p style="margin-top:32px;font-size:12px;color:var(--text3)">
-      Wszystkie wersje na <a href="https://github.com/idunnowhytf/wavesconvsite/releases" style="color:var(--p3)" target="_blank">GitHub Releases ↗</a>
+      <span data-i18n="dl.allversions">Wszystkie wersje na</span> <a href="https://github.com/idunnowhytf/wavesconvsite/releases" style="color:var(--p3)" target="_blank">GitHub Releases ↗</a>
     </p>
   </div>
 </section>
@@ -822,11 +805,175 @@
 <!-- FOOTER -->
 <footer>
   <span class="flogo">WavesConverter</span>
-  <p>Zbudowane z yt-dlp, ffmpeg i Electron · <a href="https://github.com/idunnowhytf/wavesconvsite" target="_blank">Kod na GitHub</a></p>
-  <p>© 2025 WavesConverter · Darmowe i Open Source</p>
+  <p><span data-i18n="footer.built">Zbudowane z yt-dlp, ffmpeg i Electron</span> · <a href="https://github.com/idunnowhytf/wavesconvsite" target="_blank" data-i18n="footer.src">Kod na GitHub</a></p>
+  <p data-i18n="footer.copy">© 2025 WavesConverter · Darmowe i Open Source</p>
 </footer>
 
 <script>
+/* ══════════════════════════════════════════
+   i18n — translations
+══════════════════════════════════════════ */
+const TRANSLATIONS = {
+  pl: {
+    'nav.features': 'Funkcje',
+    'nav.how': 'Jak działa',
+    'nav.formats': 'Formaty',
+    'nav.download': 'Pobierz',
+    'nav.cta': 'Pobierz za darmo',
+    'hero.eyebrow': 'Early Access v1.1.0 · Darmowe i Open Source · 100% Offline',
+    'hero.h1.a': 'Pobierz wszystko.',
+    'hero.h1.b': 'Konwertuj cokolwiek.',
+    'hero.sub': 'Aplikacja desktopowa na macOS i Windows do pobierania filmów i playlist z YouTube oraz konwersji plików multimedialnych — bez internetu, bez konta, całkowicie za darmo.',
+    'hero.btn.dl': 'Pobierz za darmo',
+    'hero.btn.gh': 'Zobacz na GitHub',
+    'hero.meta': 'macOS 12+ · Windows 10+ · Bez telemetrii · Bez subskrypcji',
+    'mock.tab1': '⬇ Pobierz', 'mock.tab2': '🔄 Konwertuj', 'mock.tab3': '📋 Historia', 'mock.tab4': '⚙ Ustawienia',
+    'mock.fetch': 'Pobierz →', 'mock.views': '👁 1,5 mld wyświetleń',
+    'stats.dl': 'Łączne pobrania', 'stats.formats': 'Formaty wyjściowe', 'stats.res': 'Maks. rozdzielczość', 'stats.bitrate': 'Maks. bitrate audio',
+    'features.label': '✦ Funkcje',
+    'features.title': 'Wszystko czego potrzebujesz.<br/>Nic zbędnego.',
+    'features.sub': 'Zbudowane z myślą o szybkości, prywatności i pełnej kontroli. Żadnych subskrypcji. Żadnej chmury. Żadnego śledzenia.',
+    'how.label': '✦ Jak działa', 'how.title': 'Trzy kroki.<br/>I tyle.', 'how.sub': 'Żadnych kont, rozszerzeń do przeglądarki ani komplikacji.',
+    'how.s1.title': 'Wklej link', 'how.s1.text': 'Skopiuj dowolny link z YouTube — pojedynczy film, playlistę lub Shorts. Naciśnij ⌘V i link automatycznie wkleja się do aplikacji. Obsługuje youtube.com, youtu.be, shorts i więcej.',
+    'how.s2.title': 'Wybierz format i jakość', 'how.s2.text': 'Wybierz Video lub Audio, potem format (MP4, MP3, WAV…) i jakość (1080p, 4K, 320kbps…). Dodaj do kolejki — możesz dodać ile chcesz naraz.',
+    'how.s3.title': 'Start — pliki lądują w folderze', 'how.s3.text': 'Obserwuj paski postępu. Dostaniesz powiadomienie gdy skończy. Pliki znajdziesz dokładnie tam gdzie ustawiłeś. To cały przepływ.',
+    'formats.label': '✦ Formaty', 'formats.title': 'Każdy format jakiego potrzebujesz.', 'formats.sub': 'Pobieraj jako wideo, wyciągaj audio lub konwertuj dowolny plik lokalny.',
+    'dl.label': '⬇ Pobierz', 'dl.title': 'Pobierz <span class="grad">WavesConverter</span>', 'dl.sub': 'Instalacja jednym kliknięciem. macOS i Windows. Zawsze za darmo.',
+    'dl.mac.note': 'Wymaga macOS 12 Monterey lub nowszego · Darmowe na zawsze · Bez telemetrii',
+    'dl.win.btn': 'Windows — Instalator 64-bit (.exe)',
+    'dl.win.note': 'Wymaga Windows 10 lub nowszego · Darmowe na zawsze · Bez telemetrii',
+    'dl.allversions': 'Wszystkie wersje na',
+    'ss.toggle': 'Windows może pokazać ostrzeżenie SmartScreen — oto jak je ominąć',
+    'ss.inner': `<p>WavesConverter jest bezpieczny i open source, ale ponieważ nie jest jeszcze podpisany płatnym certyfikatem Microsoft, Windows Defender SmartScreen może oznaczyć go jako nieznaną aplikację. Jest to normalne dla nowego oprogramowania indie. Wykonaj poniższe kroki, żeby zainstalować:</p><div class="ss-steps"><div class="ss-step"><div class="ss-step-num">1</div><div class="ss-step-text">Pobierz plik <strong>.exe</strong> i kliknij go dwukrotnie, żeby uruchomić instalator.</div></div><div class="ss-step"><div class="ss-step-num">2</div><div class="ss-step-text">Pojawi się niebieskie okno SmartScreen z napisem <strong>„Ten komputer jest chroniony przez system Windows"</strong>. Nie zamykaj go.</div></div><div class="ss-step"><div class="ss-step-num">3</div><div class="ss-step-text">Kliknij <strong>„Więcej informacji"</strong> (mały link pod głównym tekstem). Okno się rozszerzy.</div></div><div class="ss-step"><div class="ss-step-num">4</div><div class="ss-step-text">Kliknij przycisk <strong>„Uruchom mimo to"</strong>, który pojawi się na dole. Instalacja rozpocznie się normalnie.</div></div></div><div class="ss-safe"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Możesz w każdej chwili zweryfikować kod źródłowy na GitHub — wszystko jest jawne i audytowalne.</div>`,
+    'footer.built': 'Zbudowane z yt-dlp, ffmpeg i Electron', 'footer.src': 'Kod na GitHub', 'footer.copy': '© 2025 WavesConverter · Darmowe i Open Source',
+    'mob.title': 'Tylko na komputerze — na razie', 'mob.sub': 'WavesConverter to aplikacja desktopowa działająca lokalnie na Twoim komputerze. Wersja mobilna jeszcze nie jest dostępna, ale jest w planach.', 'mob.badge': 'Pobierz na PC lub Maca', 'mob.note': 'Wejdź na tę stronę z komputera, żeby pobrać aplikację',
+    'fcard': [
+      ['📋','Obsługa playlist','Pobieraj całe playlisty lub wybieraj poszczególne filmy. Ustaw globalne ustawienia lub nadpisuj format i jakość dla każdego filmu osobno.'],
+      ['⚡','Równoległa kolejka','Dodaj wiele pobrań do kolejki i uruchom je jednocześnie. Pauzuj, wznawiaj lub ponawiaj nieudane — pełna kontrola jednym kliknięciem.'],
+      ['🎛️','Pełna kontrola jakości','Wybieraj rozdzielczość od 360p do 4K i audio od 96 do 320 kbps. Ustawiaj globalnie lub osobno dla każdego filmu.'],
+      ['🔄','Konwerter plików lokalnych','Konwertuj dowolny lokalny plik multimedialny na dowolny format. Zmień kontener, rozdzielczość, bitrate — 100% offline z ffmpeg.'],
+      ['📖','Historia pobrań','Każde zakończone pobranie zapisane ze ścieżką pliku, formatem i datą. Otwórz dowolny plik bezpośrednio z historii.'],
+      ['⌨️','Skróty klawiszowe','⌘V auto-wklej URL, ⌘D dodaj do kolejki, ⌘1–5 przełączaj zakładki, Spacja start/pauza — szybkość w DNA.'],
+      ['🔔','Powiadomienia systemowe','Natywne powiadomienie pojawia się gdy pobranie się kończy — nawet jeśli aplikacja jest w tle.'],
+      ['🔒','100% Offline','Żadnych serwerów, kont, analityki. Wszystko działa lokalnie dzięki yt-dlp i ffmpeg dołączonym do aplikacji.'],
+      ['✨','Automatyczne aktualizacje','Ciche aktualizacje przez GitHub Releases. Baner pojawia się gdy nowa wersja jest gotowa — jedno kliknięcie do instalacji.'],
+    ],
+  },
+  en: {
+    'nav.features': 'Features',
+    'nav.how': 'How it works',
+    'nav.formats': 'Formats',
+    'nav.download': 'Download',
+    'nav.cta': 'Download Free',
+    'hero.eyebrow': 'Early Access v1.1.0 · Free & Open Source · 100% Offline',
+    'hero.h1.a': 'Download anything.',
+    'hero.h1.b': 'Convert everything.',
+    'hero.sub': 'A premium desktop app for macOS & Windows that downloads YouTube videos and playlists, converts any media file — all offline, no account needed, completely free.',
+    'hero.btn.dl': 'Download Free',
+    'hero.btn.gh': 'View on GitHub',
+    'hero.meta': 'macOS 12+ · Windows 10+ · No telemetry · No subscription',
+    'mock.tab1': '⬇ Download', 'mock.tab2': '🔄 Convert', 'mock.tab3': '📋 History', 'mock.tab4': '⚙ Settings',
+    'mock.fetch': 'Fetch →', 'mock.views': '👁 1.5B views',
+    'stats.dl': 'Total Downloads', 'stats.formats': 'Output Formats', 'stats.res': 'Max Resolution', 'stats.bitrate': 'Max Audio Bitrate',
+    'features.label': '✦ Features',
+    'features.title': 'Everything you need.<br/>Nothing you don\'t.',
+    'features.sub': 'Built for speed, privacy, and full control. No subscriptions. No cloud. No tracking. Ever.',
+    'how.label': '✦ How it works', 'how.title': 'Three steps.<br/>That\'s it.', 'how.sub': 'No accounts, no browser extensions, no drama.',
+    'how.s1.title': 'Paste the URL', 'how.s1.text': 'Copy any YouTube link — single video, playlist, or short. Press ⌘V and it auto-pastes into the app. Supports youtube.com, youtu.be, shorts, and more.',
+    'how.s2.title': 'Pick your format & quality', 'how.s2.text': 'Choose Video or Audio, then pick the format (MP4, MP3, WAV…) and quality (1080p, 4K, 320kbps…). Add to queue — stack as many as you want.',
+    'how.s3.title': 'Hit Start — files land in your folder', 'how.s3.text': 'Watch the progress bars. Get a notification when done. Find your files exactly where you set them. That\'s the whole flow.',
+    'formats.label': '✦ Formats', 'formats.title': 'Every format you\'ll ever need.', 'formats.sub': 'Download as video, rip as audio, or convert any local file.',
+    'dl.label': '⬇ Download', 'dl.title': 'Get <span class="grad">WavesConverter</span>', 'dl.sub': 'One-click install. macOS & Windows. Always free.',
+    'dl.mac.note': 'Requires macOS 12 Monterey or later · Free forever · No telemetry',
+    'dl.win.btn': 'Windows — 64-bit Installer (.exe)',
+    'dl.win.note': 'Requires Windows 10 or later · Free forever · No telemetry',
+    'dl.allversions': 'All versions on',
+    'ss.toggle': 'Windows may show a SmartScreen warning — here\'s how to get past it',
+    'ss.inner': `<p>WavesConverter is safe and open source, but because it's not yet signed with a paid Microsoft certificate, Windows Defender SmartScreen may flag it as an unknown app. This is expected for new indie software. Follow these steps to install:</p><div class="ss-steps"><div class="ss-step"><div class="ss-step-num">1</div><div class="ss-step-text">Download the <strong>.exe</strong> and double-click it to run the installer.</div></div><div class="ss-step"><div class="ss-step-num">2</div><div class="ss-step-text">A blue SmartScreen window appears saying <strong>"Windows protected your PC"</strong>. Don't close it.</div></div><div class="ss-step"><div class="ss-step-num">3</div><div class="ss-step-text">Click <strong>"More info"</strong> (small link below the main text). The window will expand.</div></div><div class="ss-step"><div class="ss-step-num">4</div><div class="ss-step-text">Click the <strong>"Run anyway"</strong> button that appears at the bottom. Installation will start normally.</div></div></div><div class="ss-safe"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>You can verify the source code anytime on GitHub — everything is open and auditable.</div>`,
+    'footer.built': 'Built with yt-dlp, ffmpeg & Electron', 'footer.src': 'Source on GitHub', 'footer.copy': '© 2025 WavesConverter · Free & Open Source',
+    'mob.title': 'Desktop only — for now', 'mob.sub': 'WavesConverter is a desktop app that runs locally on your computer. Mobile support isn\'t available yet, but it\'s on the roadmap.', 'mob.badge': 'Download on your PC or Mac', 'mob.note': 'Visit wavesconverter on your computer to download',
+    'fcard': [
+      ['📋','Playlist Support','Download entire playlists or cherry-pick individual videos. Set global settings or override per-item format and quality.'],
+      ['⚡','Concurrent Queue','Queue multiple downloads and run them simultaneously. Pause, resume, or retry failed items with a single click.'],
+      ['🎛️','Full Quality Control','Choose from 360p to 4K and audio from 96 to 320 kbps. Apply globally or override per video — your call.'],
+      ['🔄','Local File Converter','Convert any local media file to any format. Change container, resolution, bitrate — 100% offline with ffmpeg.'],
+      ['📖','Download History','Every completed download logged with file path, format, and date. Jump back to any file directly from history.'],
+      ['⌨️','Keyboard Shortcuts','⌘V auto-paste URL, ⌘D queue it, ⌘1–5 switch tabs, Space to start/pause — fast by design.'],
+      ['🔔','Native Notifications','System notification pops when a download finishes — even if the app is in the background.'],
+      ['🔒','100% Offline','No servers, no accounts, no analytics. Everything runs locally using yt-dlp and ffmpeg bundled inside the app.'],
+      ['✨','Auto Updates','Silent updates via GitHub Releases. A banner appears when a new version is ready — one click to install.'],
+    ],
+  }
+};
+
+let currentLang = 'pl';
+
+function applyLang(lang) {
+  const t = TRANSLATIONS[lang];
+  // simple data-i18n text nodes
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (t[key] !== undefined) el.innerHTML = t[key];
+  });
+  // hero h1 special (has nested grad span)
+  const h1 = document.querySelector('h1');
+  if(h1) h1.innerHTML = t['hero.h1.a'] + '<br/><span class="grad">' + t['hero.h1.b'] + '</span>';
+  // features head
+  const fh = document.getElementById('features-head');
+  if(fh) fh.innerHTML = `<div class="s-label reveal visible">✦ ${t['features.label'].replace('✦ ','')}</div><h2 class="s-title reveal visible">${t['features.title']}</h2><p class="s-sub reveal visible">${t['features.sub']}</p>`;
+  // features grid
+  const fg = document.getElementById('fgrid');
+  if(fg) {
+    const delays = ['','reveal-delay-1','reveal-delay-2','','reveal-delay-1','reveal-delay-2','','reveal-delay-1','reveal-delay-2'];
+    fg.innerHTML = t['fcard'].map((c,i)=>`<div class="fcard reveal visible ${delays[i]}"><div class="ficon">${c[0]}</div><h3>${c[1]}</h3><p>${c[2]}</p></div>`).join('');
+  }
+  // how head
+  const hh = document.getElementById('how-head');
+  if(hh) hh.innerHTML = `<div class="s-label reveal visible">${t['how.label']}</div><h2 class="s-title reveal visible">${t['how.title']}</h2><p class="s-sub reveal visible">${t['how.sub']}</p>`;
+  // how steps
+  const hs = document.getElementById('how-steps');
+  if(hs) hs.innerHTML = [1,2,3].map(n=>`<div class="step reveal visible"><div class="step-num">${n}</div><div class="step-body"><h3>${t['how.s'+n+'.title']}</h3><p>${t['how.s'+n+'.text']}</p></div></div>`).join('');
+  // formats head
+  const fmh = document.getElementById('formats-head');
+  if(fmh) fmh.innerHTML = `<div class="s-label reveal visible">${t['formats.label']}</div><h2 class="s-title reveal visible">${t['formats.title']}</h2><p class="s-sub reveal visible">${t['formats.sub']}</p>`;
+  // dl title
+  const dlt = document.getElementById('dl-title');
+  if(dlt) dlt.innerHTML = t['dl.title'];
+  // ss inner
+  const ssi = document.getElementById('ss-inner');
+  if(ssi) ssi.innerHTML = t['ss.inner'];
+  // mobile wall
+  document.querySelector('.mw-title').textContent = t['mob.title'];
+  document.querySelector('.mw-sub').textContent = t['mob.sub'];
+  document.querySelector('.mw-badge').innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>${t['mob.badge']}`;
+  document.querySelector('.mw-note').textContent = t['mob.note'];
+  // win dl button text
+  const winBtn = document.querySelector('#dl-win .btn-dl.main');
+  if(winBtn) {
+    const svg = winBtn.querySelector('svg').outerHTML;
+    winBtn.innerHTML = svg + ' ' + t['dl.win.btn'];
+  }
+  // lang toggle UI
+  document.getElementById('lang-flag').textContent = lang === 'pl' ? '🇬🇧' : '🇵🇱';
+  document.getElementById('lang-label').textContent = lang === 'pl' ? 'EN' : 'PL';
+  // html lang attr
+  document.documentElement.lang = lang;
+}
+
+function toggleLang() {
+  currentLang = currentLang === 'pl' ? 'en' : 'pl';
+  localStorage.setItem('wc-lang', currentLang);
+  applyLang(currentLang);
+}
+
+// init lang from localStorage or browser
+(function(){
+  const saved = localStorage.getItem('wc-lang');
+  const browserLang = navigator.language.startsWith('pl') ? 'pl' : 'en';
+  currentLang = saved || browserLang;
+  if(currentLang !== 'pl') applyLang(currentLang);
+})();
+
 /* ── MOBILE DETECTION ── */
 (function(){
   const isMobile = /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent)
