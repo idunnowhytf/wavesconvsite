@@ -1,0 +1,7 @@
+node_modules/
+dist/
+yt-dlp-bin/
+.DS_Store
+*.log
+.claude/
+assets/icon.iconset/
