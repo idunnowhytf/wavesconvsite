@@ -261,6 +261,17 @@ function renderSingle(item) {
       }
     };
   }
+
+  const maxH = item.height || (item.formats && Array.isArray(item.formats)
+    ? Math.max(...item.formats.map(f => f.vcodec !== 'none' ? (f.height || 0) : 0))
+    : 0);
+  const qSelect = document.getElementById('singleQuality');
+  if (qSelect) {
+    const bestOpt = qSelect.querySelector('option[value="best"]');
+    if (bestOpt) {
+      bestOpt.textContent = maxH ? `Najlepsza (${maxH}p)` : 'Najlepsza';
+    }
+  }
   
   show('singleSection');
   document.getElementById('singleOutputDir').value=settings.outputDir;
@@ -274,6 +285,10 @@ function renderPlaylist(items) {
   items.forEach((item,idx)=>{
     const thumb=item.thumbnail||(item.thumbnails||[])[0]?.url||'';
     const dur=item.duration?fmtDur(item.duration):'';
+    const maxH = item.height || (item.formats && Array.isArray(item.formats)
+      ? Math.max(...item.formats.map(f => f.vcodec !== 'none' ? (f.height || 0) : 0))
+      : 0);
+    const bestText = maxH ? `Najlepsza (${maxH}p)` : 'Najlepsza';
     const div=document.createElement('div'); div.className='pitem selected'; div.dataset.idx=idx;
     div.innerHTML=`<input type="checkbox" class="pcheck" data-idx="${idx}" checked>
       <span class="pitem-num">${idx+1}</span>
@@ -282,7 +297,7 @@ function renderPlaylist(items) {
       <div class="pitem-overrides">
         <select class="ov-type" data-idx="${idx}" title="Typ"><option value="">↑ globalne</option><option value="video">Wideo</option><option value="audio">Audio</option></select>
         <select class="ov-fmt" data-idx="${idx}" title="Format"><option value="">↑ globalne</option><option value="mp4">MP4</option><option value="mkv">MKV</option><option value="mp3">MP3</option><option value="wav">WAV</option><option value="flac">FLAC</option></select>
-        <select class="ov-q" data-idx="${idx}" title="Jakość"><option value="">↑ globalne</option><option value="best">Najlepsza</option><option value="1080p">1080p</option><option value="720p">720p</option><option value="480p">480p</option></select>
+        <select class="ov-q" data-idx="${idx}" title="Jakość"><option value="">↑ globalne</option><option value="best">${bestText}</option><option value="1080p">1080p</option><option value="720p">720p</option><option value="480p">480p</option></select>
       </div>`;
     div.querySelector('.pcheck').addEventListener('change', e=>div.classList.toggle('selected',e.target.checked));
     cont.appendChild(div);
