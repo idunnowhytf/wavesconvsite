@@ -1,7 +1,7 @@
 {
   "name": "waves-converter",
-  "version": "1.4.8",
-  "description": "WavesConverter – Premium YouTube Downloader & Converter",
+  "version": "1.4.9",
+  "description": "WavesConverter – YouTube Downloader & Converter",
   "main": "main.js",
   "author": "WavesConverter",
   "scripts": {
