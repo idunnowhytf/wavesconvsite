@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="(https://res.cloudinary.com/dyozzp82h/image/upload/v1780341159/Gemini_Generated_Image_ve6asxve6asxve6a-Photoroom_clfoi2.png)" alt="WavesConverter" width="100%"/>
+<img src="https://res.cloudinary.com/dyozzp82h/image/upload/v1780341159/Gemini_Generated_Image_ve6asxve6asxve6a-Photoroom_clfoi2.png" alt="WavesConverter" width="100%"/>
 
 <br/>
 
