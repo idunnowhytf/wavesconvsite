@@ -411,7 +411,7 @@
 <!-- NAV -->
 <nav id="navbar">
   <div style="display:flex;align-items:center;gap:14px;">
-    <a class="nav-logo" href="/wavesconvsite/">
+    <a class="nav-logo" href="/WavesConverter/">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
         <path d="M2 13 Q4 7 6 13 Q8 19 10 13 Q12 7 14 13 Q16 19 18 13 Q20 7 22 13"
               stroke="url(#ng1)" stroke-width="2.2" stroke-linecap="round"/>
@@ -425,16 +425,16 @@
     <span class="nav-badge" data-i18n="nav.badge">Dokumentacja</span>
   </div>
   <div class="nav-links">
-    <a href="/wavesconvsite/" data-i18n="nav.home">Strona główna</a>
-    <a href="/wavesconvsite/changelog.html" data-i18n="nav.changelog">Changelog</a>
-    <a href="https://github.com/idunnowhytf/wavesconvsite" target="_blank">GitHub ↗</a>
+    <a href="/WavesConverter/" data-i18n="nav.home">Strona główna</a>
+    <a href="/WavesConverter/changelog.html" data-i18n="nav.changelog">Changelog</a>
+    <a href="https://github.com/idunnowhytf/WavesConverter" target="_blank">GitHub ↗</a>
   </div>
   <div class="nav-right">
     <button class="btn-lang" id="lang-toggle" onclick="toggleLang()" aria-label="Switch language">
       <span id="lang-flag">🇬🇧</span>
       <span id="lang-label">EN</span>
     </button>
-    <a class="nav-dl" href="/wavesconvsite/#download">
+    <a class="nav-dl" href="/WavesConverter/#download">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
         <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
         <polyline points="7 10 12 15 17 10"/>
@@ -530,6 +530,10 @@
         <span class="tip-icon">⌨️</span>
         <div><strong data-i18n="tip2">Skrót ⌘V:</strong> <span data-i18n="s2.tip">Wystarczy skopiować link do schowka — po kliknięciu okna aplikacji link zostanie automatycznie wklejony i natychmiast zostanie wywołany Fetch. Nie musisz ręcznie klikać w pole URL.</span></div>
       </div>
+      <div class="tip" style="margin-top:15px;">
+        <span class="tip-icon">🖼️</span>
+        <div><strong data-i18n="tip3">Pobieranie miniaturki HD:</strong> <span data-i18n="s2.thumbnail">Po wczytaniu metadanych filmu, obok podglądu miniatury pojawi się dedykowany przycisk <strong>„Miniaturka HD”</strong>. Kliknięcie go pobierze bezpośrednio plik graficzny miniatury w najwyższej dostępnej rozdzielczości bezpośrednio do Twojego folderu pobierania.</span></div>
+      </div>
     </section>
 
     <!-- 3. PLAYLISTY -->
@@ -605,6 +609,10 @@
           <div class="step-n">3</div>
           <div class="step-body"><p data-i18n="s5.step3"><strong>Konwertuj</strong> — kliknij przycisk Convert. Postęp jest widoczny w czasie rzeczywistym. Przekonwertowany plik zostanie zapisany w tym samym folderze co oryginał (lub w wybranym folderze wyjściowym).</p></div>
         </div>
+        <div class="step-item">
+          <div class="step-n">4</div>
+          <div class="step-body"><p data-i18n="s5.step4"><strong>Tworzenie animowanych GIF-ów</strong> — po wybraniu formatu wyjściowego GIF, pojawią się dodatkowe opcje umożliwiające określenie czasu rozpoczęcia (Start Time) oraz czasu trwania (Duration). WavesConverter użyje profesjonalnego algorytmu podwójnego przejścia FFmpeg dla zachowania najwyższej jakości palety barw i płynności.</p></div>
+        </div>
       </div>
     </section>
 
@@ -647,6 +655,8 @@
       <p data-i18n="s7.p.open">Kliknij ikonę folderu przy dowolnej pozycji, aby otworzyć folder zawierający pobrany plik w Finderze (macOS) lub Eksploratorze plików (Windows). Możesz też kliknąć tytuł, aby otworzyć plik bezpośrednio.</p>
       <h3 data-i18n="s7.h.clear">Czyszczenie historii</h3>
       <p data-i18n="s7.p.clear">Przycisk <strong>Clear History</strong> usuwa całą historię z aplikacji. Pliki na dysku pozostają nienaruszone.</p>
+      <h3 data-i18n="s7.h.stats">Panel statystyk (Dashboard)</h3>
+      <p data-i18n="s7.p.stats">W górnej części zakładki History znajduje się zaawansowany panel statystyk, który pokazuje ogólne podsumowanie Twojej aktywności: łączną liczbę pobranych plików, ich łączny rozmiar na dysku oraz szacowany czas zaoszczędzony dzięki aplikacji.</p>
     </section>
 
     <!-- 8. SKRÓTY -->
@@ -693,7 +703,7 @@
 <!-- FOOTER -->
 <footer>
   <span class="flogo">WavesConverter</span>
-  <p><span data-i18n="footer.built">Zbudowane z yt-dlp, ffmpeg i Electron</span> · <a href="https://github.com/idunnowhytf/wavesconvsite" target="_blank" data-i18n="footer.src">Kod na GitHub</a></p>
+  <p><span data-i18n="footer.built">Zbudowane z yt-dlp, ffmpeg i Electron</span> · <a href="https://github.com/idunnowhytf/WavesConverter" target="_blank" data-i18n="footer.src">Kod na GitHub</a></p>
   <p data-i18n="footer.copy">© 2025 WavesConverter · Darmowe i Open Source</p>
 </footer>
 
@@ -761,6 +771,8 @@ const T = {
     's2.step5': '<strong>Start</strong> — przejdź do zakładki Queue i kliknij <strong>Start All</strong> lub <kbd class="kbd">Spacja</kbd>. Obserwuj postęp i ETA.',
     'tip2': 'Skrót ⌘V:',
     's2.tip': 'Wystarczy skopiować link do schowka — po kliknięciu okna aplikacji link zostanie automatycznie wklejony i natychmiast zostanie wywołany Fetch. Nie musisz ręcznie klikać w pole URL.',
+    'tip3': 'Pobieranie miniaturki HD:',
+    's2.thumbnail': 'Po wczytaniu metadanych filmu, obok podglądu miniatury pojawi się dedykowany przycisk „Miniaturka HD”. Kliknięcie go pobierze bezpośrednio plik graficzny miniatury w najwyższej dostępnej rozdzielczości bezpośrednio do Twojego folderu pobierania.',
     's3.title': 'Pobieranie playlist',
     's3.intro': 'WavesConverter obsługuje pełne playlisty YouTube — możesz pobrać wszystkie filmy lub wybrać konkretne pozycje.',
     's3.step1': '<strong>Wklej URL playlisty</strong> — link musi zawierać parametr <code>list=</code> (np. <code>youtube.com/playlist?list=PL…</code>). Naciśnij Fetch.',
@@ -780,6 +792,7 @@ const T = {
     's5.step1': '<strong>Wybierz plik</strong> — przeciągnij plik na obszar drop zone lub kliknij <strong>Browse</strong> i wybierz plik z dysku. Obsługiwane wejście: MP4, MKV, MOV, AVI, WebM, MP3, WAV, FLAC, M4A, AAC, OGG i inne.',
     's5.step2': '<strong>Wybierz format wyjściowy</strong> — z listy dostępnych formatów. Dla wideo możesz też zmienić rozdzielczość i bitrate audio.',
     's5.step3': '<strong>Konwertuj</strong> — kliknij przycisk Convert. Postęp jest widoczny w czasie rzeczywistym. Przekonwertowany plik zostanie zapisany w tym samym folderze co oryginał (lub w wybranym folderze wyjściowym).',
+    's5.step4': '<strong>Tworzenie animowanych GIF-ów</strong> — po wybraniu formatu wyjściowego GIF, pojawią się dodatkowe opestry opcje umożliwiające określenie czasu rozpoczęcia (Start Time) oraz czasu trwania (Duration). WavesConverter użyje profesjonalnego algorytmu podwójnego przejścia FFmpeg dla zachowania najwyższej jakości palety barw i płynności.',
     's6.title': 'Kolejka i ETA',
     's6.intro': 'Zakładka <strong>Queue</strong> to centrum operacyjne WavesConverter — tu zarządzasz wszystkimi pobieraniami.',
     's6.h.concurrent': 'Równoległe pobierania',
@@ -796,6 +809,8 @@ const T = {
     's7.p.open': 'Kliknij ikonę folderu przy dowolnej pozycji, aby otworzyć folder zawierający pobrany plik w Finderze (macOS) lub Eksploratorze plików (Windows). Możesz też kliknąć tytuł, aby otworzyć plik bezpośrednio.',
     's7.h.clear': 'Czyszczenie historii',
     's7.p.clear': 'Przycisk <strong>Clear History</strong> usuwa całą historię z aplikacji. Pliki na dysku pozostają nienaruszone.',
+    's7.h.stats': 'Panel statystyk (Dashboard)',
+    's7.p.stats': 'W górnej części zakładki History znajduje się zaawansowany panel statystyk, który pokazuje ogólne podsumowanie Twojej aktywności: łączną liczbę pobranych plików, ich łączny rozmiar na dysku oraz szacowany czas zaoszczędzony dzięki aplikacji.',
     's8.title': 'Skróty klawiszowe',
     's8.intro': 'WavesConverter jest zoptymalizowany pod kątem klawiatury. Poniżej pełna lista skrótów:',
     'kb.shortcut': 'Skrót',
@@ -872,6 +887,8 @@ const T = {
     's2.step5': '<strong>Start</strong> — switch to the Queue tab and click <strong>Start All</strong> or press <kbd class="kbd">Space</kbd>. Watch the progress bars and ETA.',
     'tip2': '⌘V shortcut:',
     's2.tip': 'Just copy the link to your clipboard — when you click the app window, the link auto-pastes and Fetch fires immediately. No need to click the URL field manually.',
+    'tip3': 'Download HD Thumbnail:',
+    's2.thumbnail': 'After fetching video metadata, a dedicated "Miniaturka HD" button will appear next to the thumbnail preview. Clicking it will directly download the thumbnail image in the highest available resolution to your download folder.',
     's3.title': 'Downloading Playlists',
     's3.intro': 'WavesConverter supports full YouTube playlists — download all videos or cherry-pick specific ones.',
     's3.step1': '<strong>Paste the playlist URL</strong> — the link must contain the <code>list=</code> parameter (e.g. <code>youtube.com/playlist?list=PL…</code>). Press Fetch.',
@@ -891,6 +908,7 @@ const T = {
     's5.step1': '<strong>Select a file</strong> — drag and drop a file onto the drop zone or click <strong>Browse</strong> to pick one. Supported input: MP4, MKV, MOV, AVI, WebM, MP3, WAV, FLAC, M4A, AAC, OGG, and more.',
     's5.step2': '<strong>Pick the output format</strong> — choose from the available format list. For video you can also change resolution and audio bitrate.',
     's5.step3': '<strong>Convert</strong> — click the Convert button. Progress is shown in real time. The converted file is saved in the same folder as the original (or in your chosen output folder).',
+    's5.step4': '<strong>Creating animated GIFs</strong> — after selecting GIF as the output format, additional options will appear to specify the start time and duration. WavesConverter uses a professional FFmpeg double-pass algorithm to preserve the highest color palette quality and smoothness.',
     's6.title': 'Queue & ETA',
     's6.intro': 'The <strong>Queue</strong> tab is the operations center of WavesConverter — manage all your downloads here.',
     's6.h.concurrent': 'Concurrent Downloads',
@@ -907,6 +925,8 @@ const T = {
     's7.p.open': 'Click the folder icon next to any entry to reveal the downloaded file in Finder (macOS) or File Explorer (Windows). You can also click the title to open the file directly.',
     's7.h.clear': 'Clearing history',
     's7.p.clear': 'The <strong>Clear History</strong> button removes all entries from the app. Files on disk are not affected.',
+    's7.h.stats': 'Statistics Dashboard',
+    's7.p.stats': 'At the top of the History tab, there is an advanced statistics dashboard showing a summary of your activity: the total number of downloaded files, their total size on disk, and the estimated time saved using the application.',
     's8.title': 'Keyboard Shortcuts',
     's8.intro': 'WavesConverter is keyboard-optimised. Here is the full shortcut reference:',
     'kb.shortcut': 'Shortcut',

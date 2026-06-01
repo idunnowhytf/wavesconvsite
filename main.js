@@ -322,6 +322,9 @@ ipcMain.handle('start-download', (_, job) => new Promise((resolve, reject) => {
     const h = quality && quality !== 'best' ? quality.replace('p', '') : null;
     args.push('-f', h ? `bestvideo[height<=${h}]+bestaudio/best[height<=${h}]/best` : 'bestvideo+bestaudio/best');
     args.push('--merge-output-format', outputFormat || 'mp4');
+    if (!outputFormat || outputFormat === 'mp4') {
+      args.push('--postprocessor-args', 'Merger:-c:a aac');
+    }
     if (bitrate) args.push('--postprocessor-args', `ffmpeg:-b:v ${bitrate}`);
   }
   args.push('-o', outTpl, url);
@@ -334,7 +337,24 @@ ipcMain.handle('start-download', (_, job) => new Promise((resolve, reject) => {
     mainWindow.webContents.send('download-log', { id, line });
   });
   proc.stderr.on('data', d => mainWindow.webContents.send('download-log', { id, line: d.toString().trim() }));
-  proc.on('close', code => { active.delete(id); code === 0 ? resolve({ success: true }) : reject(new Error(`Exit ${code}`)); });
+  proc.on('close', code => {
+    active.delete(id);
+    if (code === 0) {
+      let fileSize = 0;
+      try {
+        const cleanTitle = (job.title || '').replace(/[<>:"/\\|?*]/g, '_');
+        const files = fs.readdirSync(outputDir);
+        const match = files.find(f => f.toLowerCase().includes(cleanTitle.toLowerCase()));
+        if (match) {
+          const finalPath = path.join(outputDir, match);
+          fileSize = fs.statSync(finalPath).size;
+        }
+      } catch (_) {}
+      resolve({ success: true, size: fileSize });
+    } else {
+      reject(new Error(`Exit ${code}`));
+    }
+  });
   proc.on('error', err => { active.delete(id); reject(err); });
 }));
 
@@ -343,55 +363,64 @@ ipcMain.on('cancel-download', (_, id) => { const p = active.get(id); if (p) { p.
 ipcMain.handle('convert-file', (_, job) => new Promise((resolve, reject) => {
   const ffmpeg = findFfmpeg();
   if (!ffmpeg) return reject(new Error('ffmpeg not found. Please click the "Install / Repair Tools" button in Settings.'));
-  const { id, inputPath, outputPath, bitrate, videoBitrate, resolution } = job;
-  const args = ['-y', '-i', inputPath];
-  
-  if (resolution && resolution !== 'original') {
-    args.push('-vf', `scale=-2:${resolution.replace('p', '')}`);
-  }
-  
+  const { id, inputPath, outputPath, bitrate, videoBitrate, resolution, gifStart, gifDuration } = job;
   const ext = outputPath.split('.').pop().toLowerCase();
-  const isVideo = ['mp4', 'mkv', 'mov', 'avi', 'webm'].includes(ext);
+  const isGif = ext === 'gif';
   
-  if (isVideo) {
-    if (ext === 'webm') {
-      args.push('-c:v', 'libvpx-vp9');
-      if (videoBitrate) {
-        args.push('-b:v', videoBitrate);
-      } else {
-        args.push('-crf', '28', '-b:v', '0');
-      }
-      args.push('-c:a', 'libopus');
-      if (bitrate) args.push('-b:a', bitrate);
-      else args.push('-b:a', '128k');
-    } else {
-      args.push('-c:v', 'libx264', '-preset', 'fast');
-      if (videoBitrate) {
-        args.push('-b:v', videoBitrate);
-      } else {
-        args.push('-crf', '18');
-      }
-      args.push('-c:a', 'aac');
-      if (bitrate) args.push('-b:a', bitrate);
-      else args.push('-b:a', '192k');
-    }
+  const args = ['-y'];
+  if (isGif) {
+    if (gifStart) args.push('-ss', gifStart);
+    if (gifDuration) args.push('-t', String(gifDuration));
+  }
+  args.push('-i', inputPath);
+  
+  if (isGif) {
+    args.push('-vf', 'fps=15,scale=480:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse');
   } else {
-    if (ext === 'mp3') {
-      args.push('-c:a', 'libmp3lame');
-      if (bitrate) args.push('-b:a', bitrate);
-      else args.push('-b:a', '256k');
-    } else if (ext === 'wav') {
-      args.push('-c:a', 'pcm_s16le');
-    } else if (ext === 'flac') {
-      args.push('-c:a', 'flac');
-    } else if (ext === 'aac' || ext === 'm4a') {
-      args.push('-c:a', 'aac');
-      if (bitrate) args.push('-b:a', bitrate);
-      else args.push('-b:a', '256k');
-    } else if (ext === 'ogg') {
-      args.push('-c:a', 'libvorbis');
-      if (bitrate) args.push('-b:a', bitrate);
-      else args.push('-b:a', '192k');
+    if (resolution && resolution !== 'original') {
+      args.push('-vf', `scale=-2:${resolution.replace('p', '')}`);
+    }
+    const isVideo = ['mp4', 'mkv', 'mov', 'avi', 'webm'].includes(ext);
+    if (isVideo) {
+      if (ext === 'webm') {
+        args.push('-c:v', 'libvpx-vp9');
+        if (videoBitrate) {
+          args.push('-b:v', videoBitrate);
+        } else {
+          args.push('-crf', '28', '-b:v', '0');
+        }
+        args.push('-c:a', 'libopus');
+        if (bitrate) args.push('-b:a', bitrate);
+        else args.push('-b:a', '128k');
+      } else {
+        args.push('-c:v', 'libx264', '-preset', 'fast');
+        if (videoBitrate) {
+          args.push('-b:v', videoBitrate);
+        } else {
+          args.push('-crf', '18');
+        }
+        args.push('-c:a', 'aac');
+        if (bitrate) args.push('-b:a', bitrate);
+        else args.push('-b:a', '192k');
+      }
+    } else {
+      if (ext === 'mp3') {
+        args.push('-c:a', 'libmp3lame');
+        if (bitrate) args.push('-b:a', bitrate);
+        else args.push('-b:a', '256k');
+      } else if (ext === 'wav') {
+        args.push('-c:a', 'pcm_s16le');
+      } else if (ext === 'flac') {
+        args.push('-c:a', 'flac');
+      } else if (ext === 'aac' || ext === 'm4a') {
+        args.push('-c:a', 'aac');
+        if (bitrate) args.push('-b:a', bitrate);
+        else args.push('-b:a', '256k');
+      } else if (ext === 'ogg') {
+        args.push('-c:a', 'libvorbis');
+        if (bitrate) args.push('-b:a', bitrate);
+        else args.push('-b:a', '192k');
+      }
     }
   }
   
@@ -414,3 +443,8 @@ ipcMain.handle('convert-file', (_, job) => new Promise((resolve, reject) => {
     reject(err);
   });
 }));
+
+// Expose download-thumbnail handler
+ipcMain.handle('download-thumbnail', async (_, { url, dest }) => {
+  return downloadFile(url, dest);
+});

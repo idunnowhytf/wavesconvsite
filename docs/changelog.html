@@ -349,7 +349,7 @@
 
 <!-- NAV -->
 <nav id="nav">
-  <a class="nav-logo" href="/wavesconvsite/">
+  <a class="nav-logo" href="/WavesConverter/">
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
       <path d="M2 13 Q4 7 6 13 Q8 19 10 13 Q12 7 14 13 Q16 19 18 13 Q20 7 22 13"
         stroke="url(#nlg)" stroke-width="2.5" stroke-linecap="round"/>
@@ -360,17 +360,17 @@
     WavesConverter
   </a>
   <div class="nav-links">
-    <a href="/wavesconvsite/" data-i18n="nav.home">Strona główna</a>
-    <a href="/wavesconvsite/#features" data-i18n="nav.features">Funkcje</a>
-    <a href="/wavesconvsite/#download" data-i18n="nav.download">Pobierz</a>
-    <a href="/wavesconvsite/changelog.html" class="active" data-i18n="nav.changelog">Changelog</a>
+    <a href="/WavesConverter/" data-i18n="nav.home">Strona główna</a>
+    <a href="/WavesConverter/#features" data-i18n="nav.features">Funkcje</a>
+    <a href="/WavesConverter/#download" data-i18n="nav.download">Pobierz</a>
+    <a href="/WavesConverter/changelog.html" class="active" data-i18n="nav.changelog">Changelog</a>
   </div>
   <div class="nav-right">
     <div class="lang-toggle">
       <button class="lang-btn" id="btnPL" onclick="setLang('pl')">PL</button>
       <button class="lang-btn" id="btnEN" onclick="setLang('en')">EN</button>
     </div>
-    <a class="nav-dl" href="/wavesconvsite/#download" data-i18n="nav.cta">Pobierz za darmo</a>
+    <a class="nav-dl" href="/WavesConverter/#download" data-i18n="nav.cta">Pobierz za darmo</a>
   </div>
 </nav>
 
@@ -429,7 +429,7 @@
 <!-- FOOTER -->
 <footer>
   <span class="flogo">WavesConverter</span>
-  <p><span data-i18n="footer.built">Zbudowane z yt-dlp, ffmpeg i Electron</span> · <a href="https://github.com/idunnowhytf/wavesconvsite" target="_blank" data-i18n="footer.src">Kod na GitHub</a></p>
+  <p><span data-i18n="footer.built">Zbudowane z yt-dlp, ffmpeg i Electron</span> · <a href="https://github.com/idunnowhytf/WavesConverter" target="_blank" data-i18n="footer.src">Kod na GitHub</a></p>
   <p data-i18n="footer.copy">© 2025 WavesConverter · Darmowe i Open Source</p>
 </footer>
 
@@ -695,7 +695,7 @@ async function fetchReleases() {
     || '<div class="skeleton-list" id="skeleton"></div>';
 
   try {
-    const res = await fetch('https://api.github.com/repos/idunnowhytf/wavesconvsite/releases', {
+    const res = await fetch('https://api.github.com/repos/idunnowhytf/WavesConverter/releases', {
       headers: { 'Accept': 'application/vnd.github+json' }
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);

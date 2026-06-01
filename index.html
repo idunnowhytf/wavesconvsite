@@ -1,10 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <meta charset="UTF-8">
   <title>WavesConverter</title>
-  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div class="bg-orbs"><div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div></div>
@@ -16,9 +15,10 @@
     <span class="version-tag" id="versionTag">v1.0.0</span>
   </div>
   <div class="titlebar-center">
-    <div class="update-pill hidden" id="updatePill"><span class="update-dot"></span><span id="updatePillText">Update available</span><button id="btnInstallUpdate">Install</button></div>
+    <div class="update-pill hidden" id="updatePill"><span class="update-dot"></span><span id="updatePillText">Dostępna aktualizacja!</span><button id="btnInstallUpdate">Kliknij, aby zaktualizować</button></div>
   </div>
   <div class="titlebar-right">
+    <div class="install-prompt hidden" id="installPrompt">kliknij, aby zainstalować wymagane biblioteki</div>
     <div class="status-indicators" id="statusIndicators"></div>
     <button class="wbtn" id="btnMin"><svg width="10" height="2" viewBox="0 0 10 2"><rect width="10" height="2" rx="1" fill="currentColor"/></svg></button>
     <button class="wbtn" id="btnMax"><svg width="10" height="10" viewBox="0 0 10 10"><rect x="1" y="1" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="1.5" fill="none"/></svg></button>
@@ -27,11 +27,11 @@
 </div>
 
 <nav class="tabbar">
-  <button class="tab active" data-tab="download"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg><span>Download</span></button>
-  <button class="tab" data-tab="convert"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 014-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg><span>Convert</span></button>
-  <button class="tab" data-tab="queue"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3" cy="6" r="1" fill="currentColor"/><circle cx="3" cy="12" r="1" fill="currentColor"/><circle cx="3" cy="18" r="1" fill="currentColor"/></svg><span>Queue</span><span class="tab-badge" id="queueBadge">0</span></button>
-  <button class="tab" data-tab="history"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg><span>History</span><span class="tab-badge" id="historyBadge" style="display:none"></span></button>
-  <button class="tab" data-tab="settings"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg><span>Settings</span></button>
+  <button class="tab active" data-tab="download"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg><span>Pobierz</span></button>
+  <button class="tab" data-tab="convert"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 014-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg><span>Konwertuj</span></button>
+  <button class="tab" data-tab="queue"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3" cy="6" r="1" fill="currentColor"/><circle cx="3" cy="12" r="1" fill="currentColor"/><circle cx="3" cy="18" r="1" fill="currentColor"/></svg><span>Kolejka</span><span class="tab-badge" id="queueBadge">0</span></button>
+  <button class="tab" data-tab="history"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg><span>Historia</span><span class="tab-badge" id="historyBadge" style="display:none"></span></button>
+  <button class="tab" data-tab="settings"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg><span>Ustawienia</span></button>
 </nav>
 
 <!-- DOWNLOAD -->
@@ -39,9 +39,9 @@
   <div class="glass-card url-card">
     <div class="url-input-wrap">
       <div class="url-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg></div>
-      <input type="text" id="urlInput" class="url-input" placeholder="Paste YouTube URL or playlist link…" autocomplete="off" spellcheck="false"/>
+      <input type="text" id="urlInput" class="url-input" placeholder="Wklej link YouTube lub link do playlisty…" autocomplete="off" spellcheck="false"/>
       <button class="btn-fetch" id="btnFetch">
-        <span class="btn-fetch-text">Fetch</span>
+        <span class="btn-fetch-text">Wyszukaj</span>
         <span class="btn-fetch-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
       </button>
     </div>
@@ -51,37 +51,37 @@
   <div id="singleSection" class="hidden animate-in"><div class="glass-card">
     <div class="video-hero" id="videoHero"></div>
     <div class="options-row">
-      <div class="option-pill-group"><label>Type</label><div class="pill-toggle" id="singleTypePills"><button class="pill active" data-val="video">🎬 Video</button><button class="pill" data-val="audio">🎵 Audio</button></div></div>
+      <div class="option-pill-group"><label>Typ</label><div class="pill-toggle" id="singleTypePills"><button class="pill active" data-val="video">🎬 Wideo</button><button class="pill" data-val="audio">🎵 Audio</button></div></div>
       <div class="ig"><label>Format</label><select id="singleFormat"><option value="mp4">MP4</option><option value="mkv">MKV</option><option value="mov">MOV</option><option value="webm">WebM</option></select></div>
-      <div class="ig" id="singleQualityWrap"><label>Resolution</label><select id="singleQuality"><option value="best">Best</option><option value="2160p">4K</option><option value="1440p">1440p</option><option value="1080p">1080p</option><option value="720p">720p</option><option value="480p">480p</option><option value="360p">360p</option></select></div>
-      <div class="ig"><label>Bitrate</label><select id="singleBitrate"><option value="">Auto</option><option value="320k">320k</option><option value="256k">256k</option><option value="192k">192k</option><option value="128k">128k</option></select></div>
-      <div class="ig"><label>Filename</label><select id="singleFilenameTemplate"><option value="%(title)s">Title</option><option value="%(uploader)s - %(title)s">Author – Title</option><option value="%(title)s [%(id)s]">Title [ID]</option><option value="custom">Custom…</option></select></div>
-      <div class="ig hidden" id="singleCustomWrap"><label>Custom name</label><input type="text" id="singleCustomFilename" placeholder="My video"/></div>
+      <div class="ig" id="singleQualityWrap"><label>Rozdzielczość</label><select id="singleQuality"><option value="best">Najlepsza</option><option value="2160p">4K</option><option value="1440p">1440p</option><option value="1080p">1080p</option><option value="720p">720p</option><option value="480p">480p</option><option value="360p">360p</option></select></div>
+      <div class="ig"><label>Bitrate</label><select id="singleBitrate"><option value="">Automatyczny</option><option value="320k">320k</option><option value="256k">256k</option><option value="192k">192k</option><option value="128k">128k</option></select></div>
+      <div class="ig"><label>Nazwa pliku</label><select id="singleFilenameTemplate"><option value="%(title)s">Tytuł</option><option value="%(uploader)s - %(title)s">Autor – Tytuł</option><option value="%(title)s [%(id)s]">Tytuł [ID]</option><option value="custom">Własna…</option></select></div>
+      <div class="ig hidden" id="singleCustomWrap"><label>Własna nazwa</label><input type="text" id="singleCustomFilename" placeholder="Moje wideo"/></div>
     </div>
     <div class="folder-row">
-      <div class="ig flex1"><label>Output folder</label><div class="folder-input"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg><input type="text" id="singleOutputDir" readonly placeholder="Choose folder…"/><button class="btn-ghost-sm" id="btnSingleBrowse">Browse</button></div></div>
-      <button class="btn-primary" id="btnAddSingle"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add to Queue</button>
+      <div class="ig flex1"><label>Folder docelowy</label><div class="folder-input"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg><input type="text" id="singleOutputDir" readonly placeholder="Wybierz folder…"/><button class="btn-ghost-sm" id="btnSingleBrowse">Przeglądaj</button></div></div>
+      <button class="btn-primary" id="btnAddSingle"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Dodaj do kolejki</button>
     </div>
   </div></div>
 
   <div id="playlistSection" class="hidden animate-in">
     <div class="glass-card">
-      <div class="playlist-topbar"><div><div class="playlist-name" id="playlistName">Playlist</div><div class="playlist-sub" id="playlistSub"></div></div><div class="playlist-actions"><button class="btn-ghost-sm" id="btnSelAll">All</button><button class="btn-ghost-sm" id="btnSelNone">None</button></div></div>
+      <div class="playlist-topbar"><div><div class="playlist-name" id="playlistName">Playlista</div><div class="playlist-sub" id="playlistSub"></div></div><div class="playlist-actions"><button class="btn-ghost-sm" id="btnSelAll">Wszystkie</button><button class="btn-ghost-sm" id="btnSelNone">Żadne</button></div></div>
       <div id="playlistItems" class="playlist-items"></div>
     </div>
     <div class="glass-card">
-      <div class="card-label">Global settings <span class="card-label-sub">— applies to all selected</span></div>
+      <div class="card-label">Ustawienia globalne <span class="card-label-sub">— zastosuj dla wszystkich zaznaczonych</span></div>
       <div class="options-row">
-        <div class="option-pill-group"><label>Type</label><div class="pill-toggle" id="globalTypePills"><button class="pill active" data-val="video">🎬 Video</button><button class="pill" data-val="audio">🎵 Audio</button></div></div>
+        <div class="option-pill-group"><label>Typ</label><div class="pill-toggle" id="globalTypePills"><button class="pill active" data-val="video">🎬 Wideo</button><button class="pill" data-val="audio">🎵 Audio</button></div></div>
         <div class="ig"><label>Format</label><select id="globalFormat"><option value="mp4">MP4</option><option value="mkv">MKV</option><option value="mov">MOV</option><option value="webm">WebM</option></select></div>
-        <div class="ig" id="globalQualityWrap"><label>Resolution</label><select id="globalQuality"><option value="best">Best</option><option value="2160p">4K</option><option value="1440p">1440p</option><option value="1080p">1080p</option><option value="720p">720p</option><option value="480p">480p</option><option value="360p">360p</option></select></div>
-        <div class="ig"><label>Bitrate</label><select id="globalBitrate"><option value="">Auto</option><option value="320k">320k</option><option value="256k">256k</option><option value="192k">192k</option><option value="128k">128k</option></select></div>
-        <div class="ig"><label>Filename</label><select id="globalFilenameTemplate"><option value="%(title)s">Title</option><option value="%(uploader)s - %(title)s">Author – Title</option><option value="%(playlist_index)s. %(title)s">Index. Title</option><option value="%(title)s [%(id)s]">Title [ID]</option><option value="custom">Custom…</option></select></div>
-        <div class="ig hidden" id="globalCustomWrap"><label>Custom</label><input type="text" id="globalCustomFilename" placeholder="%(title)s"/></div>
+        <div class="ig" id="globalQualityWrap"><label>Rozdzielczość</label><select id="globalQuality"><option value="best">Najlepsza</option><option value="2160p">4K</option><option value="1440p">1440p</option><option value="1080p">1080p</option><option value="720p">720p</option><option value="480p">480p</option><option value="360p">360p</option></select></div>
+        <div class="ig"><label>Bitrate</label><select id="globalBitrate"><option value="">Automatyczny</option><option value="320k">320k</option><option value="256k">256k</option><option value="192k">192k</option><option value="128k">128k</option></select></div>
+        <div class="ig"><label>Nazwa pliku</label><select id="globalFilenameTemplate"><option value="%(title)s">Tytuł</option><option value="%(uploader)s - %(title)s">Autor – Tytuł</option><option value="%(playlist_index)s. %(title)s">Indeks. Tytuł</option><option value="%(title)s [%(id)s]">Tytuł [ID]</option><option value="custom">Własna…</option></select></div>
+        <div class="ig hidden" id="globalCustomWrap"><label>Własna nazwa</label><input type="text" id="globalCustomFilename" placeholder="%(title)s"/></div>
       </div>
       <div class="folder-row" style="margin-top:4px">
-        <div class="ig flex1"><label>Output folder</label><div class="folder-input"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg><input type="text" id="playlistOutputDir" readonly placeholder="Choose folder…"/><button class="btn-ghost-sm" id="btnPlaylistBrowse">Browse</button></div></div>
-        <button class="btn-primary" id="btnAddToQueue"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Selected to Queue</button>
+        <div class="ig flex1"><label>Folder docelowy</label><div class="folder-input"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg><input type="text" id="playlistOutputDir" readonly placeholder="Wybierz folder…"/><button class="btn-ghost-sm" id="btnPlaylistBrowse">Przeglądaj</button></div></div>
+        <button class="btn-primary" id="btnAddToQueue"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Dodaj zaznaczone do kolejki</button>
       </div>
     </div>
   </div>
@@ -89,32 +89,38 @@
 
 <!-- CONVERT -->
 <div class="tab-content" id="tab-convert"><div class="section"><div class="glass-card">
-  <div class="card-label">Local File Converter</div>
+  <div class="card-label">Konwerter plików lokalnych</div>
   <div id="convertDropZone" class="convert-drop-zone">
     <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
-    <span>Drop a media file here</span>
-    <span class="drop-hint">or use Browse below</span>
+    <span>Przeciągnij plik multimedialny tutaj</span>
+    <span class="drop-hint">lub kliknij Przeglądaj poniżej</span>
   </div>
-  <div class="folder-row"><div class="ig flex1"><label>Input file</label><div class="folder-input"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><polyline points="13 2 13 9 20 9"/></svg><input type="text" id="convertInput" readonly placeholder="Select a media file or drop above…"/><button class="btn-ghost-sm" id="btnChooseFile">Browse</button></div></div></div>
+  <div class="folder-row"><div class="ig flex1"><label>Plik wejściowy</label><div class="folder-input"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><polyline points="13 2 13 9 20 9"/></svg><input type="text" id="convertInput" readonly placeholder="Wybierz plik multimedialny lub przeciągnij powyżej…"/><button class="btn-ghost-sm" id="btnChooseFile">Przeglądaj</button></div></div></div>
   <div class="options-row">
-    <div class="ig"><label>Output format</label><select id="convertFormat"><option value="mp4">MP4</option><option value="mkv">MKV</option><option value="mov">MOV</option><option value="avi">AVI</option><option value="webm">WebM</option><option value="mp3">MP3</option><option value="wav">WAV</option><option value="flac">FLAC</option><option value="aac">AAC</option><option value="m4a">M4A</option><option value="ogg">OGG</option></select></div>
-    <div class="ig"><label>Resolution</label><select id="convertResolution"><option value="original">Original</option><option value="2160p">4K</option><option value="1440p">1440p</option><option value="1080p">1080p</option><option value="720p">720p</option><option value="480p">480p</option><option value="360p">360p</option></select></div>
-    <div class="ig"><label>Audio bitrate</label><select id="convertBitrate"><option value="">Auto</option><option value="320k">320k</option><option value="256k">256k</option><option value="192k">192k</option><option value="128k">128k</option></select></div>
-    <div class="ig"><label>Video bitrate</label><select id="convertVideoBitrate"><option value="">Auto</option><option value="8000k">8000k</option><option value="5000k">5000k</option><option value="3000k">3000k</option><option value="1500k">1500k</option><option value="800k">800k</option></select></div>
-    <div class="ig"><label>Output filename</label><input type="text" id="convertFilename" placeholder="Leave blank = original"/></div>
+    <div class="ig"><label>Format wyjściowy</label><select id="convertFormat"><option value="mp4">MP4</option><option value="mkv">MKV</option><option value="mov">MOV</option><option value="avi">AVI</option><option value="webm">WebM</option><option value="gif">GIF (Animacja)</option><option value="mp3">MP3</option><option value="wav">WAV</option><option value="flac">FLAC</option><option value="aac">AAC</option><option value="m4a">M4A</option><option value="ogg">OGG</option></select></div>
+    <div class="ig" id="convertResolutionWrap"><label>Rozdzielczość</label><select id="convertResolution"><option value="original">Oryginalna</option><option value="2160p">4K</option><option value="1440p">1440p</option><option value="1080p">1080p</option><option value="720p">720p</option><option value="480p">480p</option><option value="360p">360p</option></select></div>
+    <div class="ig" id="convertBitrateWrap"><label>Bitrate audio</label><select id="convertBitrate"><option value="">Automatyczny</option><option value="320k">320k</option><option value="256k">256k</option><option value="192k">192k</option><option value="128k">128k</option></select></div>
+    <div class="ig" id="convertVideoBitrateWrap"><label>Bitrate wideo</label><select id="convertVideoBitrate"><option value="">Automatyczny</option><option value="8000k">8000k</option><option value="5000k">5000k</option><option value="3000k">3000k</option><option value="1500k">1500k</option><option value="800k">800k</option></select></div>
+    <div class="ig"><label>Nazwa pliku wyjściowego</label><input type="text" id="convertFilename" placeholder="Pozostaw puste = oryginalna"/></div>
   </div>
-  <div class="folder-row"><div class="ig flex1"><label>Output folder</label><div class="folder-input"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg><input type="text" id="convertOutputDir" readonly placeholder="Choose folder…"/><button class="btn-ghost-sm" id="btnConvertBrowse">Browse</button></div></div></div>
-  <div class="convert-progress-wrap hidden" id="convertProgressWrap"><div class="convert-progress-bar"><div id="convertBar" style="width:0%"></div></div><span id="convertLabel">Converting…</span></div>
-  <button class="btn-primary" id="btnConvert"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 014-4h14"/></svg>Convert File</button>
+  
+  <!-- GIF Options Row -->
+  <div class="options-row hidden" id="gifOptionsRow" style="margin-top: 10px; background: rgba(168, 85, 247, 0.05); border: 1px dashed rgba(168, 85, 247, 0.2); padding: 12px; border-radius: var(--rss);">
+    <div class="ig"><label>Czas startu</label><input type="text" id="gifStart" value="00:00:00" placeholder="np. 00:00:05" style="background: rgba(0,0,0,0.35); border: 1px solid var(--border); color:#fff; padding:6px 10px; border-radius:6px; font-size:12px;"/></div>
+    <div class="ig"><label>Czas trwania (sekund)</label><input type="number" id="gifDuration" value="5" min="1" max="60" style="background: rgba(0,0,0,0.35); border: 1px solid var(--border); color:#fff; padding:6px 10px; border-radius:6px; font-size:12px;"/></div>
+  </div>
+  <div class="folder-row"><div class="ig flex1"><label>Folder wyjściowy</label><div class="folder-input"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg><input type="text" id="convertOutputDir" readonly placeholder="Wybierz folder…"/><button class="btn-ghost-sm" id="btnConvertBrowse">Przeglądaj</button></div></div></div>
+  <div class="convert-progress-wrap hidden" id="convertProgressWrap"><div class="convert-progress-bar"><div id="convertBar" style="width:0%"></div></div><span id="convertLabel">Konwertowanie…</span></div>
+  <button class="btn-primary" id="btnConvert"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 014-4h14"/></svg>Konwertuj plik</button>
 </div></div></div>
 
 <!-- QUEUE -->
 <div class="tab-content" id="tab-queue"><div class="section">
   <div class="queue-toolbar">
-    <button class="btn-primary" id="btnStartQueue"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>Start</button>
-    <button class="btn-ghost-sm" id="btnPauseQueue"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>Pause</button>
-    <button class="btn-ghost-sm danger" id="btnClearDone">Clear Done</button>
-    <button class="btn-ghost-sm danger" id="btnClearAll">Clear All</button>
+    <button class="btn-primary" id="btnStartQueue"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>Uruchom</button>
+    <button class="btn-ghost-sm" id="btnPauseQueue"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>Wstrzymaj</button>
+    <button class="btn-ghost-sm danger" id="btnClearDone">Wyczyść ukończone</button>
+    <button class="btn-ghost-sm danger" id="btnClearAll">Wyczyść wszystko</button>
     <div class="spacer"></div>
     <div class="queue-stat-pill" id="queueStats"></div>
   </div>
@@ -126,56 +132,77 @@
   <div class="queue-toolbar">
     <div class="queue-stat-pill" id="historyStats"></div>
     <div class="spacer"></div>
-    <button class="btn-ghost-sm danger" id="btnClearHistory">Clear History</button>
+    <button class="btn-ghost-sm danger" id="btnClearHistory">Wyczyść historię</button>
   </div>
+  
+  <!-- Statistics Dashboard -->
+  <div class="stats-dashboard" id="statsDashboard">
+    <div class="stat-card">
+      <div class="stat-icon">📊</div>
+      <div class="stat-info">
+        <span class="stat-label">Pobrane pliki</span>
+        <span class="stat-val" id="statFiles">0</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">💾</div>
+      <div class="stat-info">
+        <span class="stat-label">Łączny rozmiar</span>
+        <span class="stat-val" id="statSize">0 MB</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">⏱</div>
+      <div class="stat-info">
+        <span class="stat-label">Zaoszczędzony czas</span>
+        <span class="stat-val" id="statTime">0 min</span>
+      </div>
+    </div>
+  </div>
+
   <div id="historyList" class="queue-list"></div>
 </div></div>
 
 <!-- SETTINGS -->
 <div class="tab-content" id="tab-settings"><div class="section">
   <div class="glass-card">
-    <div class="card-label">Defaults</div>
+    <div class="card-label">Ustawienia domyślne</div>
     <div class="options-row">
-      <div class="ig" style="flex:2"><label>Default download folder</label><div class="folder-input"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg><input type="text" id="settingsDir" readonly/><button class="btn-ghost-sm" id="btnSettingsDir">Browse</button></div></div>
-      <div class="ig"><label>Concurrent downloads</label><select id="settingsConcurrent"><option value="1">1</option><option value="2" selected>2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
-      <div class="ig"><label>Default video format</label><select id="settingsVideoFormat"><option value="mp4" selected>MP4</option><option value="mkv">MKV</option><option value="mov">MOV</option></select></div>
-      <div class="ig"><label>Default audio format</label><select id="settingsAudioFormat"><option value="mp3" selected>MP3</option><option value="wav">WAV</option><option value="flac">FLAC</option><option value="aac">AAC</option></select></div>
-      <div class="ig"><label>Default quality</label><select id="settingsQuality"><option value="best" selected>Best</option><option value="1080p">1080p</option><option value="720p">720p</option><option value="480p">480p</option></select></div>
-      <div class="ig"><label>Filename template</label><select id="settingsFilename"><option value="%(title)s" selected>Title</option><option value="%(uploader)s - %(title)s">Author – Title</option><option value="%(playlist_index)s. %(title)s">Index. Title</option></select></div>
+      <div class="ig" style="flex:2"><label>Domyślny folder pobierania</label><div class="folder-input"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg><input type="text" id="settingsDir" readonly/><button class="btn-ghost-sm" id="btnSettingsDir">Przeglądaj</button></div></div>
+      <div class="ig"><label>Jednoczesne pobierania</label><select id="settingsConcurrent"><option value="1">1</option><option value="2" selected>2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
+      <div class="ig"><label>Domyślny format wideo</label><select id="settingsVideoFormat"><option value="mp4" selected>MP4</option><option value="mkv">MKV</option><option value="mov">MOV</option></select></div>
+      <div class="ig"><label>Domyślny format audio</label><select id="settingsAudioFormat"><option value="mp3" selected>MP3</option><option value="wav">WAV</option><option value="flac">FLAC</option><option value="aac">AAC</option></select></div>
+      <div class="ig"><label>Domyślna jakość</label><select id="settingsQuality"><option value="best" selected>Najlepsza</option><option value="1080p">1080p</option><option value="720p">720p</option><option value="480p">480p</option></select></div>
+      <div class="ig"><label>Szablon nazwy pliku</label><select id="settingsFilename"><option value="%(title)s" selected>Tytuł</option><option value="%(uploader)s - %(title)s">Autor – Tytuł</option><option value="%(playlist_index)s. %(title)s">Indeks. Tytuł</option></select></div>
     </div>
-    <button class="btn-primary" id="btnSaveSettings">Save Settings</button>
+    <button class="btn-primary" id="btnSaveSettings">Zapisz ustawienia</button>
   </div>
   <div class="glass-card">
     <div class="card-label">System</div>
     <div class="sys-status" id="sysStatus">
-      <div class="sys-row"><span class="sys-name">yt-dlp</span><span class="sys-val checking" id="statusYtdlp">Checking…</span></div>
-      <div class="sys-row"><span class="sys-name">ffmpeg</span><span class="sys-val checking" id="statusFfmpeg">Checking…</span></div>
+      <div class="sys-row"><span class="sys-name">yt-dlp</span><span class="sys-val checking" id="statusYtdlp">Sprawdzanie…</span></div>
+      <div class="sys-row"><span class="sys-name">ffmpeg</span><span class="sys-val checking" id="statusFfmpeg">Sprawdzanie…</span></div>
     </div>
     <div class="sys-install-row" id="sysInstallRow">
       <button class="btn-primary" id="btnInstallTools" style="margin-top:12px; width:100%;">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right:6px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Install / Repair Tools
+        Instaluj / Napraw narzędzia
       </button>
     </div>
     <div class="convert-progress-wrap hidden" id="sysInstallProgressWrap" style="margin-top:12px;">
       <div class="convert-progress-bar"><div id="sysInstallProgressBar" style="width:0%"></div></div>
-      <span id="sysInstallProgressLabel" style="font-size:12px; color:var(--text-secondary); margin-top:4px; display:block;">Preparing...</span>
+      <span id="sysInstallProgressLabel" style="font-size:12px; color:var(--text-secondary); margin-top:4px; display:block;">Przygotowywanie...</span>
     </div>
-    <p class="sys-hint" style="margin-top:8px;">Missing tools? Click the button above to automatically install them, or run: <code>brew install yt-dlp ffmpeg</code></p>
+    <p class="sys-hint" style="margin-top:8px;">Brakujące narzędzia? Kliknij przycisk powyżej, aby automatycznie je zainstalować, lub uruchom: <code>brew install yt-dlp ffmpeg</code></p>
   </div>
   <div class="glass-card">
-    <div class="card-label">Updates</div>
-    <div class="update-status-row"><div id="updateStatusText" class="update-status-text">—</div><button class="btn-ghost-sm" id="btnCheckUpdate">Check now</button></div>
+    <div class="card-label">Aktualizacje</div>
+    <div class="update-status-row"><div id="updateStatusText" class="update-status-text">—</div><button class="btn-ghost-sm" id="btnCheckUpdate">Sprawdź teraz</button></div>
   </div>
   <div class="glass-card">
-    <div class="card-label">Keyboard Shortcuts</div>
-    <div class="shortcuts-grid">
-      <div class="shortcut-row"><kbd>⌘V</kbd><span>Paste URL &amp; auto-fetch</span></div>
-      <div class="shortcut-row"><kbd>⌘↵</kbd><span>Fetch URL</span></div>
-      <div class="shortcut-row"><kbd>⌘D</kbd><span>Add to queue</span></div>
-      <div class="shortcut-row"><kbd>⌘1–5</kbd><span>Switch tabs</span></div>
-      <div class="shortcut-row"><kbd>⌘⇧C</kbd><span>Clear done items</span></div>
-      <div class="shortcut-row"><kbd>Space</kbd><span>Start / pause queue (in Queue tab)</span></div>
+    <div class="card-label">Skróty klawiszowe</div>
+    <div class="shortcuts-grid" id="shortcutsGrid">
+      <!-- Will be populated dynamically by JavaScript -->
     </div>
   </div>
 </div></div>
