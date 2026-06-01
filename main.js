@@ -428,8 +428,8 @@ ipcMain.handle('start-download', (_, job) => new Promise((resolve, reject) => {
     active.delete(id);
     if (code === 0) {
       let fileSize = 0;
+      let finalPath = '';
       try {
-        let finalPath = '';
         if (detectedPath && fs.existsSync(detectedPath)) {
           finalPath = detectedPath;
         } else if (detectedPath && fs.existsSync(path.resolve(outputDir, detectedPath))) {
