@@ -174,6 +174,7 @@
       <div class="ig"><label>Domyślny format audio</label><select id="settingsAudioFormat"><option value="mp3" selected>MP3</option><option value="wav">WAV</option><option value="flac">FLAC</option><option value="aac">AAC</option></select></div>
       <div class="ig"><label>Domyślna jakość</label><select id="settingsQuality"><option value="best" selected>Najlepsza</option><option value="1080p">1080p</option><option value="720p">720p</option><option value="480p">480p</option></select></div>
       <div class="ig"><label>Szablon nazwy pliku</label><select id="settingsFilename"><option value="%(title)s" selected>Tytuł</option><option value="%(uploader)s - %(title)s">Autor – Tytuł</option><option value="%(playlist_index)s. %(title)s">Indeks. Tytuł</option></select></div>
+      <div class="ig"><label>Motyw interfejsu</label><select id="settingsTheme"><option value="classic">Klasyczny Waves 🔮</option><option value="material">Material Design 📱</option></select></div>
     </div>
     <button class="btn-primary" id="btnSaveSettings">Zapisz ustawienia</button>
   </div>
@@ -206,6 +207,38 @@
     </div>
   </div>
 </div></div>
+
+<!-- Onboarding Welcome Modal -->
+<div class="welcome-overlay hidden" id="welcomeOverlay">
+  <div class="welcome-modal">
+    <div class="welcome-header">
+      <h2>Witaj w WavesConverter 1.4.0! 🌊</h2>
+      <p>Wybierz motyw interfejsu, który najbardziej Ci odpowiada. Możesz go zmienić w dowolnym momencie w ustawieniach.</p>
+    </div>
+    
+    <div class="welcome-body">
+      <div class="welcome-section-label">Wybierz motyw</div>
+      <div class="theme-cards">
+        <div class="theme-card active" id="welcomeThemeClassic" onclick="selectWelcomeTheme('classic')">
+          <div class="theme-card-preview theme-preview-classic">
+            <div class="preview-dot"></div>
+          </div>
+          <div class="theme-card-title">Klasyczny Waves 🔮</div>
+          <div class="theme-card-desc">Głębokie fiolety, neonowe akcenty i klasyczny styl cyberpunkowy.</div>
+        </div>
+        <div class="theme-card" id="welcomeThemeMaterial" onclick="selectWelcomeTheme('material')">
+          <div class="theme-card-preview theme-preview-material">
+            <div class="preview-dot"></div>
+          </div>
+          <div class="theme-card-title">Material Design 3 📱</div>
+          <div class="theme-card-desc">Nowoczesny, minimalistyczny styl z pełnymi zaokrągleniami elementów i wygładzonymi panelami.</div>
+        </div>
+      </div>
+    </div>
+    
+    <button class="btn-welcome" onclick="closeWelcomeOnboarding()">Rozpocznij korzystanie</button>
+  </div>
+</div>
 
 <div class="toast-stack" id="toastStack"></div>
 <script src="renderer.js"></script>

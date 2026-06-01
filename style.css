@@ -344,3 +344,153 @@ body { display:flex; flex-direction:column; position:relative; z-index:1; }
   0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.1); }
   50% { box-shadow: 0 0 6px 2px rgba(239, 68, 68, 0.22); }
 }
+
+/* ─── Material Design 3 Theme ─── */
+body.theme-material {
+  --bg: #141218;
+  --glass: #211f26;
+  --glass-hover: #2b2930;
+  --border: #49454f;
+  --border-hi: #938f99;
+  --p1: #6750a4;
+  --p2: #625b71;
+  --p3: #d0bcff;
+  --p4: #e8def8;
+  --p5: #d0bcff;
+  --p6: #f3edf7;
+  --accent: #d0bcff;
+  --accent2: #f2b8b5;
+  --text: #e6e1e5;
+  --text2: #cac4d0;
+  --text3: #938f99;
+  --text4: #49454f;
+  --r: 28px;
+  --rs: 16px;
+  --rss: 8px;
+}
+
+body.theme-material .bg-orbs {
+  background: #141218;
+}
+body.theme-material .orb {
+  opacity: 0.04;
+  filter: blur(120px);
+}
+body.theme-material .orb1 { background: var(--p1); }
+body.theme-material .orb2 { background: var(--p2); }
+body.theme-material .orb3 { background: var(--accent); }
+
+/* Material Fully Rounded (Pill) Controls */
+body.theme-material button,
+body.theme-material select,
+body.theme-material .url-input-wrap,
+body.theme-material .btn-fetch,
+body.theme-material .pill,
+body.theme-material .pill-toggle,
+body.theme-material .folder-input,
+body.theme-material .input-row,
+body.theme-material input[type="text"],
+body.theme-material .drop-zone,
+body.theme-material .toast,
+body.theme-material .install-prompt {
+  border-radius: 100px !important;
+}
+
+body.theme-material .glass-card {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+  border: 1px solid var(--border);
+}
+body.theme-material .btn-fetch {
+  border-radius: 0 100px 100px 0 !important;
+}
+body.theme-material .url-input-wrap {
+  border-radius: 100px 0 0 100px !important;
+}
+body.theme-material .tab-badge {
+  border-radius: 100px !important;
+}
+body.theme-material .titlebar {
+  background: #1d1b20;
+}
+body.theme-material .tabbar {
+  background: #211f26;
+  border-bottom: 2px solid var(--border);
+}
+body.theme-material .tab {
+  font-weight: 600;
+  border-bottom: 3px solid transparent;
+}
+body.theme-material .tab.active {
+  border-bottom-color: var(--p3);
+}
+
+/* ─── Onboarding Welcome Modal ─── */
+.welcome-overlay {
+  position: fixed; inset: 0; background: rgba(5,0,13,0.85);
+  backdrop-filter: blur(16px); display: flex; align-items: center;
+  justify-content: center; z-index: 9999; opacity: 1;
+  transition: opacity 0.3s var(--ease-out-expo);
+}
+.welcome-overlay.hidden { display: none !important; }
+.welcome-overlay.out { opacity: 0; }
+.welcome-modal {
+  width: 90%; max-width: 580px; background: rgba(20,10,32,0.8);
+  border: 1px solid var(--border-hi); border-radius: 24px;
+  padding: 36px; box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08);
+  display: flex; flex-direction: column; gap: 28px; text-align: center;
+  animation: modalPop 0.45s var(--ease-spring);
+}
+@keyframes modalPop {
+  from { transform: scale(0.85); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.welcome-header h2 { font-size: 24px; font-weight: 800; margin-top: 12px; margin-bottom: 6px; }
+.welcome-header p { color: var(--text2); font-size: 13px; }
+.welcome-body { display: flex; flex-direction: column; gap: 12px; text-align: left; }
+.welcome-section-label { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--p5); letter-spacing: 0.5px; }
+
+.theme-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.theme-card {
+  background: rgba(255,255,255,0.02); border: 1px solid var(--border);
+  border-radius: 16px; padding: 18px; cursor: pointer; display: flex;
+  flex-direction: column; gap: 10px; transition: all 0.22s var(--ease-out-expo);
+}
+.theme-card:hover {
+  background: rgba(255,255,255,0.05); border-color: rgba(168,85,247,0.3);
+}
+.theme-card.active {
+  background: rgba(124,58,237,0.08); border-color: var(--p5);
+  box-shadow: 0 0 14px rgba(124,58,237,0.22);
+}
+.theme-card-preview {
+  height: 60px; border-radius: 10px; display: flex; align-items: center; justify-content: center;
+}
+.theme-preview-classic {
+  background: linear-gradient(135deg, #080010, #3d2a57);
+  border: 1px dashed rgba(168,85,247,0.3);
+}
+.theme-preview-material {
+  background: linear-gradient(135deg, #141218, #49454f);
+  border: 1px dashed rgba(208,188,255,0.3);
+}
+.preview-dot {
+  width: 14px; height: 14px; border-radius: 50%;
+}
+.theme-preview-classic .preview-dot {
+  background: var(--p2); box-shadow: 0 0 8px var(--accent);
+}
+.theme-preview-material .preview-dot {
+  background: #d0bcff;
+}
+
+.theme-card-title { font-weight: 700; font-size: 13px; color: #fff; }
+.theme-card-desc { font-size: 11px; color: var(--text2); line-height: 1.4; }
+
+.btn-welcome {
+  width: 100%; padding: 14px; border: none; border-radius: 12px;
+  background: linear-gradient(135deg, var(--p1), var(--accent));
+  color: #fff; font-weight: 700; font-size: 14px; cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+}
+.btn-welcome:hover { opacity: 0.9; }
+.btn-welcome:active { transform: scale(0.98); }

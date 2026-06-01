@@ -1,6 +1,6 @@
 const isMac = navigator.platform.toLowerCase().includes('mac') || navigator.userAgent.toLowerCase().includes('mac');
 let queue=[], fetchedItems=[], isPlaylist=false, qRunning=false, qPaused=false;
-let settings={ outputDir:'', concurrent:2, videoFormat:'mp4', audioFormat:'mp3', quality:'best', filenameTemplate:'%(title)s' };
+let settings={ outputDir:'', concurrent:2, videoFormat:'mp4', audioFormat:'mp3', quality:'best', filenameTemplate:'%(title)s', theme:'classic' };
 let downloadHistory=[];
 
 window.addEventListener('DOMContentLoaded', async () => {
@@ -10,6 +10,12 @@ window.addEventListener('DOMContentLoaded', async () => {
   initWindowControls(); initTabs(); initDownloadTab(); initConvertTab(); initQueueTab(); initHistoryTab(); initSettingsTab(); initIpc();
   initKeyboardShortcuts(); initDragDrop();
   checkStatus(); renderQueue(); renderHistory(); applySettings();
+  if (localStorage.getItem('wc2_first_launch') !== 'false') {
+    const overlay = document.getElementById('welcomeOverlay');
+    if (overlay) overlay.classList.remove('hidden');
+    const currentTheme = settings.theme || 'classic';
+    window.selectWelcomeTheme(currentTheme);
+  }
   const v = await window.api.getVersion().catch(()=>'1.0.0');
   document.getElementById('versionTag').textContent = 'v'+v;
   requestNotificationPermission();
@@ -588,6 +594,8 @@ function initSettingsTab() {
   document.getElementById('settingsAudioFormat').value=settings.audioFormat;
   document.getElementById('settingsQuality').value=settings.quality;
   document.getElementById('settingsFilename').value=settings.filenameTemplate;
+  const sth = document.getElementById('settingsTheme');
+  if (sth) sth.value = settings.theme || 'classic';
 }
 
 async function runInstallTools() {
@@ -625,15 +633,52 @@ function saveAndApply() {
   settings.audioFormat=document.getElementById('settingsAudioFormat').value;
   settings.quality=document.getElementById('settingsQuality').value;
   settings.filenameTemplate=document.getElementById('settingsFilename').value;
+  const sth = document.getElementById('settingsTheme');
+  if (sth) settings.theme = sth.value;
   saveSettings(); applySettings(); toast('Ustawienia zapisane','success');
 }
 
 function applySettings() {
   ['singleOutputDir','playlistOutputDir','convertOutputDir'].forEach(id=>{ const el=document.getElementById(id); if(el&&!el.value) el.value=settings.outputDir; });
   const sd=document.getElementById('settingsDir'); if(sd) sd.value=settings.outputDir;
+  const sth = document.getElementById('settingsTheme');
+  if (sth) sth.value = settings.theme || 'classic';
+  document.body.classList.toggle('theme-material', settings.theme === 'material');
 }
 function saveSettings() { try{ localStorage.setItem('wc2_settings',JSON.stringify(settings)); }catch(_){} }
 function loadSettings() { try{ const s=localStorage.getItem('wc2_settings'); if(s) Object.assign(settings,JSON.parse(s)); }catch(_){} }
+
+/* Onboarding Theme Selectors */
+let welcomeSelectedTheme = 'classic';
+window.selectWelcomeTheme = function(theme) {
+  welcomeSelectedTheme = theme;
+  const classicCard = document.getElementById('welcomeThemeClassic');
+  const materialCard = document.getElementById('welcomeThemeMaterial');
+  if (theme === 'classic') {
+    if (classicCard) classicCard.classList.add('active');
+    if (materialCard) materialCard.classList.remove('active');
+    document.body.classList.remove('theme-material');
+  } else {
+    if (classicCard) classicCard.classList.remove('active');
+    if (materialCard) materialCard.classList.add('active');
+    document.body.classList.add('theme-material');
+  }
+};
+
+window.closeWelcomeOnboarding = function() {
+  settings.theme = welcomeSelectedTheme;
+  saveSettings();
+  applySettings();
+  localStorage.setItem('wc2_first_launch', 'false');
+  const overlay = document.getElementById('welcomeOverlay');
+  if (overlay) {
+    overlay.classList.add('out');
+    setTimeout(() => {
+      overlay.classList.add('hidden');
+    }, 300);
+  }
+  toast('Ustawienia zapisane!', 'success');
+};
 
 /* ─── IPC ─── */
 function initIpc() {
