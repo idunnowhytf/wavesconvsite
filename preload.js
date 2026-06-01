@@ -27,4 +27,5 @@ contextBridge.exposeInMainWorld('api', {
   onClipboardSearchTrigger: (cb) => ipcRenderer.on('clipboard-search-trigger', (_, text) => cb(text)),
   startShareServer: (opts) => ipcRenderer.invoke('start-share-server', opts),
   stopShareServer: () => ipcRenderer.invoke('stop-share-server'),
+  onDeepLink: (cb) => ipcRenderer.on('deep-link', (_, payload) => cb(payload)),
 });

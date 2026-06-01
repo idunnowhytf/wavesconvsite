@@ -324,6 +324,21 @@
       border: 1px solid rgba(168,85,247,.2); border-radius: 5px;
       padding: 1px 6px; color: var(--p3);
     }
+    .code-block {
+      margin: 16px 0; border-radius: 12px; overflow: hidden;
+      border: 1px solid rgba(168,85,247,.22);
+      background: rgba(0,0,0,.35);
+    }
+    .code-block-label {
+      font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .8px;
+      color: var(--text3); padding: 8px 14px; border-bottom: 1px solid var(--bord);
+      background: rgba(124,58,237,.08);
+    }
+    .code-block pre {
+      margin: 0; padding: 14px 16px; overflow-x: auto;
+      font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+      font-size: 12.5px; line-height: 1.65; color: var(--p4);
+    }
 
     /* ── FOOTER ── */
     footer {
@@ -462,7 +477,8 @@
       <li><a href="#historia"><span class="toc-num">7</span><span data-i18n="toc.7">Historia</span></a></li>
       <li><a href="#skroty"><span class="toc-num">8</span><span data-i18n="toc.8">Skróty klawiszowe</span></a></li>
       <li><a href="#ustawienia"><span class="toc-num">9</span><span data-i18n="toc.9">Ustawienia</span></a></li>
-      <li><a href="#faq"><span class="toc-num">10</span><span data-i18n="toc.10">FAQ</span></a></li>
+      <li><a href="#cli"><span class="toc-num">10</span><span data-i18n="toc.cli">CLI (terminal)</span></a></li>
+      <li><a href="#faq"><span class="toc-num">11</span><span data-i18n="toc.10">FAQ</span></a></li>
     </ul>
   </aside>
 
@@ -691,7 +707,68 @@
       <p data-i18n="s9.p.template">Wybierz schemat nazewnictwa: <code>%(title)s</code> (samo tytuł), <code>%(uploader)s - %(title)s</code> (autor i tytuł), <code>%(title)s [%(id)s]</code> (z ID) lub wpisz własny wzorzec kompatybilny z yt-dlp.</p>
     </section>
 
-    <!-- 10. FAQ -->
+    <!-- 10. CLI -->
+    <section class="doc-section" id="cli">
+      <h2><span class="section-icon">⌨️</span><span data-i18n="scli.title">CLI (terminal)</span></h2>
+      <p data-i18n="scli.intro"><strong>wavesconv</strong> to wersja WavesConverter dla terminala — publikowana na <a href="https://www.npmjs.com/package/wavesconv" target="_blank" rel="noopener">npm</a>. Idealna gdy wolisz wklejać linki w konsoli zamiast otwierać aplikację graficzną. Wymaga <strong>Node.js 18+</strong>.</p>
+
+      <h3 data-i18n="scli.h.install">Instalacja</h3>
+      <div class="code-block">
+        <div class="code-block-label" data-i18n="scli.code.install">npm — globalnie</div>
+        <pre>npm install -g wavesconv@latest
+wavesconv --version</pre>
+      </div>
+      <p data-i18n="scli.p.install">Przy pierwszym użyciu uruchom <code>wavesconv tools install</code>, aby pobrać yt-dlp. Do konwersji plików potrzebny jest też <code>ffmpeg</code> w PATH (lub zainstaluj go z poziomu aplikacji desktop).</p>
+
+      <h3 data-i18n="scli.h.interactive">Tryb interaktywny (wklej linki)</h3>
+      <p data-i18n="scli.p.interactive">Uruchom samo <code>wavesconv</code> — pojawi się kolorowy prompt. Wklej link YouTube i naciśnij Enter — pobieranie startuje automatycznie.</p>
+      <div class="code-block">
+        <div class="code-block-label" data-i18n="scli.code.interactive">Terminal</div>
+        <pre>wavesconv
+# 🔗 Wklej link › https://youtu.be/…</pre>
+      </div>
+
+      <h3 data-i18n="scli.h.commands">Polecenia jednorazowe</h3>
+      <div class="code-block">
+        <div class="code-block-label" data-i18n="scli.code.download">Pobieranie</div>
+        <pre>wavesconv download "https://youtu.be/…" -a -f mp3
+wavesconv download "URL" -q 1080p -o C:\Videos</pre>
+      </div>
+      <div class="code-block">
+        <div class="code-block-label" data-i18n="scli.code.other">Inne</div>
+        <pre>wavesconv info "URL"
+wavesconv convert film.mp4 -f mp3 -o out.mp3
+wavesconv tools status</pre>
+      </div>
+
+      <h3 data-i18n="scli.h.slash">Komendy w trybie interaktywnym</h3>
+      <table class="kb-table">
+        <thead><tr><th data-i18n="kb.shortcut">Komenda</th><th data-i18n="kb.action">Akcja</th></tr></thead>
+        <tbody>
+          <tr><td><code>/audio</code></td><td data-i18n="scli.cmd.audio">Tryb audio (MP3)</td></tr>
+          <tr><td><code>/video</code></td><td data-i18n="scli.cmd.video">Tryb wideo (MP4)</td></tr>
+          <tr><td><code>/fmt mp3</code></td><td data-i18n="scli.cmd.fmt">Ustaw format</td></tr>
+          <tr><td><code>/q 1080p</code></td><td data-i18n="scli.cmd.q">Ustaw jakość</td></tr>
+          <tr><td><code>/folder</code></td><td data-i18n="scli.cmd.folder">Zmień folder pobierania</td></tr>
+          <tr><td><code>/info URL</code></td><td data-i18n="scli.cmd.info">Podgląd metadanych</td></tr>
+          <tr><td><code>/quit</code></td><td data-i18n="scli.cmd.quit">Wyjście</td></tr>
+        </tbody>
+      </table>
+
+      <h3 data-i18n="scli.h.update">Aktualizacja CLI</h3>
+      <div class="code-block">
+        <div class="code-block-label">npm</div>
+        <pre>npm install -g wavesconv@latest
+# lub konkretna wersja:
+npm install -g wavesconv@1.6.0</pre>
+      </div>
+      <div class="tip">
+        <span class="tip-icon">💡</span>
+        <div data-i18n="scli.tip">Jeśli <code>npm update -g wavesconv</code> nie podnosi wersji, użyj <code>npm install -g wavesconv@latest</code>. Sprawdź wersję na registry: <code>npm view wavesconv version</code>.</div>
+      </div>
+    </section>
+
+    <!-- 11. FAQ -->
     <section class="doc-section" id="faq">
       <h2><span class="section-icon">❓</span><span data-i18n="s10.title">FAQ</span></h2>
       <div class="faq-list" id="faq-list">
@@ -725,7 +802,8 @@
       <li><a href="#historia"><span class="toc-num">7</span><span data-i18n="toc.7">Historia</span></a></li>
       <li><a href="#skroty"><span class="toc-num">8</span><span data-i18n="toc.8">Skróty klawiszowe</span></a></li>
       <li><a href="#ustawienia"><span class="toc-num">9</span><span data-i18n="toc.9">Ustawienia</span></a></li>
-      <li><a href="#faq"><span class="toc-num">10</span><span data-i18n="toc.10">FAQ</span></a></li>
+      <li><a href="#cli"><span class="toc-num">10</span><span data-i18n="toc.cli">CLI (terminal)</span></a></li>
+      <li><a href="#faq"><span class="toc-num">11</span><span data-i18n="toc.10">FAQ</span></a></li>
     </ul>
   </div>
 </div>
@@ -750,6 +828,7 @@ const T = {
     'toc.7': 'Historia',
     'toc.8': 'Skróty klawiszowe',
     'toc.9': 'Ustawienia',
+    'toc.cli': 'CLI (terminal)',
     'toc.10': 'FAQ',
     'header.eyebrow': 'Instrukcja obsługi',
     'header.sub': 'Dokumentacja',
@@ -839,6 +918,27 @@ const T = {
     's9.p.formats': 'Ustaw domyślny typ (Video/Audio), format (MP4, MP3 itp.) i jakość. Możesz je nadpisywać przy każdym pobieraniu osobno.',
     's9.h.template': 'Szablon nazwy pliku',
     's9.p.template': 'Wybierz schemat nazewnictwa: <code>%(title)s</code> (samo tytuł), <code>%(uploader)s - %(title)s</code> (autor i tytuł), <code>%(title)s [%(id)s]</code> (z ID) lub wpisz własny wzorzec kompatybilny z yt-dlp.',
+    'scli.title': 'CLI (terminal)',
+    'scli.intro': '<strong>wavesconv</strong> to wersja WavesConverter dla terminala — publikowana na <a href="https://www.npmjs.com/package/wavesconv" target="_blank" rel="noopener">npm</a>. Idealna gdy wolisz wklejać linki w konsoli zamiast otwierać aplikację graficzną. Wymaga <strong>Node.js 18+</strong>.',
+    'scli.h.install': 'Instalacja',
+    'scli.code.install': 'npm — globalnie',
+    'scli.p.install': 'Przy pierwszym użyciu uruchom <code>wavesconv tools install</code>, aby pobrać yt-dlp. Do konwersji plików potrzebny jest też <code>ffmpeg</code> w PATH (lub zainstaluj go z poziomu aplikacji desktop).',
+    'scli.h.interactive': 'Tryb interaktywny (wklej linki)',
+    'scli.p.interactive': 'Uruchom samo <code>wavesconv</code> — pojawi się kolorowy prompt. Wklej link YouTube i naciśnij Enter — pobieranie startuje automatycznie.',
+    'scli.code.interactive': 'Terminal',
+    'scli.h.commands': 'Polecenia jednorazowe',
+    'scli.code.download': 'Pobieranie',
+    'scli.code.other': 'Inne',
+    'scli.h.slash': 'Komendy w trybie interaktywnym',
+    'scli.cmd.audio': 'Tryb audio (MP3)',
+    'scli.cmd.video': 'Tryb wideo (MP4)',
+    'scli.cmd.fmt': 'Ustaw format',
+    'scli.cmd.q': 'Ustaw jakość',
+    'scli.cmd.folder': 'Zmień folder pobierania',
+    'scli.cmd.info': 'Podgląd metadanych',
+    'scli.cmd.quit': 'Wyjście',
+    'scli.h.update': 'Aktualizacja CLI',
+    'scli.tip': 'Jeśli <code>npm update -g wavesconv</code> nie podnosi wersji, użyj <code>npm install -g wavesconv@latest</code>. Sprawdź wersję na registry: <code>npm view wavesconv version</code>.',
     's10.title': 'FAQ',
     'faq.items': [
       ['Czy to legalne?', 'Pobieranie filmów na własny użytek prywatny jest w wielu krajach legalne, jednak zależy to od lokalnych przepisów. WavesConverter jest narzędziem technicznym — użytkownik ponosi odpowiedzialność za zgodność z prawem i regulaminem YouTube w swoim kraju.'],
@@ -846,6 +946,7 @@ const T = {
       ['Skąd pochodzi ffmpeg i yt-dlp?', 'Obie biblioteki są dołączone do aplikacji (bundled). Nie musisz niczego instalować osobno. ffmpeg to projekt open source licencjonowany na LGPL/GPL, yt-dlp to open source na licencji Unlicense. Żadne dane nie są wysyłane do zewnętrznych serwerów.'],
       ['Jak zaktualizować WavesConverter?', 'Aplikacja automatycznie sprawdza dostępność aktualizacji przez GitHub Releases. Gdy nowa wersja jest gotowa, pojawia się baner w górnej części okna z przyciskiem „Install". Kliknij go, a aktualizacja zostanie pobrana i zainstalowana automatycznie.'],
       ['Co zrobić jeśli pobieranie się nie udaje?', 'Najpierw sprawdź czy masz aktywne połączenie internetowe. Jeśli błąd dotyczy konkretnego URL, upewnij się że film jest publiczny (nie prywatny lub age-gated). Spróbuj też zaktualizować aplikację — nowa wersja yt-dlp może rozwiązać problem. W razie powtarzających się błędów zgłoś issue na GitHub.'],
+      ['Jak zainstalować i zaktualizować CLI?', 'Zainstaluj: <code>npm install -g wavesconv@latest</code>. Aktualizacja: to samo polecenie (nie polegaj wyłącznie na <code>npm update -g</code>). Sprawdź wersję: <code>wavesconv --version</code> i porównaj z <code>npm view wavesconv version</code>.'],
     ],
     'footer.built': 'Zbudowane z yt-dlp, ffmpeg i Electron',
     'footer.src': 'Kod na GitHub',
@@ -866,6 +967,7 @@ const T = {
     'toc.7': 'History',
     'toc.8': 'Keyboard Shortcuts',
     'toc.9': 'Settings',
+    'toc.cli': 'CLI (terminal)',
     'toc.10': 'FAQ',
     'header.eyebrow': 'User Guide',
     'header.sub': 'Documentation',
@@ -955,6 +1057,27 @@ const T = {
     's9.p.formats': 'Set the default type (Video/Audio), format (MP4, MP3, etc.), and quality. These can be overridden per individual download.',
     's9.h.template': 'Filename template',
     's9.p.template': 'Choose a naming scheme: <code>%(title)s</code> (title only), <code>%(uploader)s - %(title)s</code> (author and title), <code>%(title)s [%(id)s]</code> (with ID), or enter a custom yt-dlp-compatible template.',
+    'scli.title': 'CLI (terminal)',
+    'scli.intro': '<strong>wavesconv</strong> is the terminal version of WavesConverter — published on <a href="https://www.npmjs.com/package/wavesconv" target="_blank" rel="noopener">npm</a>. Perfect when you prefer pasting links in a console instead of opening the GUI. Requires <strong>Node.js 18+</strong>.',
+    'scli.h.install': 'Installation',
+    'scli.code.install': 'npm — global',
+    'scli.p.install': 'On first use run <code>wavesconv tools install</code> to download yt-dlp. File conversion also needs <code>ffmpeg</code> on your PATH (or install tools via the desktop app).',
+    'scli.h.interactive': 'Interactive mode (paste links)',
+    'scli.p.interactive': 'Run <code>wavesconv</code> with no arguments — a colourful prompt appears. Paste a YouTube link and press Enter — the download starts automatically.',
+    'scli.code.interactive': 'Terminal',
+    'scli.h.commands': 'One-shot commands',
+    'scli.code.download': 'Download',
+    'scli.code.other': 'Other',
+    'scli.h.slash': 'Interactive slash commands',
+    'scli.cmd.audio': 'Audio mode (MP3)',
+    'scli.cmd.video': 'Video mode (MP4)',
+    'scli.cmd.fmt': 'Set format',
+    'scli.cmd.q': 'Set quality',
+    'scli.cmd.folder': 'Change download folder',
+    'scli.cmd.info': 'Preview metadata',
+    'scli.cmd.quit': 'Exit',
+    'scli.h.update': 'Updating the CLI',
+    'scli.tip': 'If <code>npm update -g wavesconv</code> does not bump the version, use <code>npm install -g wavesconv@latest</code>. Check the registry: <code>npm view wavesconv version</code>.',
     's10.title': 'FAQ',
     'faq.items': [
       ['Is this legal?', 'Downloading videos for personal private use is legal in many countries, but this depends on local law. WavesConverter is a technical tool — the user is responsible for compliance with applicable laws and YouTube\'s Terms of Service in their region.'],
@@ -962,6 +1085,7 @@ const T = {
       ['Where do ffmpeg and yt-dlp come from?', 'Both libraries are bundled inside the app — no separate installation required. ffmpeg is open source (LGPL/GPL) and yt-dlp is open source (Unlicense). No data is sent to external servers.'],
       ['How do I update WavesConverter?', 'The app automatically checks for updates via GitHub Releases. When a new version is available, a banner appears at the top of the window with an "Install" button. Click it and the update will download and install itself.'],
       ['What should I do if a download fails?', 'First check your internet connection. If the error is URL-specific, make sure the video is public (not private or age-restricted). Try updating the app — a newer yt-dlp version often fixes compatibility issues. For persistent errors, open an issue on GitHub.'],
+      ['How do I install and update the CLI?', 'Install: <code>npm install -g wavesconv@latest</code>. Update: run the same command (do not rely only on <code>npm update -g</code>). Check version: <code>wavesconv --version</code> vs <code>npm view wavesconv version</code>.'],
     ],
     'footer.built': 'Built with yt-dlp, ffmpeg & Electron',
     'footer.src': 'Source on GitHub',
@@ -1039,7 +1163,7 @@ window.addEventListener('scroll', () => {
 }, { passive: true });
 
 /* ── SCROLL SPY ── */
-const sections = ['instalacja','pobieranie','playlisty','batch','konwerter','kolejka','historia','skroty','ustawienia','faq'];
+const sections = ['instalacja','pobieranie','playlisty','batch','konwerter','kolejka','historia','skroty','ustawienia','cli','faq'];
 const allTocLinks = () => document.querySelectorAll('.toc-list a');
 
 const spy = new IntersectionObserver((entries) => {

@@ -16,6 +16,9 @@ window.addEventListener('DOMContentLoaded', async () => {
     const currentAnim = settings.animations || 'yes';
     window.selectWelcomeAnim(currentAnim);
   }
+  if (window.api.onDeepLink) {
+    window.api.onDeepLink(payload => handleDeepLink(payload));
+  }
   if (window.api.onClipboardSearchTrigger) {
     window.api.onClipboardSearchTrigger(async (text) => {
       if (!text) return;
@@ -191,6 +194,63 @@ function initKeyboardShortcuts() {
       renderQueue(); bumpBadge(); toast('Wyczyszczono ukończone pozycje','info');
     }
   });
+}
+
+/* ─── Deep link (wavesconverter://…) ─── */
+async function handleDeepLink(payload) {
+  if (!payload) return;
+  const action = payload.action || 'open';
+
+  if (action === 'open') {
+    switchTab('download');
+    return;
+  }
+
+  if (payload.url && !/^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+/i.test(payload.url)) {
+    toast('Deep link: nieprawidłowy URL YouTube', 'warning');
+    return;
+  }
+
+  if (payload.url) {
+    switchTab('download');
+    document.getElementById('urlInput').value = payload.url;
+
+    if (payload.format) {
+      const fmt = payload.format.toLowerCase();
+      const isAudio = payload.audioOnly || ['mp3', 'wav', 'flac', 'aac', 'm4a', 'ogg'].includes(fmt);
+      if (isAudio) {
+        document.querySelectorAll('#singleTypePills .pill').forEach(p => p.classList.toggle('active', p.dataset.val === 'audio'));
+        updateSingleType('audio');
+      }
+      const fmtSel = document.getElementById('singleFormat');
+      if (fmtSel && [...fmtSel.options].some(o => o.value === fmt)) fmtSel.value = fmt;
+    }
+    if (payload.quality) {
+      const qSel = document.getElementById('singleQuality');
+      if (qSel && [...qSel.options].some(o => o.value === payload.quality)) qSel.value = payload.quality;
+    }
+    if (payload.bitrate) {
+      const brSel = document.getElementById('singleBitrate');
+      if (brSel) brSel.value = payload.bitrate;
+    }
+
+    toast('Otwarto link z deep link — wyszukiwanie…', 'info');
+    await doFetch();
+
+    if (payload.autoQueue && fetchedItems.length) {
+      if (isPlaylist) addPlaylistToQueue();
+      else addSingleToQueue();
+      if (payload.autoStart) startQueue();
+      toast(payload.autoStart ? 'Dodano do kolejki i uruchomiono' : 'Dodano do kolejki z deep link', 'success');
+    }
+    return;
+  }
+
+  if (action === 'convert' && payload.file) {
+    switchTab('convert');
+    setConvertInput(payload.file);
+    toast('Załadowano plik z deep link', 'info');
+  }
 }
 
 /* ─── Download Tab ─── */

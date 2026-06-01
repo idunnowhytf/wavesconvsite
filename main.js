@@ -1,10 +1,26 @@
-const { app, BrowserWindow, ipcMain, dialog, shell, Menu, Tray, globalShortcut, clipboard } = require('electron');
 const path = require('path');
 const fs = require('fs');
-const { spawn, exec } = require('child_process');
+const { exec } = require('child_process');
 const os = require('os');
 const https = require('https');
 const http = require('http');
+const engine = require('./lib/engine');
+const cli = require('./cli');
+
+// Tryb CLI: node cli.js …  lub  npx electron . --cli download …
+const rawArgv = process.argv.slice(1);
+const cliFlagIdx = rawArgv.indexOf('--cli');
+if (cliFlagIdx !== -1) {
+  cli.run(rawArgv.slice(cliFlagIdx + 1)).then(code => process.exit(code ?? 0)).catch(e => {
+    console.error(e.message || e);
+    process.exit(1);
+  });
+} else {
+  startElectronApp();
+}
+
+function startElectronApp() {
+const { app, BrowserWindow, ipcMain, dialog, shell, Menu, Tray, globalShortcut, clipboard } = require('electron');
 const QRCode = require('qrcode');
 
 let mainWindow;
@@ -12,49 +28,61 @@ let ytDlpPath;
 let tray = null;
 let shareServer = null;
 let isQuitting = false;
+let pendingDeepLink = null;
+
+const PROTOCOL = 'wavesconverter';
+
+function syncEngineUserData() {
+  if (app.isReady()) process.env.WAVESCONVERTER_USER_DATA = app.getPath('userData');
+}
 
 function findYtDlp() {
-  const isWin = process.platform === 'win32';
-  const name = isWin ? 'yt-dlp.exe' : 'yt-dlp';
-  const userBin = app.isReady() ? path.join(app.getPath('userData'), 'bin', name) : null;
-  const candidates = [
-    userBin,
-    path.join(__dirname, 'yt-dlp-bin', name),
-    path.join(__dirname, 'node_modules', 'yt-dlp-wrap', 'bin', name),
-    isWin ? 'C:\\ProgramData\\chocolatey\\bin\\yt-dlp.exe' : null,
-    isWin ? 'C:\\scoop\\shims\\yt-dlp.exe' : null,
-    '/opt/homebrew/bin/yt-dlp',
-    '/usr/local/bin/yt-dlp',
-    '/usr/bin/yt-dlp',
-  ].filter(Boolean);
-  return candidates.find(c => fs.existsSync(c)) || null;
+  syncEngineUserData();
+  return engine.findYtDlp();
 }
 
 function findFfmpeg() {
-  const isWin = process.platform === 'win32';
-  const name = isWin ? 'ffmpeg.exe' : 'ffmpeg';
-  const userBin = app.isReady() ? path.join(app.getPath('userData'), 'bin', name) : null;
-  
-  if (userBin && fs.existsSync(userBin)) return userBin;
-
+  syncEngineUserData();
+  let p = engine.findFfmpeg();
+  if (p) return p;
   try {
     const i = require('@ffmpeg-installer/ffmpeg');
-    let p = i.path;
-    if (app.isPackaged) {
-      p = p.replace('app.asar', 'app.asar.unpacked');
-    }
-    if (fs.existsSync(p)) return p;
+    let fp = i.path;
+    if (app.isPackaged) fp = fp.replace('app.asar', 'app.asar.unpacked');
+    if (fs.existsSync(fp)) return fp;
   } catch (_) {}
+  return null;
+}
 
-  const candidates = [
-    isWin ? 'C:\\ProgramData\\chocolatey\\bin\\ffmpeg.exe' : null,
-    isWin ? 'C:\\scoop\\shims\\ffmpeg.exe' : null,
-    '/opt/homebrew/bin/ffmpeg',
-    '/usr/local/bin/ffmpeg',
-    '/usr/bin/ffmpeg',
-  ].filter(Boolean);
-  
-  return candidates.find(c => fs.existsSync(c)) || null;
+function registerProtocol() {
+  if (process.defaultApp) {
+    if (process.argv.length >= 2) {
+      app.setAsDefaultProtocolClient(PROTOCOL, process.execPath, [path.resolve(process.argv[1])]);
+    }
+  } else {
+    app.setAsDefaultProtocolClient(PROTOCOL);
+  }
+}
+
+function deliverDeepLink(payload) {
+  if (!payload) return;
+  if (mainWindow?.webContents && !mainWindow.webContents.isLoading()) {
+    mainWindow.show();
+    mainWindow.focus();
+    mainWindow.webContents.send('deep-link', payload);
+    pendingDeepLink = null;
+  } else {
+    pendingDeepLink = payload;
+  }
+}
+
+function handleDeepLinkUrl(url) {
+  const payload = engine.parseDeepLink(url);
+  if (payload) deliverDeepLink(payload);
+}
+
+function flushPendingDeepLink() {
+  if (pendingDeepLink) deliverDeepLink(pendingDeepLink);
 }
 
 // Helper: Get ffbinaries platform tag
@@ -185,6 +213,7 @@ function createWindow() {
   });
   mainWindow.loadFile('index.html');
   mainWindow.once('ready-to-show', () => mainWindow.show());
+  mainWindow.webContents.on('did-finish-load', flushPendingDeepLink);
   mainWindow.on('maximize',   () => mainWindow.webContents.send('window-state', 'maximized'));
   mainWindow.on('unmaximize', () => mainWindow.webContents.send('window-state', 'normal'));
   
@@ -244,40 +273,59 @@ function showAndCheckClipboard() {
   }
 }
 
-app.whenReady().then(async () => {
-  ytDlpPath = findYtDlp();
-  if (!ytDlpPath) {
-    try {
-      const YTDlpWrap = require('yt-dlp-wrap').default || require('yt-dlp-wrap');
-      const binDir = path.join(app.getPath('userData'), 'bin');
-      if (!fs.existsSync(binDir)) fs.mkdirSync(binDir, { recursive: true });
-      const binFile = path.join(binDir, process.platform === 'win32' ? 'yt-dlp.exe' : 'yt-dlp');
-      await YTDlpWrap.downloadFromGithub(binFile);
-      if (process.platform !== 'win32') fs.chmodSync(binFile, 0o755);
-      ytDlpPath = binFile;
-    } catch (e) { console.error('yt-dlp download failed on startup:', e.message); }
-  }
-  createWindow();
-  createTray();
-  registerGlobalShortcut();
-  setupAutoUpdater();
-});
+const gotSingleInstanceLock = app.requestSingleInstanceLock();
+if (!gotSingleInstanceLock) {
+  app.quit();
+} else {
+  app.on('second-instance', (_, argv) => {
+    const link = engine.findDeepLinkInArgv(argv);
+    if (link) handleDeepLinkUrl(link);
+    if (mainWindow) {
+      mainWindow.show();
+      mainWindow.focus();
+    }
+  });
 
-app.on('will-quit', () => {
-  globalShortcut.unregisterAll();
-});
+  app.on('open-url', (event, url) => {
+    event.preventDefault();
+    handleDeepLinkUrl(url);
+  });
 
-app.on('window-all-closed', () => {
-  // Keep running in system tray
-});
+  app.whenReady().then(async () => {
+    syncEngineUserData();
+    registerProtocol();
 
-app.on('activate', () => {
-  if (BrowserWindow.getAllWindows().length === 0) {
+    const startupLink = engine.findDeepLinkInArgv(process.argv);
+    if (startupLink) handleDeepLinkUrl(startupLink);
+
+    ytDlpPath = findYtDlp();
+    if (!ytDlpPath) {
+      try {
+        ytDlpPath = await engine.ensureYtDlp();
+      } catch (e) { console.error('yt-dlp download failed on startup:', e.message); }
+    }
     createWindow();
-  } else {
-    mainWindow?.show();
-  }
-});
+    createTray();
+    registerGlobalShortcut();
+    setupAutoUpdater();
+  });
+
+  app.on('will-quit', () => {
+    globalShortcut.unregisterAll();
+  });
+
+  app.on('window-all-closed', () => {
+    // Keep running in system tray
+  });
+
+  app.on('activate', () => {
+    if (BrowserWindow.getAllWindows().length === 0) {
+      createWindow();
+    } else {
+      mainWindow?.show();
+    }
+  });
+}
 
 function setupAutoUpdater() {
   if (!app.isPackaged) return;
@@ -362,201 +410,33 @@ ipcMain.handle('install-tools', async (event) => {
   return { success: true };
 });
 
-ipcMain.handle('fetch-info', async (_, url) => {
-  const activeYtDlp = findYtDlp();
-  if (!activeYtDlp) throw new Error('yt-dlp not found. Please click the "Install / Repair Tools" button in Settings.');
-  return new Promise((resolve, reject) => {
-    const args = ['--dump-json', '--flat-playlist', '--no-warnings', url];
-    let out = '', err = '';
-    const proc = spawn(activeYtDlp, args);
-    proc.stdout.on('data', d => out += d);
-    proc.stderr.on('data', d => err += d);
-    proc.on('close', () => {
-      if (!out.trim()) return reject(new Error(err.slice(0, 300) || 'No info returned'));
-      try { resolve(out.trim().split('\n').filter(Boolean).map(l => JSON.parse(l))); }
-      catch (e) { reject(new Error('Failed to parse video info')); }
-    });
-  });
-});
+ipcMain.handle('fetch-info', async (_, url) => engine.fetchInfo(url));
 
 const active = new Map();
 
-ipcMain.handle('start-download', (_, job) => new Promise((resolve, reject) => {
-  const activeYtDlp = findYtDlp();
-  const ffmpeg = findFfmpeg();
-  if (!activeYtDlp) return reject(new Error('yt-dlp not found. Please click the "Install / Repair Tools" button in Settings.'));
-  const { id, url, outputFormat, quality, bitrate, outputDir, filename, audioOnly } = job;
-  const safeName = (filename || '%(title)s').replace(/[<>:"/\\|?*]/g, '_');
-  const outTpl = path.join(outputDir, safeName + '.%(ext)s');
-  const args = ['--no-warnings', '--newline'];
-  if (ffmpeg) args.push('--ffmpeg-location', path.dirname(ffmpeg));
-  if (audioOnly) {
-    args.push('-x', '--audio-format', outputFormat || 'mp3');
-    if (bitrate) args.push('--audio-quality', bitrate.replace('k', '') + 'K');
-  } else {
-    const h = quality && quality !== 'best' ? quality.replace('p', '') : null;
-    args.push('-f', h ? `bestvideo[height<=${h}]+bestaudio/best[height<=${h}]/best` : 'bestvideo+bestaudio/best');
-    args.push('--merge-output-format', outputFormat || 'mp4');
-    if (!outputFormat || outputFormat === 'mp4') {
-      args.push('--postprocessor-args', 'Merger:-c:a aac');
-    }
-    if (bitrate) args.push('--postprocessor-args', `ffmpeg:-b:v ${bitrate}`);
-  }
-  args.push('-o', outTpl, url);
-  
-  let detectedPath = '';
-  const proc = spawn(activeYtDlp, args);
-  active.set(id, proc);
-  
-  proc.stdout.on('data', d => {
-    const line = d.toString().trim();
-    const mDest = line.match(/Destination:\s+(.+)/i) || 
-                  line.match(/Merging formats into\s+"([^"]+)"/i) ||
-                  line.match(/Merging formats into\s+(.+)/i) ||
-                  line.match(/\[download\]\s+(.+?)\s+has already been downloaded/i);
-    if (mDest) {
-      detectedPath = mDest[1].trim();
-    }
-    const m = line.match(/(\d+\.?\d*)%/);
-    if (m) mainWindow.webContents.send('download-progress', { id, progress: parseFloat(m[1]), line });
-    mainWindow.webContents.send('download-log', { id, line });
-  });
-  
-  proc.stderr.on('data', d => mainWindow.webContents.send('download-log', { id, line: d.toString().trim() }));
-  
-  proc.on('close', code => {
-    active.delete(id);
-    if (code === 0) {
-      let fileSize = 0;
-      let finalPath = '';
-      try {
-        if (detectedPath && fs.existsSync(detectedPath)) {
-          finalPath = detectedPath;
-        } else if (detectedPath && fs.existsSync(path.resolve(outputDir, detectedPath))) {
-          finalPath = path.resolve(outputDir, detectedPath);
-        } else {
-          // Fallback 1: match by cleanTitle
-          const cleanTitle = (job.title || '').replace(/[<>:"/\\|?*]/g, '_');
-          const files = fs.readdirSync(outputDir);
-          const match = files.find(f => f.toLowerCase().includes(cleanTitle.toLowerCase()));
-          if (match) {
-            finalPath = path.join(outputDir, match);
-          } else {
-            // Fallback 2: search for most recently modified file in outputDir in last 15 seconds
-            const now = Date.now();
-            let bestFile = null;
-            let bestMtime = 0;
-            for (const f of files) {
-              const fp = path.join(outputDir, f);
-              try {
-                const stat = fs.statSync(fp);
-                if (stat.isFile() && (now - stat.mtimeMs < 15000) && stat.mtimeMs > bestMtime) {
-                  bestMtime = stat.mtimeMs;
-                  bestFile = fp;
-                }
-              } catch (_) {}
-            }
-            if (bestFile) finalPath = bestFile;
-          }
-        }
-        
-        if (finalPath && fs.existsSync(finalPath)) {
-          fileSize = fs.statSync(finalPath).size;
-        }
-      } catch (_) {}
-      resolve({ success: true, size: fileSize, path: finalPath });
-    } else {
-      reject(new Error(`Exit ${code}`));
-    }
-  });
-  proc.on('error', err => { active.delete(id); reject(err); });
-}));
+ipcMain.handle('start-download', (_, job) => {
+  if (!findYtDlp()) return Promise.reject(new Error('yt-dlp not found. Please click the "Install / Repair Tools" button in Settings.'));
+  const { id } = job;
+  return engine.runDownload(job, {
+    onSpawn: proc => active.set(id, proc),
+    onProgress: (progress, line) => {
+      mainWindow?.webContents.send('download-progress', { id, progress, line });
+      mainWindow?.webContents.send('download-log', { id, line });
+    },
+    onLog: line => mainWindow?.webContents.send('download-log', { id, line }),
+  }).finally(() => active.delete(id));
+});
 
 ipcMain.on('cancel-download', (_, id) => { const p = active.get(id); if (p) { p.kill('SIGTERM'); active.delete(id); } });
 
-ipcMain.handle('convert-file', (_, job) => new Promise((resolve, reject) => {
-  const ffmpeg = findFfmpeg();
-  if (!ffmpeg) return reject(new Error('ffmpeg not found. Please click the "Install / Repair Tools" button in Settings.'));
-  const { id, inputPath, outputPath, bitrate, videoBitrate, resolution, gifStart, gifDuration } = job;
-  const ext = outputPath.split('.').pop().toLowerCase();
-  const isGif = ext === 'gif';
-  
-  const args = ['-y'];
-  if (isGif) {
-    if (gifStart) args.push('-ss', gifStart);
-    if (gifDuration) args.push('-t', String(gifDuration));
-  }
-  args.push('-i', inputPath);
-  
-  if (isGif) {
-    args.push('-vf', 'fps=15,scale=480:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse');
-  } else {
-    if (resolution && resolution !== 'original') {
-      args.push('-vf', `scale=-2:${resolution.replace('p', '')}`);
-    }
-    const isVideo = ['mp4', 'mkv', 'mov', 'avi', 'webm'].includes(ext);
-    if (isVideo) {
-      if (ext === 'webm') {
-        args.push('-c:v', 'libvpx-vp9');
-        if (videoBitrate) {
-          args.push('-b:v', videoBitrate);
-        } else {
-          args.push('-crf', '28', '-b:v', '0');
-        }
-        args.push('-c:a', 'libopus');
-        if (bitrate) args.push('-b:a', bitrate);
-        else args.push('-b:a', '128k');
-      } else {
-        args.push('-c:v', 'libx264', '-preset', 'fast');
-        if (videoBitrate) {
-          args.push('-b:v', videoBitrate);
-        } else {
-          args.push('-crf', '18');
-        }
-        args.push('-c:a', 'aac');
-        if (bitrate) args.push('-b:a', bitrate);
-        else args.push('-b:a', '192k');
-      }
-    } else {
-      if (ext === 'mp3') {
-        args.push('-c:a', 'libmp3lame');
-        if (bitrate) args.push('-b:a', bitrate);
-        else args.push('-b:a', '256k');
-      } else if (ext === 'wav') {
-        args.push('-c:a', 'pcm_s16le');
-      } else if (ext === 'flac') {
-        args.push('-c:a', 'flac');
-      } else if (ext === 'aac' || ext === 'm4a') {
-        args.push('-c:a', 'aac');
-        if (bitrate) args.push('-b:a', bitrate);
-        else args.push('-b:a', '256k');
-      } else if (ext === 'ogg') {
-        args.push('-c:a', 'libvorbis');
-        if (bitrate) args.push('-b:a', bitrate);
-        else args.push('-b:a', '192k');
-      }
-    }
-  }
-  
-  args.push(outputPath);
-  const proc = spawn(ffmpeg, args);
-  active.set(id, proc);
-  let errOut = '';
-  proc.stderr.on('data', d => {
-    const line = d.toString();
-    errOut += line;
-    const t = line.match(/time=(\d+:\d+:\d+)/);
-    if (t) mainWindow.webContents.send('convert-progress', { id, time: t[1] });
-  });
-  proc.on('close', code => {
-    active.delete(id);
-    code === 0 ? resolve({ success: true }) : reject(new Error(errOut.slice(-300)));
-  });
-  proc.on('error', err => {
-    active.delete(id);
-    reject(err);
-  });
-}));
+ipcMain.handle('convert-file', (_, job) => {
+  if (!findFfmpeg()) return Promise.reject(new Error('ffmpeg not found. Please click the "Install / Repair Tools" button in Settings.'));
+  const { id } = job;
+  return engine.runConvert(job, {
+    onSpawn: proc => active.set(id, proc),
+    onProgress: time => mainWindow?.webContents.send('convert-progress', { id, time }),
+  }).finally(() => active.delete(id));
+});
 
 // Expose download-thumbnail handler
 ipcMain.handle('download-thumbnail', async (_, { url, dest }) => {
@@ -637,3 +517,5 @@ ipcMain.handle('stop-share-server', async () => {
   }
   return { success: true };
 });
+
+} // startElectronApp

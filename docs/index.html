@@ -338,6 +338,57 @@
       box-shadow: 0 4px 20px rgba(124,58,237,.12);
     }
 
+    /* ── CLI SECTION ── */
+    .cli-section { padding: 100px 24px; }
+    .cli-inner {
+      max-width: 820px; margin: 0 auto;
+      background: linear-gradient(135deg,rgba(124,58,237,.08),rgba(34,211,238,.04));
+      border: 1px solid rgba(168,85,247,.22); border-radius: 24px;
+      padding: 52px 44px; backdrop-filter: blur(20px);
+      box-shadow: 0 0 80px rgba(124,58,237,.1), inset 0 1px 0 rgba(255,255,255,.05);
+    }
+    .cli-inner .section-head { text-align: left; align-items: flex-start; margin-bottom: 36px; }
+    .cli-steps { display: flex; flex-direction: column; gap: 14px; margin-bottom: 28px; }
+    .cli-step {
+      display: flex; gap: 14px; align-items: flex-start;
+      background: rgba(0,0,0,.25); border: 1px solid var(--bord);
+      border-radius: 12px; padding: 16px 18px;
+    }
+    .cli-step-n {
+      width: 28px; height: 28px; border-radius: 8px; flex-shrink: 0;
+      background: linear-gradient(135deg,rgba(124,58,237,.35),rgba(34,211,238,.2));
+      border: 1px solid rgba(168,85,247,.3);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 800; color: var(--p3);
+    }
+    .cli-step pre {
+      margin: 10px 0 0; padding: 12px 14px; border-radius: 8px;
+      background: rgba(0,0,0,.4); border: 1px solid var(--bord);
+      font-family: 'SF Mono', 'Fira Code', monospace; font-size: 12.5px;
+      color: var(--p4); overflow-x: auto; line-height: 1.6;
+    }
+    .cli-step p { font-size: 14px; color: var(--text2); line-height: 1.65; margin: 0; }
+    .cli-step strong { color: var(--text); }
+    .cli-links {
+      display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px;
+    }
+    .cli-link-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 18px; border-radius: 10px; font-size: 13px; font-weight: 700;
+      text-decoration: none; transition: all .18s;
+    }
+    .cli-link-btn.pri {
+      background: linear-gradient(135deg,var(--p1),var(--acc)); color: #fff;
+      box-shadow: 0 4px 20px var(--glow);
+    }
+    .cli-link-btn.sec {
+      background: rgba(255,255,255,.04); border: 1px solid var(--bord2); color: var(--p3);
+    }
+    .cli-link-btn:hover { transform: translateY(-1px); opacity: .92; }
+    @media(max-width: 640px) {
+      .cli-inner { padding: 32px 22px; }
+    }
+
     /* ── DOWNLOAD SECTION ── */
     .dl-section { padding: 100px 24px; text-align:center; }
     .dl-card {
@@ -614,6 +665,7 @@
     <a href="#features" data-i18n="nav.features">Funkcje</a>
     <a href="#how" data-i18n="nav.how">Jak działa</a>
     <a href="#formats" data-i18n="nav.formats">Formaty</a>
+    <a href="#cli" data-i18n="nav.cli">CLI</a>
     <a href="#download" data-i18n="nav.download">Pobierz</a>
     <a href="/WavesConverter/changelog.html" data-i18n="nav.changelog">Changelog</a>
     <a href="/WavesConverter/docs.html" data-i18n="nav.docs">Docs</a>
@@ -658,6 +710,10 @@
         <line x1="12" y1="15" x2="12" y2="3"/>
       </svg>
       <span data-i18n="hero.btn.dl">Pobierz za darmo</span>
+    </a>
+    <a class="btn-h sec" href="#cli">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+      <span data-i18n="hero.btn.cli">CLI (terminal)</span>
     </a>
     <a class="btn-h sec" href="https://github.com/idunnowhytf/WavesConverter" target="_blank">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
@@ -861,6 +917,53 @@
 </section>
 
 
+<!-- CLI TUTORIAL -->
+<section class="cli-section" id="cli">
+  <div class="cli-inner reveal">
+    <div class="section-head" id="cli-head">
+      <div class="s-label" data-i18n="cli.label">⌨ Terminal</div>
+      <h2 class="s-title" data-i18n="cli.title">Pobieraj z <span class="grad">terminala</span></h2>
+      <p class="s-sub" data-i18n="cli.sub">Bez okna aplikacji — zainstaluj <strong>wavesconv</strong> z npm, uruchom i wklejaj linki YouTube w konsoli.</p>
+    </div>
+    <div class="cli-steps" id="cli-steps">
+      <div class="cli-step">
+        <div class="cli-step-n">1</div>
+        <div>
+          <p data-i18n="cli.s1">Zainstaluj <strong>Node.js 18+</strong>, potem globalnie:</p>
+          <pre>npm install -g wavesconv@latest</pre>
+        </div>
+      </div>
+      <div class="cli-step">
+        <div class="cli-step-n">2</div>
+        <div>
+          <p data-i18n="cli.s2">Przy pierwszym uruchomieniu doinstaluj yt-dlp:</p>
+          <pre>wavesconv tools install</pre>
+        </div>
+      </div>
+      <div class="cli-step">
+        <div class="cli-step-n">3</div>
+        <div>
+          <p data-i18n="cli.s3">Uruchom tryb interaktywny i wklej link:</p>
+          <pre>wavesconv
+# 🔗 Wklej link › https://youtu.be/…</pre>
+        </div>
+      </div>
+      <div class="cli-step">
+        <div class="cli-step-n">4</div>
+        <div>
+          <p data-i18n="cli.s4">Albo jednym poleceniem (audio MP3):</p>
+          <pre>wavesconv download "https://youtu.be/…" -a -f mp3</pre>
+        </div>
+      </div>
+    </div>
+    <div class="cli-links">
+      <a class="cli-link-btn pri" href="https://www.npmjs.com/package/wavesconv" target="_blank" rel="noopener" data-i18n="cli.npm">Pakiet na npm ↗</a>
+      <a class="cli-link-btn sec" href="/WavesConverter/docs.html#cli" data-i18n="cli.docs">Pełna dokumentacja CLI</a>
+    </div>
+    <p style="margin-top:20px;font-size:12px;color:var(--text3);" data-i18n="cli.update">Aktualizacja: <code style="font-size:11px;padding:2px 6px;background:rgba(124,58,237,.15);border-radius:4px;color:var(--p3);">npm install -g wavesconv@latest</code></p>
+  </div>
+</section>
+
 <!-- DOWNLOAD -->
 <section class="dl-section" id="download">
   <div class="dl-card reveal">
@@ -937,6 +1040,7 @@ const TRANSLATIONS = {
     'nav.features': 'Funkcje',
     'nav.how': 'Jak działa',
     'nav.formats': 'Formaty',
+    'nav.cli': 'CLI',
     'nav.download': 'Pobierz',
     'nav.cta': 'Pobierz za darmo',
     'hero.eyebrow': 'Early Access v1.1.0 · Darmowe i Open Source · 100% Offline',
@@ -944,6 +1048,7 @@ const TRANSLATIONS = {
     'hero.h1.b': 'Konwertuj cokolwiek.',
     'hero.sub': 'Aplikacja desktopowa na macOS i Windows do pobierania filmów i playlist z YouTube oraz konwersji plików multimedialnych — bez internetu, bez konta, całkowicie za darmo.',
     'hero.btn.dl': 'Pobierz za darmo',
+    'hero.btn.cli': 'CLI (terminal)',
     'hero.btn.gh': 'Zobacz na GitHub',
     'hero.meta': 'macOS 12+ · Windows 10+ · Bez telemetrii · Bez subskrypcji',
     'mock.tab1': '⬇ Pobierz', 'mock.tab2': '🔄 Konwertuj', 'mock.tab3': '📋 Historia', 'mock.tab4': '⚙ Ustawienia',
@@ -957,6 +1062,16 @@ const TRANSLATIONS = {
     'how.s2.title': 'Wybierz format i jakość', 'how.s2.text': 'Wybierz Video lub Audio, potem format (MP4, MP3, WAV…) i jakość (1080p, 4K, 320kbps…). Dodaj do kolejki — możesz dodać ile chcesz naraz.',
     'how.s3.title': 'Start — pliki lądują w folderze', 'how.s3.text': 'Obserwuj paski postępu. Dostaniesz powiadomienie gdy skończy. Pliki znajdziesz dokładnie tam gdzie ustawiłeś. To cały przepływ.',
     'formats.label': '✦ Formaty', 'formats.title': 'Każdy format jakiego potrzebujesz.', 'formats.sub': 'Pobieraj jako wideo, wyciągaj audio lub konwertuj dowolny plik lokalny.',
+    'cli.label': '⌨ Terminal',
+    'cli.title': 'Pobieraj z <span class="grad">terminala</span>',
+    'cli.sub': 'Bez okna aplikacji — zainstaluj <strong>wavesconv</strong> z npm, uruchom i wklejaj linki YouTube w konsoli.',
+    'cli.s1': 'Zainstaluj <strong>Node.js 18+</strong>, potem globalnie:',
+    'cli.s2': 'Przy pierwszym uruchomieniu doinstaluj yt-dlp:',
+    'cli.s3': 'Uruchom tryb interaktywny i wklej link:',
+    'cli.s4': 'Albo jednym poleceniem (audio MP3):',
+    'cli.npm': 'Pakiet na npm ↗',
+    'cli.docs': 'Pełna dokumentacja CLI',
+    'cli.update': 'Aktualizacja: <code style="font-size:11px;padding:2px 6px;background:rgba(124,58,237,.15);border-radius:4px;color:var(--p3);">npm install -g wavesconv@latest</code>',
     'dl.label': '⬇ Pobierz', 'dl.title': 'Pobierz <span class="grad">WavesConverter</span>', 'dl.sub': 'Instalacja jednym kliknięciem. macOS i Windows. Zawsze za darmo.',
     'dl.mac.note': 'Wymaga macOS 12 Monterey lub nowszego · Darmowe na zawsze · Bez telemetrii',
     'dl.win.btn': 'Windows — Instalator 64-bit (.exe)',
@@ -984,6 +1099,7 @@ const TRANSLATIONS = {
     'nav.features': 'Features',
     'nav.how': 'How it works',
     'nav.formats': 'Formats',
+    'nav.cli': 'CLI',
     'nav.download': 'Download',
     'nav.cta': 'Download Free',
     'hero.eyebrow': 'Early Access v1.1.0 · Free & Open Source · 100% Offline',
@@ -991,6 +1107,7 @@ const TRANSLATIONS = {
     'hero.h1.b': 'Convert everything.',
     'hero.sub': 'A premium desktop app for macOS & Windows that downloads YouTube videos and playlists, converts any media file — all offline, no account needed, completely free.',
     'hero.btn.dl': 'Download Free',
+    'hero.btn.cli': 'CLI (terminal)',
     'hero.btn.gh': 'View on GitHub',
     'hero.meta': 'macOS 12+ · Windows 10+ · No telemetry · No subscription',
     'mock.tab1': '⬇ Download', 'mock.tab2': '🔄 Convert', 'mock.tab3': '📋 History', 'mock.tab4': '⚙ Settings',
@@ -1004,6 +1121,16 @@ const TRANSLATIONS = {
     'how.s2.title': 'Pick your format & quality', 'how.s2.text': 'Choose Video or Audio, then pick the format (MP4, MP3, WAV…) and quality (1080p, 4K, 320kbps…). Add to queue — stack as many as you want.',
     'how.s3.title': 'Hit Start — files land in your folder', 'how.s3.text': 'Watch the progress bars. Get a notification when done. Find your files exactly where you set them. That\'s the whole flow.',
     'formats.label': '✦ Formats', 'formats.title': 'Every format you\'ll ever need.', 'formats.sub': 'Download as video, rip as audio, or convert any local file.',
+    'cli.label': '⌨ Terminal',
+    'cli.title': 'Download from the <span class="grad">terminal</span>',
+    'cli.sub': 'No GUI needed — install <strong>wavesconv</strong> from npm, run it, and paste YouTube links in your console.',
+    'cli.s1': 'Install <strong>Node.js 18+</strong>, then globally:',
+    'cli.s2': 'On first run, install yt-dlp:',
+    'cli.s3': 'Start interactive mode and paste a link:',
+    'cli.s4': 'Or one-shot (audio MP3):',
+    'cli.npm': 'npm package ↗',
+    'cli.docs': 'Full CLI documentation',
+    'cli.update': 'Update: <code style="font-size:11px;padding:2px 6px;background:rgba(124,58,237,.15);border-radius:4px;color:var(--p3);">npm install -g wavesconv@latest</code>',
     'dl.label': '⬇ Download', 'dl.title': 'Get <span class="grad">WavesConverter</span>', 'dl.sub': 'One-click install. macOS & Windows. Always free.',
     'dl.mac.note': 'Requires macOS 12 Monterey or later · Free forever · No telemetry',
     'dl.win.btn': 'Windows — 64-bit Installer (.exe)',
@@ -1057,6 +1184,20 @@ function applyLang(lang) {
   // formats head
   const fmh = document.getElementById('formats-head');
   if(fmh) fmh.innerHTML = `<div class="s-label reveal visible">${t['formats.label']}</div><h2 class="s-title reveal visible">${t['formats.title']}</h2><p class="s-sub reveal visible">${t['formats.sub']}</p>`;
+  // cli head
+  const clih = document.getElementById('cli-head');
+  if(clih) clih.innerHTML = `<div class="s-label">${t['cli.label']}</div><h2 class="s-title">${t['cli.title']}</h2><p class="s-sub">${t['cli.sub']}</p>`;
+  const clipre = [
+    ['npm install -g wavesconv@latest'],
+    ['wavesconv tools install'],
+    ['wavesconv\n# 🔗 Wklej link › https://youtu.be/…', 'wavesconv\n# 🔗 Paste link › https://youtu.be/…'],
+    ['wavesconv download "https://youtu.be/…" -a -f mp3'],
+  ];
+  const cs = document.getElementById('cli-steps');
+  if(cs) {
+    const s3comment = lang === 'pl' ? clipre[2][0] : clipre[2][1];
+    cs.innerHTML = [1,2,3,4].map((n,i)=>`<div class="cli-step"><div class="cli-step-n">${n}</div><div><p>${t['cli.s'+n]}</p><pre>${i===2?s3comment:clipre[i][0]}</pre></div></div>`).join('');
+  }
   // dl title
   const dlt = document.getElementById('dl-title');
   if(dlt) dlt.innerHTML = t['dl.title'];

@@ -201,6 +201,24 @@
     <div class="update-status-row"><div id="updateStatusText" class="update-status-text">—</div><button class="btn-ghost-sm" id="btnCheckUpdate">Sprawdź teraz</button></div>
   </div>
   <div class="glass-card">
+    <div class="card-label">Deep link i CLI</div>
+    <p class="sys-hint" style="margin-bottom:10px;">Otwórz link YouTube bezpośrednio w aplikacji (po pierwszym uruchomieniu system zarejestruje protokół <code>wavesconverter://</code>):</p>
+    <div class="shortcuts-grid" style="margin-bottom:12px;">
+      <div class="shortcut-row"><kbd>wavesconverter://download?url=…</kbd><span>Wklej URL w zakładce Pobierz i wyszukaj</span></div>
+      <div class="shortcut-row"><kbd>wavesconverter://queue?url=…&amp;start=1</kbd><span>Dodaj do kolejki i uruchom pobieranie</span></div>
+      <div class="shortcut-row"><kbd>wavesconverter://open</kbd><span>Otwórz aplikację</span></div>
+    </div>
+    <p class="sys-hint" style="margin-bottom:8px;">Tryb terminala (bez okna GUI):</p>
+    <div style="font-family:monospace;font-size:11px;color:var(--p4);background:rgba(0,0,0,0.25);border:1px solid var(--border);border-radius:8px;padding:10px 12px;line-height:1.6;">
+      npm run cli<br>
+      <span style="color:var(--text3)"># tryb interaktywny — wklej linki w terminalu</span><br>
+      npm run cli -- download "https://youtu.be/…" -a -f mp3<br>
+      npm run cli -- info "https://youtu.be/…"<br>
+      npm run cli -- convert plik.mp4 -f mp3 -o out.mp3<br>
+      npx electron . --cli download "https://youtu.be/…" -q 1080p
+    </div>
+  </div>
+  <div class="glass-card">
     <div class="card-label">Skróty klawiszowe</div>
     <div class="shortcuts-grid" id="shortcutsGrid">
       <!-- Will be populated dynamically by JavaScript -->

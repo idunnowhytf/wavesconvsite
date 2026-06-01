@@ -1,0 +1,11 @@
+# Aplikacja Electron — nie trafia na npm (CLI używa pola "files", to zapas)
+main.js
+preload.js
+index.html
+style.css
+renderer.js
+assets/
+docs/
+dist/
+.git/
+.antigravitycli/

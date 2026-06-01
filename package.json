@@ -1,14 +1,45 @@
 {
-  "name": "waves-converter",
-  "version": "1.4.9",
-  "description": "WavesConverter – YouTube Downloader & Converter",
-  "main": "main.js",
+  "name": "wavesconv",
+  "version": "1.6.0",
+  "description": "CLI: pobieranie YouTube (yt-dlp) i konwersja mediów (ffmpeg) — WavesConverter",
+  "main": "cli.js",
+  "bin": {
+    "wavesconv": "./cli.js"
+  },
+  "files": [
+    "cli.js",
+    "lib",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/idunnowhytf/wavesconvsite.git"
+  },
+  "homepage": "https://github.com/idunnowhytf/wavesconvsite#readme",
+  "bugs": {
+    "url": "https://github.com/idunnowhytf/wavesconvsite/issues"
+  },
+  "keywords": [
+    "youtube",
+    "yt-dlp",
+    "ffmpeg",
+    "downloader",
+    "converter",
+    "cli",
+    "wavesconverter"
+  ],
   "author": "WavesConverter",
   "scripts": {
     "start": "electron .",
+    "cli": "node cli.js",
+    "prepublishOnly": "node cli.js --version",
     "build": "electron-builder",
     "build:mac": "electron-builder --mac",
-    "publish": "electron-builder --publish always"
+    "publish:app": "electron-builder --publish always",
+    "publish:npm": "npm publish --access public"
   },
   "build": {
     "appId": "com.wavesconverter.app",
@@ -18,11 +49,19 @@
     },
     "files": [
       "main.js",
+      "cli.js",
+      "lib/**",
       "preload.js",
       "index.html",
       "style.css",
       "renderer.js",
       "assets/**"
+    ],
+    "protocols": [
+      {
+        "name": "WavesConverter",
+        "schemes": ["wavesconverter"]
+      }
     ],
     "mac": {
       "category": "public.app-category.video",
@@ -56,17 +95,15 @@
       "releaseType": "release"
     }
   },
-  "keywords": [],
   "license": "ISC",
-  "devDependencies": {
-    "electron": "^42.3.0",
-    "electron-builder": "^26.8.1"
-  },
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
-    "electron-updater": "^6.8.3",
-    "fluent-ffmpeg": "^2.1.3",
-    "qrcode": "^1.5.4",
     "yt-dlp-wrap": "^2.3.12"
+  },
+  "devDependencies": {
+    "electron": "^42.3.0",
+    "electron-builder": "^26.8.1",
+    "electron-updater": "^6.8.3",
+    "qrcode": "^1.5.4"
   }
 }
