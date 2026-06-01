@@ -13,9 +13,9 @@ converts any media file — all offline, no account needed, completely free.
 
 <br/>
 
-[![Download](https://img.shields.io/badge/⬇_Download-macOS_&_Windows-7c3aed?style=for-the-badge)](https://idunnowhytf.github.io/wavesconverter/#download)
-[![Website](https://img.shields.io/badge/🌐_Website-wavesconverter-a855f7?style=for-the-badge)](https://idunnowhytf.github.io/wavesconverter/)
-[![Releases](https://img.shields.io/github/v/release/idunnowhytf/wavesconverter?style=for-the-badge&color=d946ef&label=Latest)](https://github.com/idunnowhytf/wavesconverter/releases)
+[![Download](https://img.shields.io/badge/⬇_Download-macOS_&_Windows-7c3aed?style=for-the-badge)](https://idunnowhytf.github.io/WavesConverter/#download)
+[![Website](https://img.shields.io/badge/🌐_Website-wavesconverter-a855f7?style=for-the-badge)](https://idunnowhytf.github.io/WavesConverter/)
+[![Releases](https://img.shields.io/github/v/release/idunnowhytf/WavesConverter?style=for-the-badge&color=d946ef&label=Latest)](https://github.com/idunnowhytf/WavesConverter/releases)
 [![License](https://img.shields.io/badge/License-ISC-6d28d9?style=for-the-badge)](LICENSE)
 
 <br/>
@@ -46,9 +46,9 @@ converts any media file — all offline, no account needed, completely free.
 
 | Platform | Link |
 |---|---|
-| 🍎 **macOS Apple Silicon** (M1/M2/M3/M4) | [WavesConverter-arm64.dmg](https://github.com/idunnowhytf/wavesconverter/releases/latest/download/WavesConverter-1.0.0-arm64.dmg) |
-| 🍎 **macOS Intel** (x64) | [WavesConverter.dmg](https://github.com/idunnowhytf/wavesconverter/releases/latest/download/WavesConverter-1.0.0.dmg) |
-| 🪟 **Windows 10+** (x64) | [WavesConverter-Setup.exe](https://github.com/idunnowhytf/wavesconverter/releases/latest/download/WavesConverter.Setup.1.0.0.exe) |
+| 🍎 **macOS Apple Silicon** (M1/M2/M3/M4) | [WavesConverter-arm64.dmg](https://github.com/idunnowhytf/WavesConverter/releases/latest/download/WavesConverter-1.0.0-arm64.dmg) |
+| 🍎 **macOS Intel** (x64) | [WavesConverter.dmg](https://github.com/idunnowhytf/WavesConverter/releases/latest/download/WavesConverter-1.0.0.dmg) |
+| 🪟 **Windows 10+** (x64) | [WavesConverter-Setup.exe](https://github.com/idunnowhytf/WavesConverter/releases/latest/download/WavesConverter.Setup.1.0.0.exe) |
 
 > **Windows users:** SmartScreen may show a warning since the app isn't signed with a paid certificate.
 > Click **"More info" → "Run anyway"** to proceed. The source code is fully open and auditable here.
@@ -142,12 +142,12 @@ wavesconvsite/
 
 ## 📋 Changelog
 
-See [**Releases →**](https://github.com/idunnowhytf/wavesconverter/releases) for full version history.
+See [**Releases →**](https://github.com/idunnowhytf/WavesConverter/releases) for full version history.
 
 
 ## 🤝 Contributing
 
-Found a bug or have a feature idea? [Open an issue](https://github.com/idunnowhytf/wavesconverter/issues) — all feedback welcome.
+Found a bug or have a feature idea? [Open an issue](https://github.com/idunnowhytf/WavesConverter/issues) — all feedback welcome.
 
 ---
 
@@ -161,7 +161,7 @@ This tool is intended for downloading content you own or have permission to down
 
 <div align="center">
 
-**[Website](https://idunnowhytf.github.io/wavesconverter/) · [Releases](https://github.com/idunnowhytf/wavesconverter/releases) · [Docs](https://idunnowhytf.github.io/wavesconverter/docs.html) · [Changelog](https://idunnowhytf.github.io/wavesconverter/changelog.html)**
+**[Website](https://idunnowhytf.github.io/WavesConverter/) · [Releases](https://github.com/idunnowhytf/WavesConverter/releases) · [Docs](https://idunnowhytf.github.io/WavesConverter/docs.html) · [Changelog](https://idunnowhytf.github.io/WavesConverter/changelog.html)**
 
 <br/>
 
