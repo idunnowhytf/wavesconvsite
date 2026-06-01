@@ -1,6 +1,6 @@
 const isMac = navigator.platform.toLowerCase().includes('mac') || navigator.userAgent.toLowerCase().includes('mac');
 let queue=[], fetchedItems=[], isPlaylist=false, qRunning=false, qPaused=false;
-let settings={ outputDir:'', concurrent:2, videoFormat:'mp4', audioFormat:'mp3', quality:'best', filenameTemplate:'%(title)s', theme:'classic' };
+let settings={ outputDir:'', concurrent:2, videoFormat:'mp4', audioFormat:'mp3', quality:'best', filenameTemplate:'%(title)s', animations:'yes' };
 let downloadHistory=[];
 
 window.addEventListener('DOMContentLoaded', async () => {
@@ -13,8 +13,8 @@ window.addEventListener('DOMContentLoaded', async () => {
   if (localStorage.getItem('wc2_first_launch') !== 'false') {
     const overlay = document.getElementById('welcomeOverlay');
     if (overlay) overlay.classList.remove('hidden');
-    const currentTheme = settings.theme || 'classic';
-    window.selectWelcomeTheme(currentTheme);
+    const currentAnim = settings.animations || 'yes';
+    window.selectWelcomeAnim(currentAnim);
   }
   const v = await window.api.getVersion().catch(()=>'1.0.0');
   document.getElementById('versionTag').textContent = 'v'+v;
@@ -594,8 +594,8 @@ function initSettingsTab() {
   document.getElementById('settingsAudioFormat').value=settings.audioFormat;
   document.getElementById('settingsQuality').value=settings.quality;
   document.getElementById('settingsFilename').value=settings.filenameTemplate;
-  const sth = document.getElementById('settingsTheme');
-  if (sth) sth.value = settings.theme || 'classic';
+  const sa = document.getElementById('settingsAnimations');
+  if (sa) sa.value = settings.animations || 'yes';
 }
 
 async function runInstallTools() {
@@ -633,40 +633,40 @@ function saveAndApply() {
   settings.audioFormat=document.getElementById('settingsAudioFormat').value;
   settings.quality=document.getElementById('settingsQuality').value;
   settings.filenameTemplate=document.getElementById('settingsFilename').value;
-  const sth = document.getElementById('settingsTheme');
-  if (sth) settings.theme = sth.value;
+  const sa = document.getElementById('settingsAnimations');
+  if (sa) settings.animations = sa.value;
   saveSettings(); applySettings(); toast('Ustawienia zapisane','success');
 }
 
 function applySettings() {
   ['singleOutputDir','playlistOutputDir','convertOutputDir'].forEach(id=>{ const el=document.getElementById(id); if(el&&!el.value) el.value=settings.outputDir; });
   const sd=document.getElementById('settingsDir'); if(sd) sd.value=settings.outputDir;
-  const sth = document.getElementById('settingsTheme');
-  if (sth) sth.value = settings.theme || 'classic';
-  document.body.classList.toggle('theme-material', settings.theme === 'material');
+  const sa = document.getElementById('settingsAnimations');
+  if (sa) sa.value = settings.animations || 'yes';
+  document.body.classList.toggle('no-animations', settings.animations === 'no');
 }
 function saveSettings() { try{ localStorage.setItem('wc2_settings',JSON.stringify(settings)); }catch(_){} }
 function loadSettings() { try{ const s=localStorage.getItem('wc2_settings'); if(s) Object.assign(settings,JSON.parse(s)); }catch(_){} }
 
-/* Onboarding Theme Selectors */
-let welcomeSelectedTheme = 'classic';
-window.selectWelcomeTheme = function(theme) {
-  welcomeSelectedTheme = theme;
-  const classicCard = document.getElementById('welcomeThemeClassic');
-  const materialCard = document.getElementById('welcomeThemeMaterial');
-  if (theme === 'classic') {
-    if (classicCard) classicCard.classList.add('active');
-    if (materialCard) materialCard.classList.remove('active');
-    document.body.classList.remove('theme-material');
+/* Onboarding Animations Selectors */
+let welcomeSelectedAnim = 'yes';
+window.selectWelcomeAnim = function(anim) {
+  welcomeSelectedAnim = anim;
+  const yesCard = document.getElementById('welcomeAnimYes');
+  const noCard = document.getElementById('welcomeAnimNo');
+  if (anim === 'yes') {
+    if (yesCard) yesCard.classList.add('active');
+    if (noCard) noCard.classList.remove('active');
+    document.body.classList.remove('no-animations');
   } else {
-    if (classicCard) classicCard.classList.remove('active');
-    if (materialCard) materialCard.classList.add('active');
-    document.body.classList.add('theme-material');
+    if (yesCard) yesCard.classList.remove('active');
+    if (noCard) noCard.classList.add('active');
+    document.body.classList.add('no-animations');
   }
 };
 
 window.closeWelcomeOnboarding = function() {
-  settings.theme = welcomeSelectedTheme;
+  settings.animations = welcomeSelectedAnim;
   saveSettings();
   applySettings();
   localStorage.setItem('wc2_first_launch', 'false');

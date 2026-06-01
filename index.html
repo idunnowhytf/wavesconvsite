@@ -174,7 +174,7 @@
       <div class="ig"><label>Domyślny format audio</label><select id="settingsAudioFormat"><option value="mp3" selected>MP3</option><option value="wav">WAV</option><option value="flac">FLAC</option><option value="aac">AAC</option></select></div>
       <div class="ig"><label>Domyślna jakość</label><select id="settingsQuality"><option value="best" selected>Najlepsza</option><option value="1080p">1080p</option><option value="720p">720p</option><option value="480p">480p</option></select></div>
       <div class="ig"><label>Szablon nazwy pliku</label><select id="settingsFilename"><option value="%(title)s" selected>Tytuł</option><option value="%(uploader)s - %(title)s">Autor – Tytuł</option><option value="%(playlist_index)s. %(title)s">Indeks. Tytuł</option></select></div>
-      <div class="ig"><label>Motyw interfejsu</label><select id="settingsTheme"><option value="classic">Klasyczny Waves 🔮</option><option value="material">Material Design 📱</option></select></div>
+      <div class="ig"><label>Efekty i Animacje</label><select id="settingsAnimations"><option value="yes">Włączone ✨</option><option value="no">Wyłączone (Szybki tryb) ⚡</option></select></div>
     </div>
     <button class="btn-primary" id="btnSaveSettings">Zapisz ustawienia</button>
   </div>
@@ -210,28 +210,28 @@
 
 <!-- Onboarding Welcome Modal -->
 <div class="welcome-overlay hidden" id="welcomeOverlay">
-  <div class="welcome-modal">
+  <div class="welcome-modal" style="max-width: 480px;">
     <div class="welcome-header">
-      <h2>Witaj w WavesConverter 1.4.2! 🌊</h2>
-      <p>Wybierz motyw interfejsu, który najbardziej Ci odpowiada. Możesz go zmienić w dowolnym momencie w ustawieniach.</p>
+      <h2>Witaj w WavesConverter 1.4.3! 🌊</h2>
+      <p>Skonfiguruj efekty wizualne na start. Możesz je zmienić w dowolnym momencie w ustawieniach.</p>
     </div>
     
     <div class="welcome-body">
-      <div class="welcome-section-label">Wybierz motyw</div>
-      <div class="theme-cards">
-        <div class="theme-card active" id="welcomeThemeClassic" onclick="selectWelcomeTheme('classic')">
-          <div class="theme-card-preview theme-preview-classic">
-            <div class="preview-dot"></div>
+      <div class="welcome-section-label">Efekty i Animacje</div>
+      <div class="theme-cards" style="grid-template-columns: 1fr; gap: 12px;">
+        <div class="theme-card active" id="welcomeAnimYes" onclick="selectWelcomeAnim('yes')" style="padding: 14px 18px; cursor: pointer; flex-direction: row; align-items: center; gap: 14px;">
+          <div class="preview-dot" style="background: var(--p5); box-shadow: 0 0 10px var(--accent); flex-shrink: 0; width: 14px; height: 14px; border-radius: 50%;"></div>
+          <div style="display: flex; flex-direction: column; gap: 3px; text-align: left;">
+            <div class="theme-card-title" style="margin:0; font-size:13px;">Włączone płynne animacje ✨</div>
+            <div class="theme-card-desc" style="margin:0; font-size:11px; color: var(--text2);">Cyberpunkowe orby w tle, efekty przejść kart i animowane interfejsy.</div>
           </div>
-          <div class="theme-card-title">Klasyczny Waves 🔮</div>
-          <div class="theme-card-desc">Głębokie fiolety, neonowe akcenty i klasyczny styl cyberpunkowy.</div>
         </div>
-        <div class="theme-card" id="welcomeThemeMaterial" onclick="selectWelcomeTheme('material')">
-          <div class="theme-card-preview theme-preview-material">
-            <div class="preview-dot"></div>
+        <div class="theme-card" id="welcomeAnimNo" onclick="selectWelcomeAnim('no')" style="padding: 14px 18px; cursor: pointer; flex-direction: row; align-items: center; gap: 14px;">
+          <div class="preview-dot" style="background: var(--text3); flex-shrink: 0; width: 14px; height: 14px; border-radius: 50%;"></div>
+          <div style="display: flex; flex-direction: column; gap: 3px; text-align: left;">
+            <div class="theme-card-title" style="margin:0; font-size:13px;">Wyłączone animacje (Tryb szybki) ⚡</div>
+            <div class="theme-card-desc" style="margin:0; font-size:11px; color: var(--text2);">Natychmiastowe ładowanie kart bez ruchu, minimalne zużycie procesora.</div>
           </div>
-          <div class="theme-card-title">Material Design 3 📱</div>
-          <div class="theme-card-desc">Nowoczesny, minimalistyczny styl z pełnymi zaokrągleniami elementów i wygładzonymi panelami.</div>
         </div>
       </div>
     </div>
