@@ -328,25 +328,64 @@ ipcMain.handle('start-download', (_, job) => new Promise((resolve, reject) => {
     if (bitrate) args.push('--postprocessor-args', `ffmpeg:-b:v ${bitrate}`);
   }
   args.push('-o', outTpl, url);
+  
+  let detectedPath = '';
   const proc = spawn(activeYtDlp, args);
   active.set(id, proc);
+  
   proc.stdout.on('data', d => {
     const line = d.toString().trim();
+    const mDest = line.match(/Destination:\s+(.+)/i) || 
+                  line.match(/Merging formats into\s+"([^"]+)"/i) ||
+                  line.match(/Merging formats into\s+(.+)/i) ||
+                  line.match(/\[download\]\s+(.+?)\s+has already been downloaded/i);
+    if (mDest) {
+      detectedPath = mDest[1].trim();
+    }
     const m = line.match(/(\d+\.?\d*)%/);
     if (m) mainWindow.webContents.send('download-progress', { id, progress: parseFloat(m[1]), line });
     mainWindow.webContents.send('download-log', { id, line });
   });
+  
   proc.stderr.on('data', d => mainWindow.webContents.send('download-log', { id, line: d.toString().trim() }));
+  
   proc.on('close', code => {
     active.delete(id);
     if (code === 0) {
       let fileSize = 0;
       try {
-        const cleanTitle = (job.title || '').replace(/[<>:"/\\|?*]/g, '_');
-        const files = fs.readdirSync(outputDir);
-        const match = files.find(f => f.toLowerCase().includes(cleanTitle.toLowerCase()));
-        if (match) {
-          const finalPath = path.join(outputDir, match);
+        let finalPath = '';
+        if (detectedPath && fs.existsSync(detectedPath)) {
+          finalPath = detectedPath;
+        } else if (detectedPath && fs.existsSync(path.resolve(outputDir, detectedPath))) {
+          finalPath = path.resolve(outputDir, detectedPath);
+        } else {
+          // Fallback 1: match by cleanTitle
+          const cleanTitle = (job.title || '').replace(/[<>:"/\\|?*]/g, '_');
+          const files = fs.readdirSync(outputDir);
+          const match = files.find(f => f.toLowerCase().includes(cleanTitle.toLowerCase()));
+          if (match) {
+            finalPath = path.join(outputDir, match);
+          } else {
+            // Fallback 2: search for most recently modified file in outputDir in last 15 seconds
+            const now = Date.now();
+            let bestFile = null;
+            let bestMtime = 0;
+            for (const f of files) {
+              const fp = path.join(outputDir, f);
+              try {
+                const stat = fs.statSync(fp);
+                if (stat.isFile() && (now - stat.mtimeMs < 15000) && stat.mtimeMs > bestMtime) {
+                  bestMtime = stat.mtimeMs;
+                  bestFile = fp;
+                }
+              } catch (_) {}
+            }
+            if (bestFile) finalPath = bestFile;
+          }
+        }
+        
+        if (finalPath && fs.existsSync(finalPath)) {
           fileSize = fs.statSync(finalPath).size;
         }
       } catch (_) {}
