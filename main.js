@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, dialog, shell } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog, shell, Menu, Tray, globalShortcut, clipboard } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const { spawn, exec } = require('child_process');
@@ -7,6 +7,8 @@ const https = require('https');
 
 let mainWindow;
 let ytDlpPath;
+let tray = null;
+let isQuitting = false;
 
 function findYtDlp() {
   const isWin = process.platform === 'win32';
@@ -182,6 +184,61 @@ function createWindow() {
   mainWindow.once('ready-to-show', () => mainWindow.show());
   mainWindow.on('maximize',   () => mainWindow.webContents.send('window-state', 'maximized'));
   mainWindow.on('unmaximize', () => mainWindow.webContents.send('window-state', 'normal'));
+  
+  // Close to tray logic
+  mainWindow.on('close', (event) => {
+    if (!isQuitting) {
+      event.preventDefault();
+      mainWindow.hide();
+      return false;
+    }
+  });
+}
+
+function createTray() {
+  const iconPath = path.join(__dirname, 'assets', process.platform === 'win32' ? 'icon.ico' : 'icon.png');
+  if (!fs.existsSync(iconPath)) return;
+  
+  tray = new Tray(iconPath);
+  const contextMenu = Menu.buildFromTemplate([
+    { label: 'Pokaż WavesConverter', click: () => { showAndCheckClipboard(); } },
+    { label: 'Minimalizuj do zasobnika', click: () => { mainWindow?.hide(); } },
+    { type: 'separator' },
+    { label: 'Zakończ', click: () => { isQuitting = true; app.quit(); } }
+  ]);
+  
+  tray.setToolTip('WavesConverter');
+  tray.setContextMenu(contextMenu);
+  
+  tray.on('click', () => {
+    if (mainWindow?.isVisible()) {
+      mainWindow.hide();
+    } else {
+      showAndCheckClipboard();
+    }
+  });
+}
+
+function registerGlobalShortcut() {
+  // Alt+Shift+W is a safe global shortcut combination
+  globalShortcut.register('Alt+Shift+W', () => {
+    if (mainWindow) {
+      if (mainWindow.isVisible() && mainWindow.isFocused()) {
+        mainWindow.hide();
+      } else {
+        showAndCheckClipboard();
+      }
+    }
+  });
+}
+
+function showAndCheckClipboard() {
+  if (mainWindow) {
+    mainWindow.show();
+    mainWindow.focus();
+    const text = clipboard.readText();
+    mainWindow.webContents.send('clipboard-search-trigger', text);
+  }
 }
 
 app.whenReady().then(async () => {
@@ -198,11 +255,26 @@ app.whenReady().then(async () => {
     } catch (e) { console.error('yt-dlp download failed on startup:', e.message); }
   }
   createWindow();
+  createTray();
+  registerGlobalShortcut();
   setupAutoUpdater();
 });
 
-app.on('window-all-closed', () => { if (process.platform !== 'darwin') app.quit(); });
-app.on('activate', () => { if (BrowserWindow.getAllWindows().length === 0) createWindow(); });
+app.on('will-quit', () => {
+  globalShortcut.unregisterAll();
+});
+
+app.on('window-all-closed', () => {
+  // Keep running in system tray
+});
+
+app.on('activate', () => {
+  if (BrowserWindow.getAllWindows().length === 0) {
+    createWindow();
+  } else {
+    mainWindow?.show();
+  }
+});
 
 function setupAutoUpdater() {
   if (!app.isPackaged) return;

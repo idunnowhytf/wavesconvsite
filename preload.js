@@ -24,4 +24,5 @@ contextBridge.exposeInMainWorld('api', {
   installTools: () => ipcRenderer.invoke('install-tools'),
   onInstallStatus: (cb) => ipcRenderer.on('install-status', (_, d) => cb(d)),
   downloadThumbnail: (opts) => ipcRenderer.invoke('download-thumbnail', opts),
+  onClipboardSearchTrigger: (cb) => ipcRenderer.on('clipboard-search-trigger', (_, text) => cb(text)),
 });

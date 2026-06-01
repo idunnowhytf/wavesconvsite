@@ -16,6 +16,24 @@ window.addEventListener('DOMContentLoaded', async () => {
     const currentAnim = settings.animations || 'yes';
     window.selectWelcomeAnim(currentAnim);
   }
+  if (window.api.onClipboardSearchTrigger) {
+    window.api.onClipboardSearchTrigger(async (text) => {
+      if (!text) return;
+      const cleanText = text.trim();
+      const isYt = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/i.test(cleanText);
+      if (isYt) {
+        const urlInput = document.getElementById('urlInput');
+        if (urlInput) {
+          if (urlInput.value.trim() === cleanText) return;
+          urlInput.value = cleanText;
+          switchTab('download');
+          const btnFetch = document.getElementById('btnFetch');
+          if (btnFetch) btnFetch.click();
+          toast('Wykryto link YouTube w schowku — wyszukiwanie... 🔍', 'info');
+        }
+      }
+    });
+  }
   const v = await window.api.getVersion().catch(()=>'1.0.0');
   document.getElementById('versionTag').textContent = 'v'+v;
   requestNotificationPermission();
