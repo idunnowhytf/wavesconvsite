@@ -347,38 +347,115 @@ body { display:flex; flex-direction:column; position:relative; z-index:1; }
 
 /* ─── Material Design 3 Theme ─── */
 body.theme-material {
-  --bg: #141218;
-  --glass: #211f26;
-  --glass-hover: #2b2930;
-  --border: #49454f;
-  --border-hi: #938f99;
+  --bg: #120d1e;
+  --glass: #1a132c;
+  --glass-hover: #241b3e;
+  --border: rgba(208, 188, 255, 0.16);
+  --border-hi: rgba(208, 188, 255, 0.35);
   --p1: #6750a4;
-  --p2: #625b71;
-  --p3: #d0bcff;
-  --p4: #e8def8;
-  --p5: #d0bcff;
+  --p2: #7f67be;
+  --p3: #b099e2;
+  --p4: #d0bcff;
+  --p5: #e8def8;
   --p6: #f3edf7;
   --accent: #d0bcff;
   --accent2: #f2b8b5;
-  --text: #e6e1e5;
+  --text: #f3edf7;
   --text2: #cac4d0;
   --text3: #938f99;
   --text4: #49454f;
-  --r: 28px;
-  --rs: 16px;
+  --r: 24px;
+  --rs: 14px;
   --rss: 8px;
+
+  /* Transform layout into Left Sidebar + Main Content Grid */
+  display: grid !important;
+  grid-template-rows: 46px 1fr !important;
+  grid-template-columns: 220px 1fr !important;
+  grid-template-areas:
+    "title title"
+    "sidebar main" !important;
+  height: 100vh !important;
+  width: 100vw !important;
+  overflow: hidden !important;
 }
 
 body.theme-material .bg-orbs {
-  background: #141218;
+  background: #120d1e;
 }
 body.theme-material .orb {
-  opacity: 0.04;
+  opacity: 0.08;
   filter: blur(120px);
 }
 body.theme-material .orb1 { background: var(--p1); }
 body.theme-material .orb2 { background: var(--p2); }
 body.theme-material .orb3 { background: var(--accent); }
+
+/* Titlebar Area */
+body.theme-material .titlebar {
+  grid-area: title;
+  background: #150f24;
+  border-bottom: 1px solid var(--border);
+}
+
+/* Sidebar Tabbar */
+body.theme-material .tabbar {
+  grid-area: sidebar;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+  padding: 24px 12px !important;
+  gap: 8px !important;
+  border-bottom: none !important;
+  border-right: 1px solid var(--border) !important;
+  height: 100% !important;
+  width: auto !important;
+  background: #18112a;
+}
+
+/* Sidebar individual tab items */
+body.theme-material .tab {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 12px !important;
+  padding: 12px 16px !important;
+  border-bottom: none !important;
+  border-left: 3px solid transparent !important;
+  margin: 0 !important;
+  border-radius: 14px !important;
+  width: 100% !important;
+  color: var(--text2);
+  transition: all 0.2s ease;
+  font-weight: 600;
+  text-align: left;
+}
+
+body.theme-material .tab:hover {
+  background: rgba(208, 188, 255, 0.04) !important;
+  color: var(--text);
+}
+
+body.theme-material .tab.active {
+  background: rgba(103, 80, 164, 0.25) !important;
+  border-left-color: var(--accent) !important;
+  color: var(--accent) !important;
+}
+
+body.theme-material .tab-badge {
+  margin-left: auto !important;
+  border-radius: 100px !important;
+}
+
+/* Main Content Area */
+body.theme-material .tab-content {
+  grid-area: main;
+  height: calc(100vh - 46px) !important;
+  width: 100% !important;
+  overflow-y: auto !important;
+  padding: 0 !important;
+}
 
 /* Material Fully Rounded (Pill) Controls */
 body.theme-material button,
@@ -397,31 +474,19 @@ body.theme-material .install-prompt {
 }
 
 body.theme-material .glass-card {
-  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.22);
   border: 1px solid var(--border);
+  background: rgba(26, 19, 44, 0.6);
 }
+body.theme-material .glass-card:hover {
+  border-color: rgba(208, 188, 255, 0.3);
+}
+
 body.theme-material .btn-fetch {
   border-radius: 0 100px 100px 0 !important;
 }
 body.theme-material .url-input-wrap {
   border-radius: 100px 0 0 100px !important;
-}
-body.theme-material .tab-badge {
-  border-radius: 100px !important;
-}
-body.theme-material .titlebar {
-  background: #1d1b20;
-}
-body.theme-material .tabbar {
-  background: #211f26;
-  border-bottom: 2px solid var(--border);
-}
-body.theme-material .tab {
-  font-weight: 600;
-  border-bottom: 3px solid transparent;
-}
-body.theme-material .tab.active {
-  border-bottom-color: var(--p3);
 }
 
 /* ─── Onboarding Welcome Modal ─── */
