@@ -641,16 +641,36 @@ function initIpc() {
   window.api.onLog(({id,line})=>{ const j=queue.find(x=>x.id===id); if(j) j.log=line; const el=document.getElementById(`log-${id}`); if(el) el.textContent=line; });
   window.api.onConvertProgress(({time})=>{ const l=document.getElementById('convertLabel'); if(l) l.textContent=`Konwertowanie… ${time}`; const b=document.getElementById('convertBar'); if(b){ const c=parseFloat(b.style.width)||5; if(c<90) b.style.width=(c+1.5)+'%'; } });
   window.api.onUpdateStatus(info=>{
-    const pill=document.getElementById('updatePill'), txt=document.getElementById('updatePillText'), stxt=document.getElementById('updateStatusText');
-    if(info.type==='available'||info.type==='ready'){
+    const pill=document.getElementById('updatePill');
+    const txt=document.getElementById('updatePillText');
+    const btn=document.getElementById('btnInstallUpdate');
+    const stxt=document.getElementById('updateStatusText');
+    
+    if(info.type==='available') {
       pill.classList.remove('hidden');
-      txt.textContent=info.type==='ready'?`Aktualizacja v${info.version} gotowa!`:`Dostępna aktualizacja v${info.version}!`;
-      toast(`Aktualizacja v${info.version} ${info.type==='ready'?'jest gotowa — kliknij Aktualizuj':'jest dostępna'}`,info.type==='ready'?'success':'info');
+      txt.textContent=`Wykryto v${info.version}`;
+      btn.textContent='Pobieranie aktualizacji...';
+      btn.disabled=true;
     }
-    if(info.type==='latest') stxt.textContent="Używasz najnowszej wersji ✓";
-    if(info.type==='downloading') stxt.textContent=`Pobieranie aktualizacji… ${info.percent}%`;
-    if(info.type==='error') stxt.textContent='Błąd aktualizacji: '+info.message;
-    if(info.type==='dev') stxt.textContent='Aktualizacje działają tylko w wersji produkcyjnej';
+    if(info.type==='downloading') {
+      pill.classList.remove('hidden');
+      btn.textContent=`Pobieranie… ${info.percent}%`;
+      btn.disabled=true;
+      if (stxt) stxt.textContent=`Pobieranie aktualizacji… ${info.percent}%`;
+    }
+    if(info.type==='ready') {
+      pill.classList.remove('hidden');
+      txt.textContent=`Aktualizacja v${info.version} gotowa!`;
+      btn.textContent='Zainstaluj i uruchom ponownie';
+      btn.disabled=false;
+      toast(`Aktualizacja v${info.version} jest gotowa. Kliknij "Zainstaluj i uruchom ponownie", aby zaktualizować aplikację.`, 'success');
+    }
+    if(info.type==='latest' && stxt) stxt.textContent="Używasz najnowszej wersji ✓";
+    if(info.type==='error') {
+      if (stxt) stxt.textContent='Błąd aktualizacji: '+info.message;
+      toast('Błąd aktualizacji: '+info.message, 'error');
+    }
+    if(info.type==='dev' && stxt) stxt.textContent='Aktualizacje działają tylko w wersji produkcyjnej';
   });
   window.api.onInstallStatus(({ status, progress, message }) => {
     const bar = document.getElementById('sysInstallProgressBar');
