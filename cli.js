@@ -72,7 +72,7 @@ async function cmdInfo(url, flags, color) {
   spin.start();
   let items;
   try {
-    items = await engine.fetchInfo(url);
+    items = await engine.fetchInfo(url, { cookiesPath: process.env.WAVESCONVERTER_COOKIES || '' });
     spin.succeed(`${items.length} element(ów)`);
   } catch (e) {
     spin.fail(e.message);
@@ -101,8 +101,8 @@ async function cmdInfo(url, flags, color) {
 }
 
 async function cmdDownload(url, flags, color) {
-  if (!engine.isYouTubeUrl(url)) {
-    throw new Error('Nieprawidłowy URL YouTube: ' + url);
+  if (!engine.isSupportedMediaUrl(url)) {
+    throw new Error('Nieobsługiwany URL. Użyj linku YouTube lub Instagram (post / Reel / Stories).');
   }
 
   const setupSpin = new ui.Spinner('Przygotowanie yt-dlp', color);
@@ -125,7 +125,7 @@ async function cmdDownload(url, flags, color) {
   const metaSpin = new ui.Spinner('Wczytywanie metadanych', color);
   metaSpin.start();
   try {
-    const items = await engine.fetchInfo(url);
+    const items = await engine.fetchInfo(url, { cookiesPath: process.env.WAVESCONVERTER_COOKIES || '' });
     if (items[0]) title = items[0].title || items[0].id || title;
     metaSpin.succeed(title.slice(0, 52) + (title.length > 52 ? '…' : ''));
   } catch (_) {
@@ -136,6 +136,8 @@ async function cmdDownload(url, flags, color) {
     id: 'cli-' + Date.now(),
     title,
     url,
+    platform: engine.getMediaPlatform(url),
+    cookiesPath: process.env.WAVESCONVERTER_COOKIES || '',
     audioOnly,
     outputFormat: format,
     quality: flags.quality || 'best',

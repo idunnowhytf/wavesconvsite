@@ -469,15 +469,17 @@
     <ul class="toc-list" id="toc-list">
       <li><a href="#instalacja"><span class="toc-num">1</span><span data-i18n="toc.1">Instalacja</span></a></li>
       <li><a href="#pobieranie"><span class="toc-num">2</span><span data-i18n="toc.2">Pobieranie filmów</span></a></li>
-      <li><a href="#playlisty"><span class="toc-num">3</span><span data-i18n="toc.3">Pobieranie playlist</span></a></li>
-      <li><a href="#batch"><span class="toc-num">4</span><span data-i18n="toc.4">Batch paste</span></a></li>
-      <li><a href="#konwerter"><span class="toc-num">5</span><span data-i18n="toc.5">Konwerter plików</span></a></li>
-      <li><a href="#kolejka"><span class="toc-num">6</span><span data-i18n="toc.6">Kolejka i ETA</span></a></li>
-      <li><a href="#historia"><span class="toc-num">7</span><span data-i18n="toc.7">Historia</span></a></li>
-      <li><a href="#skroty"><span class="toc-num">8</span><span data-i18n="toc.8">Skróty klawiszowe</span></a></li>
-      <li><a href="#ustawienia"><span class="toc-num">9</span><span data-i18n="toc.9">Ustawienia</span></a></li>
-      <li><a href="#cli"><span class="toc-num">10</span><span data-i18n="toc.cli">CLI (terminal)</span></a></li>
-      <li><a href="#faq"><span class="toc-num">11</span><span data-i18n="toc.10">FAQ</span></a></li>
+      <li><a href="#instagram"><span class="toc-num">3</span><span data-i18n="toc.instagram">Instagram</span></a></li>
+      <li><a href="#playlisty"><span class="toc-num">4</span><span data-i18n="toc.3">Pobieranie playlist</span></a></li>
+      <li><a href="#batch"><span class="toc-num">5</span><span data-i18n="toc.4">Batch paste</span></a></li>
+      <li><a href="#konwerter"><span class="toc-num">6</span><span data-i18n="toc.5">Konwerter plików</span></a></li>
+      <li><a href="#kolejka"><span class="toc-num">7</span><span data-i18n="toc.6">Kolejka i ETA</span></a></li>
+      <li><a href="#historia"><span class="toc-num">8</span><span data-i18n="toc.7">Historia</span></a></li>
+      <li><a href="#skroty"><span class="toc-num">9</span><span data-i18n="toc.8">Skróty klawiszowe</span></a></li>
+      <li><a href="#ustawienia"><span class="toc-num">10</span><span data-i18n="toc.9">Ustawienia</span></a></li>
+      <li><a href="#deeplink"><span class="toc-num">11</span><span data-i18n="toc.deeplink">Deep linking</span></a></li>
+      <li><a href="#cli"><span class="toc-num">12</span><span data-i18n="toc.cli">CLI (terminal)</span></a></li>
+      <li><a href="#faq"><span class="toc-num">13</span><span data-i18n="toc.10">FAQ</span></a></li>
     </ul>
   </aside>
 
@@ -519,7 +521,7 @@
     <!-- 2. POBIERANIE FILMÓW -->
     <section class="doc-section" id="pobieranie">
       <h2><span class="section-icon">🎬</span><span data-i18n="s2.title">Pobieranie filmów</span></h2>
-      <p data-i18n="s2.intro">Aby pobrać pojedynczy film z YouTube, wykonaj poniższe kroki:</p>
+      <p data-i18n="s2.intro">Aby pobrać pojedynczy film z <strong>YouTube</strong> (lub publiczną treść z Instagram — patrz sekcja <a href="#instagram">Instagram</a>), wykonaj poniższe kroki:</p>
       <div class="step-list">
         <div class="step-item">
           <div class="step-n">1</div>
@@ -552,7 +554,47 @@
       </div>
     </section>
 
-    <!-- 3. PLAYLISTY -->
+    <!-- 3. INSTAGRAM -->
+    <section class="doc-section" id="instagram">
+      <h2><span class="section-icon">📸</span><span data-i18n="sig.title">Instagram</span></h2>
+      <p data-i18n="sig.intro">WavesConverter obsługuje publiczne treści z Instagrama przez yt-dlp — tak samo jak YouTube: wklej link, Fetch, wybierz format i pobierz.</p>
+
+      <h3 data-i18n="sig.h.types">Obsługiwane typy</h3>
+      <table class="kb-table">
+        <thead><tr><th data-i18n="sig.th.type">Typ</th><th data-i18n="sig.th.url">Przykład URL</th><th data-i18n="sig.th.note">Uwagi</th></tr></thead>
+        <tbody>
+          <tr><td data-i18n="sig.row.reel">Reels</td><td><code>instagram.com/reel/…</code></td><td data-i18n="sig.row.reel.n">Wideo — najczęstszy przypadek</td></tr>
+          <tr><td data-i18n="sig.row.post">Post (zdjęcie / wideo)</td><td><code>instagram.com/p/…</code></td><td data-i18n="sig.row.post.n">Pojedynczy post lub karuzela</td></tr>
+          <tr><td data-i18n="sig.row.tv">IGTV</td><td><code>instagram.com/tv/…</code></td><td data-i18n="sig.row.tv.n">Dłuższe wideo</td></tr>
+          <tr><td data-i18n="sig.row.story">Stories</td><td><code>instagram.com/stories/…</code></td><td data-i18n="sig.row.story.n">Często wymaga pliku cookies (patrz niżej)</td></tr>
+        </tbody>
+      </table>
+
+      <div class="step-list">
+        <div class="step-item">
+          <div class="step-n">1</div>
+          <div class="step-body"><p data-i18n="sig.step1"><strong>Skopiuj link</strong> z aplikacji Instagram (Udostępnij → Kopiuj link) i wklej w pole URL w zakładce Pobierz.</p></div>
+        </div>
+        <div class="step-item">
+          <div class="step-n">2</div>
+          <div class="step-body"><p data-i18n="sig.step2"><strong>Fetch</strong> — aplikacja pobierze metadane. Dla karuzeli możesz wybrać konkretne media, jeśli yt-dlp zwróci wiele plików.</p></div>
+        </div>
+        <div class="step-item">
+          <div class="step-n">3</div>
+          <div class="step-body"><p data-i18n="sig.step3"><strong>Format</strong> — wideo zapiszesz jako MP4 itd.; z postów ze zdjęciami często pobierane jest najlepsze dostępne wideo lub obraz.</p></div>
+        </div>
+      </div>
+
+      <h3 data-i18n="sig.h.cookies">Stories i treści prywatne — plik cookies</h3>
+      <p data-i18n="sig.p.cookies">Instagram często blokuje Stories i konta prywatne bez sesji. W <strong>Ustawienia</strong> → pole <strong>Plik cookies (Instagram)</strong> wskaż plik <code>cookies.txt</code> wyeksportowany z przeglądarki (format Netscape, np. rozszerzenie „Get cookies.txt LOCALLY”). Zaloguj się na instagram.com w tej samej przeglądarce przed eksportem.</p>
+
+      <div class="note">
+        <span class="note-icon">⚖️</span>
+        <div data-i18n="sig.note.legal">Pobieraj tylko treści, do których masz prawo (własne materiały lub za zgodą autora). WavesConverter nie omija haseł Instagrama — cookies to Twoja sesja przeglądarki, nie „łamanie” zabezpieczeń.</div>
+      </div>
+    </section>
+
+    <!-- 4. PLAYLISTY -->
     <section class="doc-section" id="playlisty">
       <h2><span class="section-icon">📋</span><span data-i18n="s3.title">Pobieranie playlist</span></h2>
       <p data-i18n="s3.intro">WavesConverter obsługuje pełne playlisty YouTube — możesz pobrać wszystkie filmy lub wybrać konkretne pozycje.</p>
@@ -704,9 +746,64 @@
       <p data-i18n="s9.p.formats">Ustaw domyślny typ (Video/Audio), format (MP4, MP3 itp.) i jakość. Możesz je nadpisywać przy każdym pobieraniu osobno.</p>
       <h3 data-i18n="s9.h.template">Szablon nazwy pliku</h3>
       <p data-i18n="s9.p.template">Wybierz schemat nazewnictwa: <code>%(title)s</code> (samo tytuł), <code>%(uploader)s - %(title)s</code> (autor i tytuł), <code>%(title)s [%(id)s]</code> (z ID) lub wpisz własny wzorzec kompatybilny z yt-dlp.</p>
+      <h3 data-i18n="s9.h.advanced">Zaawansowane</h3>
+      <p data-i18n="s9.p.advanced">W sekcji <strong>Zaawansowane</strong> znajdziesz przycisk <strong>Zainstaluj CLI</strong> (pakiet npm <code>wavesconv</code>), krótki tutorial terminala oraz opis deep linków <code>wavesconverter://</code>.</p>
     </section>
 
-    <!-- 10. CLI -->
+    <!-- 11. DEEP LINKING -->
+    <section class="doc-section" id="deeplink">
+      <h2><span class="section-icon">🔗</span><span data-i18n="sdeeplink.title">Deep linking</span></h2>
+      <p data-i18n="sdeeplink.intro">Po instalacji aplikacji desktopowej system rejestruje niestandardowy protokół <code>wavesconverter://</code>. Linki w tym formacie otwierają WavesConverter i przekazują akcję oraz opcjonalnie URL filmu (YouTube lub Instagram).</p>
+
+      <h3 data-i18n="sdeeplink.h.how">Jak to działa</h3>
+      <div class="step-list">
+        <div class="step-item">
+          <div class="step-n">1</div>
+          <div class="step-body"><p data-i18n="sdeeplink.step1">Użytkownik klika link <code>wavesconverter://…</code> w przeglądarce, skryptcie lub innym programie.</p></div>
+        </div>
+        <div class="step-item">
+          <div class="step-n">2</div>
+          <div class="step-body"><p data-i18n="sdeeplink.step2">System uruchamia (lub aktywuje) WavesConverter i przekazuje pełny URL protokołu.</p></div>
+        </div>
+        <div class="step-item">
+          <div class="step-n">3</div>
+          <div class="step-body"><p data-i18n="sdeeplink.step3">Aplikacja parsuje akcję (<code>download</code>, <code>queue</code>, <code>open</code>) i parametry — głównie <code>url</code> (zakodowany w UTF-8).</p></div>
+        </div>
+        <div class="step-item">
+          <div class="step-n">4</div>
+          <div class="step-body"><p data-i18n="sdeeplink.step4">Dla <code>download</code> link trafia do zakładki Pobierz i uruchamia się Fetch. Dla <code>queue</code> z <code>start=1</code> element trafia do kolejki i pobieranie startuje od razu.</p></div>
+        </div>
+      </div>
+
+      <h3 data-i18n="sdeeplink.h.formats">Formaty linków</h3>
+      <table class="kb-table">
+        <thead><tr><th data-i18n="sdeeplink.th.link">Link</th><th data-i18n="sdeeplink.th.action">Działanie</th></tr></thead>
+        <tbody>
+          <tr><td><code>wavesconverter://open</code></td><td data-i18n="sdeeplink.row.open">Tylko otwórz aplikację</td></tr>
+          <tr><td><code>wavesconverter://download?url=ENCODED</code></td><td data-i18n="sdeeplink.row.download">Wklej URL i wyszukaj metadane</td></tr>
+          <tr><td><code>wavesconverter://queue?url=ENCODED&amp;start=1</code></td><td data-i18n="sdeeplink.row.queue">Dodaj do kolejki i rozpocznij pobieranie</td></tr>
+          <tr><td><code>…&amp;type=audio</code></td><td data-i18n="sdeeplink.row.audio">Wymuś tryb audio przy kolejce</td></tr>
+        </tbody>
+      </table>
+
+      <h3 data-i18n="sdeeplink.h.examples">Przykłady</h3>
+      <div class="code-block">
+        <div class="code-block-label">YouTube</div>
+        <pre>wavesconverter://download?url=https%3A%2F%2Fyoutu.be%2FdQw4w9WgXcQ</pre>
+      </div>
+      <div class="code-block">
+        <div class="code-block-label" data-i18n="sdeeplink.code.ig">Instagram Reel</div>
+        <pre>wavesconverter://queue?url=https%3A%2F%2Fwww.instagram.com%2Freel%2FABC123%2F&amp;start=1</pre>
+      </div>
+      <p data-i18n="sdeeplink.p.encode">Parametr <code>url</code> musi być zakodowany (np. <code>encodeURIComponent</code> w JavaScript). Możesz też przekazać pełny HTTPS w ścieżce po hoście akcji, jeśli parser rozpozna <code>https://</code> w pathname.</p>
+
+      <div class="tip">
+        <span class="tip-icon">🖥️</span>
+        <div data-i18n="sdeeplink.tip">Na Windowsie protokół rejestruje się przy instalacji instalatora NSIS. Na macOS — w bundle aplikacji. Jeśli link otwiera przeglądarkę zamiast aplikacji, uruchom WavesConverter raz z menu Start / Applications i spróbuj ponownie.</div>
+      </div>
+    </section>
+
+    <!-- 12. CLI -->
     <section class="doc-section" id="cli">
       <h2><span class="section-icon">⌨️</span><span data-i18n="scli.title">CLI (terminal)</span></h2>
       <p data-i18n="scli.intro"><strong>wavesconv</strong> to wersja WavesConverter dla terminala — publikowana na <a href="https://www.npmjs.com/package/wavesconv" target="_blank" rel="noopener">npm</a>. Idealna gdy wolisz wklejać linki w konsoli zamiast otwierać aplikację graficzną. Wymaga <strong>Node.js 18+</strong>.</p>
@@ -720,7 +817,7 @@ wavesconv --version</pre>
       <p data-i18n="scli.p.install">Przy pierwszym użyciu uruchom <code>wavesconv tools install</code>, aby pobrać yt-dlp. Do konwersji plików potrzebny jest też <code>ffmpeg</code> w PATH (lub zainstaluj go z poziomu aplikacji desktop).</p>
 
       <h3 data-i18n="scli.h.interactive">Tryb interaktywny (wklej linki)</h3>
-      <p data-i18n="scli.p.interactive">Uruchom samo <code>wavesconv</code> — pojawi się kolorowy prompt. Wklej link YouTube i naciśnij Enter — pobieranie startuje automatycznie.</p>
+      <p data-i18n="scli.p.interactive">Uruchom samo <code>wavesconv</code> — pojawi się kolorowy prompt. Wklej link YouTube lub Instagram i naciśnij Enter — pobieranie startuje automatycznie.</p>
       <div class="code-block">
         <div class="code-block-label" data-i18n="scli.code.interactive">Terminal</div>
         <pre>wavesconv
@@ -794,15 +891,17 @@ npm install -g wavesconv@1.6.0</pre>
     <ul class="toc-list" id="toc-list-mob">
       <li><a href="#instalacja"><span class="toc-num">1</span><span data-i18n="toc.1">Instalacja</span></a></li>
       <li><a href="#pobieranie"><span class="toc-num">2</span><span data-i18n="toc.2">Pobieranie filmów</span></a></li>
-      <li><a href="#playlisty"><span class="toc-num">3</span><span data-i18n="toc.3">Pobieranie playlist</span></a></li>
-      <li><a href="#batch"><span class="toc-num">4</span><span data-i18n="toc.4">Batch paste</span></a></li>
-      <li><a href="#konwerter"><span class="toc-num">5</span><span data-i18n="toc.5">Konwerter plików</span></a></li>
-      <li><a href="#kolejka"><span class="toc-num">6</span><span data-i18n="toc.6">Kolejka i ETA</span></a></li>
-      <li><a href="#historia"><span class="toc-num">7</span><span data-i18n="toc.7">Historia</span></a></li>
-      <li><a href="#skroty"><span class="toc-num">8</span><span data-i18n="toc.8">Skróty klawiszowe</span></a></li>
-      <li><a href="#ustawienia"><span class="toc-num">9</span><span data-i18n="toc.9">Ustawienia</span></a></li>
-      <li><a href="#cli"><span class="toc-num">10</span><span data-i18n="toc.cli">CLI (terminal)</span></a></li>
-      <li><a href="#faq"><span class="toc-num">11</span><span data-i18n="toc.10">FAQ</span></a></li>
+      <li><a href="#instagram"><span class="toc-num">3</span><span data-i18n="toc.instagram">Instagram</span></a></li>
+      <li><a href="#playlisty"><span class="toc-num">4</span><span data-i18n="toc.3">Pobieranie playlist</span></a></li>
+      <li><a href="#batch"><span class="toc-num">5</span><span data-i18n="toc.4">Batch paste</span></a></li>
+      <li><a href="#konwerter"><span class="toc-num">6</span><span data-i18n="toc.5">Konwerter plików</span></a></li>
+      <li><a href="#kolejka"><span class="toc-num">7</span><span data-i18n="toc.6">Kolejka i ETA</span></a></li>
+      <li><a href="#historia"><span class="toc-num">8</span><span data-i18n="toc.7">Historia</span></a></li>
+      <li><a href="#skroty"><span class="toc-num">9</span><span data-i18n="toc.8">Skróty klawiszowe</span></a></li>
+      <li><a href="#ustawienia"><span class="toc-num">10</span><span data-i18n="toc.9">Ustawienia</span></a></li>
+      <li><a href="#deeplink"><span class="toc-num">11</span><span data-i18n="toc.deeplink">Deep linking</span></a></li>
+      <li><a href="#cli"><span class="toc-num">12</span><span data-i18n="toc.cli">CLI (terminal)</span></a></li>
+      <li><a href="#faq"><span class="toc-num">13</span><span data-i18n="toc.10">FAQ</span></a></li>
     </ul>
   </div>
 </div>
@@ -820,7 +919,9 @@ const T = {
     'toc.label': 'Spis treści',
     'toc.1': 'Instalacja',
     'toc.2': 'Pobieranie filmów',
+    'toc.instagram': 'Instagram',
     'toc.3': 'Pobieranie playlist',
+    'toc.deeplink': 'Deep linking',
     'toc.4': 'Batch paste',
     'toc.5': 'Konwerter plików',
     'toc.6': 'Kolejka i ETA',
@@ -842,7 +943,7 @@ const T = {
     'note': 'Dlaczego SmartScreen?',
     's1.win.note': 'WavesConverter jest bezpieczny i open source, ale nie jest jeszcze podpisany płatnym certyfikatem Microsoft. To normalne dla nowego oprogramowania indie. Kod źródłowy jest publiczny na GitHub.',
     's2.title': 'Pobieranie filmów',
-    's2.intro': 'Aby pobrać pojedynczy film z YouTube, wykonaj poniższe kroki:',
+    's2.intro': 'Aby pobrać pojedynczy film z <strong>YouTube</strong> (lub publiczną treść z Instagram — patrz sekcja <a href="#instagram">Instagram</a>), wykonaj poniższe kroki:',
     's2.step1': '<strong>Wklej URL</strong> — skopiuj link do filmu (youtube.com/watch, youtu.be lub Shorts) i naciśnij <kbd class="kbd">⌘V</kbd> (macOS) lub <kbd class="kbd">Ctrl+V</kbd> (Windows). Link automatycznie pojawi się w polu i zacznie się pobieranie metadanych.',
     's2.step2': '<strong>Kliknij Fetch</strong> — aplikacja pobierze tytuł, miniaturę i dostępne formaty z YouTube.',
     's2.step3': '<strong>Wybierz format i jakość</strong> — przełącz między Video / Audio, wybierz format (MP4, MKV, MOV, WebM dla wideo; MP3, WAV, FLAC, M4A dla audio) oraz rozdzielczość lub bitrate.',
@@ -852,6 +953,26 @@ const T = {
     's2.tip': 'Wystarczy skopiować link do schowka — po kliknięciu okna aplikacji link zostanie automatycznie wklejony i natychmiast zostanie wywołany Fetch. Nie musisz ręcznie klikać w pole URL.',
     'tip3': 'Pobieranie miniaturki HD:',
     's2.thumbnail': 'Po wczytaniu metadanych filmu, obok podglądu miniatury pojawi się dedykowany przycisk „Miniaturka HD”. Kliknięcie go pobierze bezpośrednio plik graficzny miniatury w najwyższej dostępnej rozdzielczości bezpośrednio do Twojego folderu pobierania.',
+    'sig.title': 'Instagram',
+    'sig.intro': 'WavesConverter obsługuje publiczne treści z Instagrama przez yt-dlp — tak samo jak YouTube: wklej link, Fetch, wybierz format i pobierz.',
+    'sig.h.types': 'Obsługiwane typy',
+    'sig.th.type': 'Typ',
+    'sig.th.url': 'Przykład URL',
+    'sig.th.note': 'Uwagi',
+    'sig.row.reel': 'Reels',
+    'sig.row.reel.n': 'Wideo — najczęstszy przypadek',
+    'sig.row.post': 'Post (zdjęcie / wideo)',
+    'sig.row.post.n': 'Pojedynczy post lub karuzela',
+    'sig.row.tv': 'IGTV',
+    'sig.row.tv.n': 'Dłuższe wideo',
+    'sig.row.story': 'Stories',
+    'sig.row.story.n': 'Często wymaga pliku cookies (patrz niżej)',
+    'sig.step1': '<strong>Skopiuj link</strong> z aplikacji Instagram (Udostępnij → Kopiuj link) i wklej w pole URL w zakładce Pobierz.',
+    'sig.step2': '<strong>Fetch</strong> — aplikacja pobierze metadane. Dla karuzeli możesz wybrać konkretne media, jeśli yt-dlp zwróci wiele plików.',
+    'sig.step3': '<strong>Format</strong> — wideo zapiszesz jako MP4 itd.; z postów ze zdjęciami często pobierane jest najlepsze dostępne wideo lub obraz.',
+    'sig.h.cookies': 'Stories i treści prywatne — plik cookies',
+    'sig.p.cookies': 'Instagram często blokuje Stories i konta prywatne bez sesji. W <strong>Ustawienia</strong> → pole <strong>Plik cookies (Instagram)</strong> wskaż plik <code>cookies.txt</code> wyeksportowany z przeglądarki (format Netscape, np. rozszerzenie „Get cookies.txt LOCALLY”). Zaloguj się na instagram.com w tej samej przeglądarce przed eksportem.',
+    'sig.note.legal': 'Pobieraj tylko treści, do których masz prawo (własne materiały lub za zgodą autora). WavesConverter nie omija haseł Instagrama — cookies to Twoja sesja przeglądarki, nie „łamanie” zabezpieczeń.',
     's3.title': 'Pobieranie playlist',
     's3.intro': 'WavesConverter obsługuje pełne playlisty YouTube — możesz pobrać wszystkie filmy lub wybrać konkretne pozycje.',
     's3.step1': '<strong>Wklej URL playlisty</strong> — link musi zawierać parametr <code>list=</code> (np. <code>youtube.com/playlist?list=PL…</code>). Naciśnij Fetch.',
@@ -917,13 +1038,33 @@ const T = {
     's9.p.formats': 'Ustaw domyślny typ (Video/Audio), format (MP4, MP3 itp.) i jakość. Możesz je nadpisywać przy każdym pobieraniu osobno.',
     's9.h.template': 'Szablon nazwy pliku',
     's9.p.template': 'Wybierz schemat nazewnictwa: <code>%(title)s</code> (samo tytuł), <code>%(uploader)s - %(title)s</code> (autor i tytuł), <code>%(title)s [%(id)s]</code> (z ID) lub wpisz własny wzorzec kompatybilny z yt-dlp.',
+    's9.h.advanced': 'Zaawansowane',
+    's9.p.advanced': 'W sekcji <strong>Zaawansowane</strong> znajdziesz przycisk <strong>Zainstaluj CLI</strong> (pakiet npm <code>wavesconv</code>), krótki tutorial terminala oraz opis deep linków <code>wavesconverter://</code>.',
+    'sdeeplink.title': 'Deep linking',
+    'sdeeplink.intro': 'Po instalacji aplikacji desktopowej system rejestruje niestandardowy protokół <code>wavesconverter://</code>. Linki w tym formacie otwierają WavesConverter i przekazują akcję oraz opcjonalnie URL filmu (YouTube lub Instagram).',
+    'sdeeplink.h.how': 'Jak to działa',
+    'sdeeplink.step1': 'Użytkownik klika link <code>wavesconverter://…</code> w przeglądarce, skrypcie lub innym programie.',
+    'sdeeplink.step2': 'System uruchamia (lub aktywuje) WavesConverter i przekazuje pełny URL protokołu.',
+    'sdeeplink.step3': 'Aplikacja parsuje akcję (<code>download</code>, <code>queue</code>, <code>open</code>) i parametry — głównie <code>url</code> (zakodowany w UTF-8).',
+    'sdeeplink.step4': 'Dla <code>download</code> link trafia do zakładki Pobierz i uruchamia się Fetch. Dla <code>queue</code> z <code>start=1</code> element trafia do kolejki i pobieranie startuje od razu.',
+    'sdeeplink.h.formats': 'Formaty linków',
+    'sdeeplink.th.link': 'Link',
+    'sdeeplink.th.action': 'Działanie',
+    'sdeeplink.row.open': 'Tylko otwórz aplikację',
+    'sdeeplink.row.download': 'Wklej URL i wyszukaj metadane',
+    'sdeeplink.row.queue': 'Dodaj do kolejki i rozpocznij pobieranie',
+    'sdeeplink.row.audio': 'Wymuś tryb audio przy kolejce',
+    'sdeeplink.h.examples': 'Przykłady',
+    'sdeeplink.code.ig': 'Instagram Reel',
+    'sdeeplink.p.encode': 'Parametr <code>url</code> musi być zakodowany (np. <code>encodeURIComponent</code> w JavaScript). Możesz też przekazać pełny HTTPS w ścieżce po hoście akcji, jeśli parser rozpozna <code>https://</code> w pathname.',
+    'sdeeplink.tip': 'Na Windowsie protokół rejestruje się przy instalacji instalatora NSIS. Na macOS — w bundle aplikacji. Jeśli link otwiera przeglądarkę zamiast aplikacji, uruchom WavesConverter raz z menu Start / Applications i spróbuj ponownie.',
     'scli.title': 'CLI (terminal)',
     'scli.intro': '<strong>wavesconv</strong> to wersja WavesConverter dla terminala — publikowana na <a href="https://www.npmjs.com/package/wavesconv" target="_blank" rel="noopener">npm</a>. Idealna gdy wolisz wklejać linki w konsoli zamiast otwierać aplikację graficzną. Wymaga <strong>Node.js 18+</strong>.',
     'scli.h.install': 'Instalacja',
     'scli.code.install': 'npm — globalnie',
     'scli.p.install': 'Przy pierwszym użyciu uruchom <code>wavesconv tools install</code>, aby pobrać yt-dlp. Do konwersji plików potrzebny jest też <code>ffmpeg</code> w PATH (lub zainstaluj go z poziomu aplikacji desktop).',
     'scli.h.interactive': 'Tryb interaktywny (wklej linki)',
-    'scli.p.interactive': 'Uruchom samo <code>wavesconv</code> — pojawi się kolorowy prompt. Wklej link YouTube i naciśnij Enter — pobieranie startuje automatycznie.',
+    'scli.p.interactive': 'Uruchom samo <code>wavesconv</code> — pojawi się kolorowy prompt. Wklej link YouTube lub Instagram i naciśnij Enter — pobieranie startuje automatycznie.',
     'scli.code.interactive': 'Terminal',
     'scli.h.commands': 'Polecenia jednorazowe',
     'scli.code.download': 'Pobieranie',
@@ -959,7 +1100,9 @@ const T = {
     'toc.label': 'Table of Contents',
     'toc.1': 'Installation',
     'toc.2': 'Downloading Videos',
+    'toc.instagram': 'Instagram',
     'toc.3': 'Downloading Playlists',
+    'toc.deeplink': 'Deep linking',
     'toc.4': 'Batch Paste',
     'toc.5': 'File Converter',
     'toc.6': 'Queue & ETA',
@@ -981,7 +1124,7 @@ const T = {
     'note': 'Why SmartScreen?',
     's1.win.note': 'WavesConverter is safe and open source, but it is not yet signed with a paid Microsoft certificate. This is normal for new indie software. The source code is publicly available on GitHub.',
     's2.title': 'Downloading Videos',
-    's2.intro': 'To download a single YouTube video, follow these steps:',
+    's2.intro': 'To download a single <strong>YouTube</strong> video (or public Instagram content — see <a href="#instagram">Instagram</a>), follow these steps:',
     's2.step1': '<strong>Paste the URL</strong> — copy a video link (youtube.com/watch, youtu.be, or Shorts) and press <kbd class="kbd">⌘V</kbd> (macOS) or <kbd class="kbd">Ctrl+V</kbd> (Windows). The link will auto-fill and metadata fetching will begin.',
     's2.step2': '<strong>Click Fetch</strong> — the app will retrieve the title, thumbnail, and available formats from YouTube.',
     's2.step3': '<strong>Choose format & quality</strong> — toggle between Video / Audio, pick a format (MP4, MKV, MOV, WebM for video; MP3, WAV, FLAC, M4A for audio) and resolution or bitrate.',
@@ -991,6 +1134,26 @@ const T = {
     's2.tip': 'Just copy the link to your clipboard — when you click the app window, the link auto-pastes and Fetch fires immediately. No need to click the URL field manually.',
     'tip3': 'Download HD Thumbnail:',
     's2.thumbnail': 'After fetching video metadata, a dedicated "Miniaturka HD" button will appear next to the thumbnail preview. Clicking it will directly download the thumbnail image in the highest available resolution to your download folder.',
+    'sig.title': 'Instagram',
+    'sig.intro': 'WavesConverter supports public Instagram content via yt-dlp — same flow as YouTube: paste a link, Fetch, pick a format, and download.',
+    'sig.h.types': 'Supported types',
+    'sig.th.type': 'Type',
+    'sig.th.url': 'Example URL',
+    'sig.th.note': 'Notes',
+    'sig.row.reel': 'Reels',
+    'sig.row.reel.n': 'Video — most common',
+    'sig.row.post': 'Post (photo / video)',
+    'sig.row.post.n': 'Single post or carousel',
+    'sig.row.tv': 'IGTV',
+    'sig.row.tv.n': 'Long-form video',
+    'sig.row.story': 'Stories',
+    'sig.row.story.n': 'Often requires a cookies file (see below)',
+    'sig.step1': '<strong>Copy the link</strong> from the Instagram app (Share → Copy link) and paste it into the Download tab URL field.',
+    'sig.step2': '<strong>Fetch</strong> — the app loads metadata. For carousels you may pick specific items if yt-dlp returns multiple files.',
+    'sig.step3': '<strong>Format</strong> — save video as MP4 etc.; photo posts may download the best available image or video.',
+    'sig.h.cookies': 'Stories & private content — cookies file',
+    'sig.p.cookies': 'Instagram often blocks Stories and private accounts without a session. In <strong>Settings</strong> → <strong>Instagram cookies file</strong>, point to a <code>cookies.txt</code> exported from your browser (Netscape format, e.g. “Get cookies.txt LOCALLY”). Log in to instagram.com in that browser before exporting.',
+    'sig.note.legal': 'Only download content you are allowed to use (your own media or with permission). WavesConverter does not crack Instagram passwords — cookies are your browser session, not a bypass.',
     's3.title': 'Downloading Playlists',
     's3.intro': 'WavesConverter supports full YouTube playlists — download all videos or cherry-pick specific ones.',
     's3.step1': '<strong>Paste the playlist URL</strong> — the link must contain the <code>list=</code> parameter (e.g. <code>youtube.com/playlist?list=PL…</code>). Press Fetch.',
@@ -1056,13 +1219,33 @@ const T = {
     's9.p.formats': 'Set the default type (Video/Audio), format (MP4, MP3, etc.), and quality. These can be overridden per individual download.',
     's9.h.template': 'Filename template',
     's9.p.template': 'Choose a naming scheme: <code>%(title)s</code> (title only), <code>%(uploader)s - %(title)s</code> (author and title), <code>%(title)s [%(id)s]</code> (with ID), or enter a custom yt-dlp-compatible template.',
+    's9.h.advanced': 'Advanced',
+    's9.p.advanced': 'Under <strong>Advanced</strong> you will find <strong>Install CLI</strong> (npm package <code>wavesconv</code>), a quick terminal tutorial, and deep link docs for <code>wavesconverter://</code>.',
+    'sdeeplink.title': 'Deep linking',
+    'sdeeplink.intro': 'After installing the desktop app, the OS registers the custom protocol <code>wavesconverter://</code>. Links in this format open WavesConverter and pass an action plus an optional media URL (YouTube or Instagram).',
+    'sdeeplink.h.how': 'How it works',
+    'sdeeplink.step1': 'The user clicks a <code>wavesconverter://…</code> link in a browser, script, or another app.',
+    'sdeeplink.step2': 'The OS launches (or focuses) WavesConverter and passes the full protocol URL.',
+    'sdeeplink.step3': 'The app parses the action (<code>download</code>, <code>queue</code>, <code>open</code>) and parameters — mainly <code>url</code> (UTF-8 encoded).',
+    'sdeeplink.step4': 'For <code>download</code>, the URL lands in the Download tab and Fetch runs. For <code>queue</code> with <code>start=1</code>, the item is queued and downloading begins immediately.',
+    'sdeeplink.h.formats': 'Link formats',
+    'sdeeplink.th.link': 'Link',
+    'sdeeplink.th.action': 'Action',
+    'sdeeplink.row.open': 'Open the app only',
+    'sdeeplink.row.download': 'Paste URL and fetch metadata',
+    'sdeeplink.row.queue': 'Add to queue and start download',
+    'sdeeplink.row.audio': 'Force audio mode when queuing',
+    'sdeeplink.h.examples': 'Examples',
+    'sdeeplink.code.ig': 'Instagram Reel',
+    'sdeeplink.p.encode': 'The <code>url</code> parameter must be percent-encoded (e.g. <code>encodeURIComponent</code> in JavaScript). You can also pass a full HTTPS URL in the pathname if the parser detects <code>https://</code>.',
+    'sdeeplink.tip': 'On Windows the protocol is registered by the NSIS installer. On macOS it is declared in the app bundle. If links open in the browser instead of the app, launch WavesConverter once from Start / Applications and try again.',
     'scli.title': 'CLI (terminal)',
     'scli.intro': '<strong>wavesconv</strong> is the terminal version of WavesConverter — published on <a href="https://www.npmjs.com/package/wavesconv" target="_blank" rel="noopener">npm</a>. Perfect when you prefer pasting links in a console instead of opening the GUI. Requires <strong>Node.js 18+</strong>.',
     'scli.h.install': 'Installation',
     'scli.code.install': 'npm — global',
     'scli.p.install': 'On first use run <code>wavesconv tools install</code> to download yt-dlp. File conversion also needs <code>ffmpeg</code> on your PATH (or install tools via the desktop app).',
     'scli.h.interactive': 'Interactive mode (paste links)',
-    'scli.p.interactive': 'Run <code>wavesconv</code> with no arguments — a colourful prompt appears. Paste a YouTube link and press Enter — the download starts automatically.',
+    'scli.p.interactive': 'Run <code>wavesconv</code> with no arguments — a colourful prompt appears. Paste a YouTube or Instagram link and press Enter — the download starts automatically.',
     'scli.code.interactive': 'Terminal',
     'scli.h.commands': 'One-shot commands',
     'scli.code.download': 'Download',
@@ -1162,7 +1345,7 @@ window.addEventListener('scroll', () => {
 }, { passive: true });
 
 /* ── SCROLL SPY ── */
-const sections = ['instalacja','pobieranie','playlisty','batch','konwerter','kolejka','historia','skroty','ustawienia','cli','faq'];
+const sections = ['instalacja','pobieranie','instagram','playlisty','batch','konwerter','kolejka','historia','skroty','ustawienia','deeplink','cli','faq'];
 const allTocLinks = () => document.querySelectorAll('.toc-list a');
 
 const spy = new IntersectionObserver((entries) => {

@@ -1,6 +1,7 @@
 const isMac = navigator.platform.toLowerCase().includes('mac') || navigator.userAgent.toLowerCase().includes('mac');
 let queue=[], fetchedItems=[], isPlaylist=false, qRunning=false, qPaused=false;
-let settings={ outputDir:'', concurrent:2, videoFormat:'mp4', audioFormat:'mp3', quality:'best', filenameTemplate:'%(title)s', animations:'yes' };
+let settings={ outputDir:'', concurrent:2, videoFormat:'mp4', audioFormat:'mp3', quality:'best', filenameTemplate:'%(title)s', animations:'yes', cookiesPath:'' };
+let currentFetchUrl='', currentFetchPlatform=null;
 let downloadHistory=[];
 
 window.addEventListener('DOMContentLoaded', async () => {
@@ -23,8 +24,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     window.api.onClipboardSearchTrigger(async (text) => {
       if (!text) return;
       const cleanText = text.trim();
-      const isYt = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/i.test(cleanText);
-      if (isYt) {
+      if (await window.api.isSupportedUrl(cleanText)) {
         const urlInput = document.getElementById('urlInput');
         if (urlInput) {
           if (urlInput.value.trim() === cleanText) return;
@@ -32,7 +32,8 @@ window.addEventListener('DOMContentLoaded', async () => {
           switchTab('download');
           const btnFetch = document.getElementById('btnFetch');
           if (btnFetch) btnFetch.click();
-          toast('Wykryto link YouTube w schowku — wyszukiwanie... 🔍', 'info');
+          const plat = await window.api.getUrlPlatform(cleanText);
+          toast(plat === 'instagram' ? 'Wykryto link Instagram — wyszukiwanie... 📸' : 'Wykryto link YouTube — wyszukiwanie... 🔍', 'info');
         }
       }
     });
@@ -60,6 +61,7 @@ function initTabs() {
 function switchTab(name) {
   document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===name));
   document.querySelectorAll('.tab-content').forEach(c=>c.classList.toggle('active', c.id==='tab-'+name));
+  if (name === 'settings') checkCliStatus();
 }
 
 /* ─── Toast ─── */
@@ -154,10 +156,13 @@ function initKeyboardShortcuts() {
           inp.focus();
           // Read clipboard and paste
           navigator.clipboard.readText().then(text => {
-            if (text && (text.includes('youtube.com') || text.includes('youtu.be'))) {
-              inp.value = text;
-              setTimeout(() => doFetch(), 100);
-              toast('Wklejono link — wyszukiwanie…', 'info');
+            if (text) {
+              window.api.isSupportedUrl(text).then(ok => {
+                if (!ok) return;
+                inp.value = text;
+                setTimeout(() => doFetch(), 100);
+                toast('Wklejono link — wyszukiwanie…', 'info');
+              });
             }
           }).catch(()=>{});
         }
@@ -206,8 +211,8 @@ async function handleDeepLink(payload) {
     return;
   }
 
-  if (payload.url && !/^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+/i.test(payload.url)) {
-    toast('Deep link: nieprawidłowy URL YouTube', 'warning');
+  if (payload.url && !(await window.api.isSupportedUrl(payload.url))) {
+    toast('Deep link: nieobsługiwany URL (YouTube / Instagram)', 'warning');
     return;
   }
 
@@ -292,13 +297,21 @@ function toggle(id,show) { const el=document.getElementById(id); show?el.classLi
 async function doFetch() {
   const url = document.getElementById('urlInput').value.trim();
   if(!url) return toast('Najpierw wprowadź URL','warning');
+  if(!(await window.api.isSupportedUrl(url))) {
+    return toast('Nieobsługiwany link. Wklej URL YouTube lub Instagram (post, Reel, Stories).','warning');
+  }
+  currentFetchUrl=url;
+  currentFetchPlatform=await window.api.getUrlPlatform(url);
+  if(currentFetchPlatform==='instagram'&&url.toLowerCase().includes('/stories/')) {
+    toast('Stories: konto prywatne może wymagać pliku cookies (Ustawienia).','info');
+  }
   const btn=document.getElementById('btnFetch');
   btn.disabled=true;
   btn.querySelector('.btn-fetch-text').textContent='Pobieranie…';
   btn.querySelector('.btn-fetch-icon').innerHTML='<div class="spinner"></div>';
   hide('singleSection'); hide('playlistSection');
   try {
-    const items = await window.api.fetchInfo(url);
+    const items = await window.api.fetchInfo(url, { cookiesPath: settings.cookiesPath||'' });
     fetchedItems=items;
     if(items.length===1){ isPlaylist=false; renderSingle(items[0]); }
     else { isPlaylist=true; renderPlaylist(items); }
@@ -314,10 +327,12 @@ function renderSingle(item) {
   const hero=document.getElementById('videoHero');
   const thumb=item.thumbnail||(item.thumbnails||[])[0]?.url||'';
   const dur=item.duration?fmtDur(item.duration):'';
+  const platLabel=currentFetchPlatform==='instagram'?'📸 Instagram':currentFetchPlatform==='youtube'?'▶ YouTube':'';
   hero.innerHTML=`${thumb?`<img class="vh-thumb" src="${thumb}" onerror="this.style.display='none'" alt="">`:'<div class="vh-thumb-placeholder"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="13" rx="2"/></svg></div>'}
     <div class="vh-info">
       <div class="vh-title">${escHtml(item.title||item.id)}</div>
       <div class="vh-meta">
+        ${platLabel?`<span class="vh-chip">${platLabel}</span>`:''}
         ${item.uploader?`<span class="vh-chip">👤 ${escHtml(item.uploader)}</span>`:''}
         ${dur?`<span class="vh-chip">⏱ ${dur}</span>`:''}
         ${item.view_count?`<span class="vh-chip">👁 ${fmtN(item.view_count)}</span>`:''}
@@ -364,8 +379,12 @@ function renderSingle(item) {
 }
 
 function renderPlaylist(items) {
-  document.getElementById('playlistName').textContent=items[0]?.playlist_title||items[0]?.playlist||'Playlista';
-  document.getElementById('playlistSub').textContent=`${items.length} filmów`;
+  const isIg=currentFetchPlatform==='instagram';
+  const urlLow=(currentFetchUrl||'').toLowerCase();
+  let heading=isIg?(urlLow.includes('/stories/')?'Instagram Stories':urlLow.includes('/reel/')?'Instagram Reels':'Instagram — post / karuzela'):'Playlista';
+  if(!isIg) heading=items[0]?.playlist_title||items[0]?.playlist||heading;
+  document.getElementById('playlistName').textContent=heading;
+  document.getElementById('playlistSub').textContent=isIg?`${items.length} elementów do pobrania`:`${items.length} filmów`;
   const cont=document.getElementById('playlistItems'); cont.innerHTML='';
   items.forEach((item,idx)=>{
     const thumb=item.thumbnail||(item.thumbnails||[])[0]?.url||'';
@@ -399,7 +418,8 @@ function setAllChecked(val) {
 function addSingleToQueue() {
   if(!fetchedItems.length) return toast('Najpierw wyszukaj wideo','warning');
   const item=fetchedItems[0], type=getPillVal('singleTypePills');
-  pushJob(buildJob(item,{ type, fmt:document.getElementById('singleFormat').value, quality:document.getElementById('singleQuality').value, bitrate:document.getElementById('singleBitrate').value, filename:getFilename('singleFilenameTemplate','singleCustomFilename'), outputDir:document.getElementById('singleOutputDir').value||settings.outputDir, url:item.url||item.webpage_url||document.getElementById('urlInput').value.trim() }));
+  const itemUrl=item.url||item.webpage_url||document.getElementById('urlInput').value.trim();
+  pushJob(buildJob(item,{ type, fmt:document.getElementById('singleFormat').value, quality:document.getElementById('singleQuality').value, bitrate:document.getElementById('singleBitrate').value, filename:getFilename('singleFilenameTemplate','singleCustomFilename'), outputDir:document.getElementById('singleOutputDir').value||settings.outputDir, url:itemUrl, platform:currentFetchPlatform }));
   toast(`Dodano do kolejki, naciśnij ${isMac ? '⌘3' : 'Ctrl+3'} aby wyświetlić`,'success'); goQueue();
 }
 
@@ -410,13 +430,14 @@ function addPlaylistToQueue() {
   checks.forEach(cb=>{
     const idx=parseInt(cb.dataset.idx), item=fetchedItems[idx];
     const ovType=document.querySelector(`.ov-type[data-idx="${idx}"]`)?.value||'', ovFmt=document.querySelector(`.ov-fmt[data-idx="${idx}"]`)?.value||'', ovQ=document.querySelector(`.ov-q[data-idx="${idx}"]`)?.value||'';
-    pushJob(buildJob(item,{ type:ovType||gType, fmt:ovFmt||gFmt, quality:ovQ||gQ, bitrate:gBr, filename:gFile, outputDir, url:item.url||item.webpage_url||`https://www.youtube.com/watch?v=${item.id}` }));
+    const itemUrl=item.url||item.webpage_url||currentFetchUrl;
+    pushJob(buildJob(item,{ type:ovType||gType, fmt:ovFmt||gFmt, quality:ovQ||gQ, bitrate:gBr, filename:gFile, outputDir, url:itemUrl, platform:currentFetchPlatform }));
   });
   toast(`Dodano ${checks.length} ${checks.length === 1 ? 'element' : 'elementów'} do kolejki`,'success'); goQueue();
 }
 
 function buildJob(item,opts) {
-  return { id:`job-${Date.now()}-${Math.random().toString(36).slice(2,7)}`, title:item.title||item.id||'Bez tytułu', thumbnail:item.thumbnail||(item.thumbnails||[])[0]?.url||'', url:opts.url, audioOnly:opts.type==='audio', outputFormat:opts.fmt, quality:opts.quality, bitrate:opts.bitrate, outputDir:opts.outputDir, filename:opts.filename, status:'pending', progress:0, log:'' };
+  return { id:`job-${Date.now()}-${Math.random().toString(36).slice(2,7)}`, title:item.title||item.id||'Bez tytułu', thumbnail:item.thumbnail||(item.thumbnails||[])[0]?.url||'', url:opts.url, platform:opts.platform||null, cookiesPath:settings.cookiesPath||'', audioOnly:opts.type==='audio', outputFormat:opts.fmt, quality:opts.quality, bitrate:opts.bitrate, outputDir:opts.outputDir, filename:opts.filename, status:'pending', progress:0, log:'' };
 }
 function getFilename(selId,inputId) { const v=document.getElementById(selId).value; return v==='custom'?document.getElementById(inputId).value.trim()||'%(title)s':v; }
 function pushJob(job) { queue.push(job); renderQueue(); bumpBadge(); }
@@ -644,6 +665,8 @@ function loadHistory() { try{ const h=localStorage.getItem('wc2_history'); if(h)
 /* ─── Settings Tab ─── */
 function initSettingsTab() {
   document.getElementById('btnSettingsDir').addEventListener('click', async()=>{ const d=await window.api.chooseFolder(); if(d) document.getElementById('settingsDir').value=d; });
+  const btnCookies=document.getElementById('btnSettingsCookies');
+  if(btnCookies) btnCookies.addEventListener('click', async()=>{ const f=await window.api.chooseCookiesFile(); if(f) document.getElementById('settingsCookies').value=f; });
   document.getElementById('btnSaveSettings').addEventListener('click', saveAndApply);
   
   // Komunikat o brakujących bibliotekach obok czerwonych kropek
@@ -670,7 +693,37 @@ function initSettingsTab() {
   });
   document.getElementById('btnInstallUpdate').addEventListener('click', ()=>window.api.installUpdate());
   document.getElementById('btnInstallTools').addEventListener('click', runInstallTools);
+  const btnCli = document.getElementById('btnInstallCli');
+  if (btnCli) btnCli.addEventListener('click', runInstallCli);
+  const btnCopyCli = document.getElementById('btnCopyCliCmd');
+  if (btnCopyCli) btnCopyCli.addEventListener('click', () => {
+    window.api.copyText('npm install -g wavesconv@latest');
+    toast('Skopiowano polecenie instalacji CLI', 'info');
+  });
+  const btnNode = document.getElementById('btnOpenNodejs');
+  if (btnNode) btnNode.addEventListener('click', () => window.api.openExternal('https://nodejs.org/'));
+  const linkNpm = document.getElementById('linkNpmCli');
+  if (linkNpm) linkNpm.addEventListener('click', e => { e.preventDefault(); window.api.openExternal('https://www.npmjs.com/package/wavesconv'); });
+  const btnDl = document.getElementById('btnCopyDeeplinkExample');
+  if (btnDl) btnDl.addEventListener('click', () => {
+    const ex = 'wavesconverter://download?url=' + encodeURIComponent('https://www.instagram.com/reel/EXAMPLE/');
+    window.api.copyText(ex);
+    toast('Skopiowano przykład deep link', 'info');
+  });
+  if (window.api.onCliInstallStatus) {
+    window.api.onCliInstallStatus(d => {
+      const wrap = document.getElementById('cliInstallProgressWrap');
+      const bar = document.getElementById('cliInstallProgressBar');
+      const lbl = document.getElementById('cliInstallProgressLabel');
+      if (!wrap || !bar || !lbl) return;
+      wrap.classList.remove('hidden');
+      if (d.progress) bar.style.width = Math.min(100, d.progress) + '%';
+      if (d.message) lbl.textContent = d.message;
+    });
+  }
   document.getElementById('settingsDir').value=settings.outputDir;
+  const sc=document.getElementById('settingsCookies');
+  if(sc) sc.value=settings.cookiesPath||'';
   document.getElementById('settingsConcurrent').value=settings.concurrent;
   document.getElementById('settingsVideoFormat').value=settings.videoFormat;
   document.getElementById('settingsAudioFormat').value=settings.audioFormat;
@@ -678,6 +731,65 @@ function initSettingsTab() {
   document.getElementById('settingsFilename').value=settings.filenameTemplate;
   const sa = document.getElementById('settingsAnimations');
   if (sa) sa.value = settings.animations || 'yes';
+}
+
+async function checkCliStatus() {
+  const nodeEl = document.getElementById('cliStatusNode');
+  const npmEl = document.getElementById('cliStatusNpm');
+  const cliEl = document.getElementById('cliStatusCli');
+  if (!nodeEl) return;
+  nodeEl.textContent = 'Sprawdzanie…'; nodeEl.className = 'sys-val checking';
+  npmEl.textContent = 'Sprawdzanie…'; npmEl.className = 'sys-val checking';
+  cliEl.textContent = 'Sprawdzanie…'; cliEl.className = 'sys-val checking';
+  try {
+    const s = await window.api.checkCli();
+    if (s.node) {
+      nodeEl.textContent = s.node; nodeEl.className = 'sys-val ok';
+    } else {
+      nodeEl.textContent = 'Brak — zainstaluj Node.js'; nodeEl.className = 'sys-val missing';
+    }
+    if (s.npm) {
+      npmEl.textContent = 'v' + s.npm; npmEl.className = 'sys-val ok';
+    } else {
+      npmEl.textContent = s.npmError ? 'Błąd' : 'Brak'; npmEl.className = 'sys-val missing';
+    }
+    if (s.cliInstalled) {
+      cliEl.textContent = 'v' + (s.cli || 'OK'); cliEl.className = 'sys-val ok';
+    } else {
+      cliEl.textContent = 'Nie zainstalowano'; cliEl.className = 'sys-val missing';
+    }
+  } catch (_) {
+    nodeEl.textContent = 'Błąd'; nodeEl.className = 'sys-val missing';
+    npmEl.textContent = '—'; npmEl.className = 'sys-val missing';
+    cliEl.textContent = '—'; cliEl.className = 'sys-val missing';
+  }
+}
+
+async function runInstallCli() {
+  const btn = document.getElementById('btnInstallCli');
+  const wrap = document.getElementById('cliInstallProgressWrap');
+  const bar = document.getElementById('cliInstallProgressBar');
+  const lbl = document.getElementById('cliInstallProgressLabel');
+  if (!btn || !wrap) return;
+  btn.disabled = true;
+  wrap.classList.remove('hidden');
+  bar.style.width = '5%';
+  bar.style.background = '';
+  lbl.textContent = 'Rozpoczynanie instalacji CLI…';
+  try {
+    const res = await window.api.installCli();
+    bar.style.width = '100%';
+    lbl.textContent = 'CLI zainstalowane: wavesconv ' + (res.version || '');
+    toast('CLI zainstalowane pomyślnie!', 'success');
+    await checkCliStatus();
+  } catch (e) {
+    bar.style.width = '100%';
+    bar.style.background = 'var(--danger)';
+    lbl.textContent = 'Instalacja nie powiodła się: ' + e.message;
+    toast('CLI: ' + e.message, 'error');
+  } finally {
+    btn.disabled = false;
+  }
 }
 
 async function runInstallTools() {
@@ -710,6 +822,8 @@ async function runInstallTools() {
 
 function saveAndApply() {
   settings.outputDir=document.getElementById('settingsDir').value;
+  const sc=document.getElementById('settingsCookies');
+  if(sc) settings.cookiesPath=sc.value.trim();
   settings.concurrent=document.getElementById('settingsConcurrent').value;
   settings.videoFormat=document.getElementById('settingsVideoFormat').value;
   settings.audioFormat=document.getElementById('settingsAudioFormat').value;

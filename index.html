@@ -39,13 +39,13 @@
   <div class="glass-card url-card">
     <div class="url-input-wrap">
       <div class="url-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg></div>
-      <input type="text" id="urlInput" class="url-input" placeholder="Wklej link YouTube lub link do playlisty…" autocomplete="off" spellcheck="false"/>
+      <input type="text" id="urlInput" class="url-input" placeholder="YouTube, Instagram (post, Reel, Stories)…" autocomplete="off" spellcheck="false"/>
       <button class="btn-fetch" id="btnFetch">
         <span class="btn-fetch-text">Wyszukaj</span>
         <span class="btn-fetch-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
       </button>
     </div>
-    <div class="url-hints"><span class="hint-chip">youtube.com/watch</span><span class="hint-chip">youtu.be/</span><span class="hint-chip">playlist?list=</span></div>
+    <div class="url-hints"><span class="hint-chip">youtube.com</span><span class="hint-chip">youtu.be</span><span class="hint-chip">instagram.com/p/</span><span class="hint-chip">/reel/</span><span class="hint-chip">/stories/</span></div>
   </div>
 
   <div id="singleSection" class="hidden animate-in"><div class="glass-card">
@@ -174,6 +174,7 @@
       <div class="ig"><label>Domyślny format audio</label><select id="settingsAudioFormat"><option value="mp3" selected>MP3</option><option value="wav">WAV</option><option value="flac">FLAC</option><option value="aac">AAC</option></select></div>
       <div class="ig"><label>Domyślna jakość</label><select id="settingsQuality"><option value="best" selected>Najlepsza</option><option value="1080p">1080p</option><option value="720p">720p</option><option value="480p">480p</option></select></div>
       <div class="ig"><label>Szablon nazwy pliku</label><select id="settingsFilename"><option value="%(title)s" selected>Tytuł</option><option value="%(uploader)s - %(title)s">Autor – Tytuł</option><option value="%(playlist_index)s. %(title)s">Indeks. Tytuł</option></select></div>
+      <div class="ig" style="flex:2;min-width:280px;"><label>Plik cookies (Instagram Stories / prywatne)</label><div class="folder-input"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><input type="text" id="settingsCookies" readonly placeholder="Opcjonalnie: cookies.txt z przeglądarki…"/><button class="btn-ghost-sm" id="btnSettingsCookies">Przeglądaj</button></div></div>
       <div class="ig"><label>Efekty i Animacje</label><select id="settingsAnimations"><option value="yes">Włączone ✨</option><option value="no">Wyłączone (Szybki tryb) ⚡</option></select></div>
     </div>
     <button class="btn-primary" id="btnSaveSettings">Zapisz ustawienia</button>
@@ -195,28 +196,56 @@
       <span id="sysInstallProgressLabel" style="font-size:12px; color:var(--text-secondary); margin-top:4px; display:block;">Przygotowywanie...</span>
     </div>
     <p class="sys-hint" style="margin-top:8px;">Brakujące narzędzia? Kliknij przycisk powyżej, aby automatycznie je zainstalować, lub uruchom: <code>brew install yt-dlp ffmpeg</code></p>
+    <p class="sys-hint" style="margin-top:8px;">📸 <strong>Instagram:</strong> posty i Reels działają bez logowania. Stories i treści prywatne często wymagają eksportu <code>cookies.txt</code> (np. rozszerzenie „Get cookies.txt”) i wskazania go powyżej.</p>
   </div>
   <div class="glass-card">
     <div class="card-label">Aktualizacje</div>
     <div class="update-status-row"><div id="updateStatusText" class="update-status-text">—</div><button class="btn-ghost-sm" id="btnCheckUpdate">Sprawdź teraz</button></div>
   </div>
-  <div class="glass-card">
-    <div class="card-label">Deep link i CLI</div>
-    <p class="sys-hint" style="margin-bottom:10px;">Otwórz link YouTube bezpośrednio w aplikacji (po pierwszym uruchomieniu system zarejestruje protokół <code>wavesconverter://</code>):</p>
-    <div class="shortcuts-grid" style="margin-bottom:12px;">
-      <div class="shortcut-row"><kbd>wavesconverter://download?url=…</kbd><span>Wklej URL w zakładce Pobierz i wyszukaj</span></div>
-      <div class="shortcut-row"><kbd>wavesconverter://queue?url=…&amp;start=1</kbd><span>Dodaj do kolejki i uruchom pobieranie</span></div>
-      <div class="shortcut-row"><kbd>wavesconverter://open</kbd><span>Otwórz aplikację</span></div>
+  <div class="glass-card" id="settingsAdvanced">
+    <div class="card-label">Zaawansowane</div>
+
+    <h3 class="settings-subhead">⌨ WavesConverter CLI (terminal)</h3>
+    <p class="sys-hint">Pobieraj z terminala bez otwierania okna — pakiet <a href="#" id="linkNpmCli" style="color:var(--p4);">wavesconv</a> na npm. Wymaga <strong>Node.js 18+</strong>.</p>
+    <div class="sys-status" id="cliStatus" style="margin-top:12px;">
+      <div class="sys-row"><span class="sys-name">Node.js</span><span class="sys-val checking" id="cliStatusNode">Sprawdzanie…</span></div>
+      <div class="sys-row"><span class="sys-name">npm</span><span class="sys-val checking" id="cliStatusNpm">Sprawdzanie…</span></div>
+      <div class="sys-row"><span class="sys-name">wavesconv</span><span class="sys-val checking" id="cliStatusCli">Sprawdzanie…</span></div>
     </div>
-    <p class="sys-hint" style="margin-bottom:8px;">Tryb terminala (bez okna GUI):</p>
-    <div style="font-family:monospace;font-size:11px;color:var(--p4);background:rgba(0,0,0,0.25);border:1px solid var(--border);border-radius:8px;padding:10px 12px;line-height:1.6;">
-      npm run cli<br>
-      <span style="color:var(--text3)"># tryb interaktywny — wklej linki w terminalu</span><br>
-      npm run cli -- download "https://youtu.be/…" -a -f mp3<br>
-      npm run cli -- info "https://youtu.be/…"<br>
-      npm run cli -- convert plik.mp4 -f mp3 -o out.mp3<br>
-      npx electron . --cli download "https://youtu.be/…" -q 1080p
+    <div class="cli-install-actions">
+      <button class="btn-primary" id="btnInstallCli" type="button">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right:6px;"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+        Zainstaluj CLI (npm)
+      </button>
+      <button class="btn-ghost-sm" id="btnCopyCliCmd" type="button">Kopiuj polecenie ręczne</button>
+      <button class="btn-ghost-sm" id="btnOpenNodejs" type="button">Pobierz Node.js ↗</button>
     </div>
+    <div class="convert-progress-wrap hidden" id="cliInstallProgressWrap" style="margin-top:12px;">
+      <div class="convert-progress-bar"><div id="cliInstallProgressBar" style="width:0%"></div></div>
+      <span id="cliInstallProgressLabel" style="font-size:12px;color:var(--text2);margin-top:4px;display:block;">—</span>
+    </div>
+
+    <div class="cli-tutorial">
+      <div class="cli-tutorial-title">Szybki tutorial CLI</div>
+      <ol class="cli-tutorial-steps">
+        <li>Kliknij <strong>Zainstaluj CLI</strong> powyżej (lub w terminalu: <code>npm install -g wavesconv@latest</code>).</li>
+        <li>Pierwsze uruchomienie: <code>wavesconv tools install</code> — pobiera yt-dlp.</li>
+        <li>Tryb interaktywny: wpisz <code>wavesconv</code>, wklej link (YouTube lub Instagram), Enter.</li>
+        <li>Jednorazowo: <code>wavesconv download "URL" -a -f mp3</code> lub wideo <code>-q 1080p</code>.</li>
+        <li>Aktualizacja: <code>npm install -g wavesconv@latest</code> (nie tylko <code>npm update</code>).</li>
+      </ol>
+    </div>
+
+    <h3 class="settings-subhead">🔗 Deep linking</h3>
+    <p class="sys-hint">Po instalacji aplikacji system rejestruje protokół <code>wavesconverter://</code>. Linki otwierają WavesConverter z wklejonym adresem (YouTube lub Instagram).</p>
+    <div class="shortcuts-grid deeplink-examples">
+      <div class="shortcut-row"><kbd>wavesconverter://download?url=…</kbd><span>Wyszukaj w zakładce Pobierz</span></div>
+      <div class="shortcut-row"><kbd>wavesconverter://queue?url=…&amp;start=1</kbd><span>Dodaj do kolejki i startuj pobieranie</span></div>
+      <div class="shortcut-row"><kbd>wavesconverter://download?url=…&amp;type=audio</kbd><span>Wymuś tryb audio (np. MP3)</span></div>
+      <div class="shortcut-row"><kbd>wavesconverter://open</kbd><span>Tylko otwórz aplikację</span></div>
+    </div>
+    <p class="sys-hint" style="margin-top:10px;">Przykład (URL zakodowany): <code style="font-size:10px;word-break:break-all;">wavesconverter://download?url=https%3A%2F%2Fwww.instagram.com%2Freel%2F…</code></p>
+    <button class="btn-ghost-sm" id="btnCopyDeeplinkExample" type="button" style="margin-top:8px;">Kopiuj przykład deep link (Instagram Reel)</button>
   </div>
   <div class="glass-card">
     <div class="card-label">Skróty klawiszowe</div>

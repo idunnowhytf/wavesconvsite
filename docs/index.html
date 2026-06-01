@@ -577,36 +577,46 @@
     }
     .testi-cta a:hover { background: rgba(124,58,237,.2); border-color: var(--p2); color: var(--p4); transform: translateY(-1px); }
 
-    /* ── MOBILE OVERLAY ── */
-    #mobile-wall {
-      display: none; position: fixed; inset: 0; z-index: 9999;
-      background: rgba(5,0,13,0.97); backdrop-filter: blur(20px);
-      flex-direction: column; align-items: center; justify-content: center;
-      text-align: center; padding: 32px;
+    .mobile-download-note {
+      display: none;
+      margin-top: 16px;
+      padding: 18px;
+      border-radius: 12px;
+      background: rgba(124,58,237,.08);
+      border: 1px solid rgba(168,85,247,.25);
+      text-align: left;
     }
-    #mobile-wall.show { display: flex; }
-    .mw-icon { font-size: 64px; margin-bottom: 24px; animation: mwBounce 2s ease-in-out infinite; }
-    @keyframes mwBounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
-    .mw-title {
-      font-size: 28px; font-weight: 900; letter-spacing: -1px; margin-bottom: 14px;
-      background: linear-gradient(135deg,#c084fc,#e879f9);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    .mobile-download-note h3 {
+      font-size: 16px;
+      margin-bottom: 8px;
+      color: var(--p4);
     }
-    .mw-sub { font-size: 16px; color: var(--text2); line-height: 1.7; max-width: 320px; margin-bottom: 32px; }
-    .mw-badge {
+    .mobile-download-note p {
+      font-size: 13px;
+      color: var(--text2);
+      margin-bottom: 12px;
+    }
+    .mobile-download-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .mobile-download-links a {
       display: inline-flex; align-items: center; gap: 8px;
-      padding: 10px 22px; border-radius: 100px;
-      background: rgba(124,58,237,.15); border: 1px solid rgba(168,85,247,.3);
-      font-size: 14px; font-weight: 600; color: var(--p3); margin-bottom: 12px;
+      padding: 9px 14px; border-radius: 9px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--bord2);
+      color: var(--p3);
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 700;
     }
-    .mw-platforms { display: flex; gap: 10px; margin-top: 8px; flex-wrap: wrap; justify-content: center; }
-    .mw-platform {
-      display: flex; align-items: center; gap: 7px;
-      padding: 8px 18px; border-radius: 10px;
-      background: rgba(255,255,255,.04); border: 1px solid var(--bord);
-      font-size: 13px; font-weight: 600; color: var(--text2);
+    .mobile-download-links a:hover { background: rgba(168,85,247,.12); }
+
+    @media(max-width:768px) {
+      .os-tabs, .dl-buttons, .smartscreen-box { display: none !important; }
+      .mobile-download-note { display: block; }
     }
-    .mw-note { margin-top: 28px; font-size: 12px; color: var(--text3); }
   </style>
 </head>
 <body>
@@ -617,31 +627,6 @@
   <span id="banner-text">Nowa wersja dostępna!</span>
   <a id="banner-link" href="https://github.com/idunnowhytf/WavesConverter/releases/latest" target="_blank">Pobierz teraz ↗</a>
   <button class="banner-close" onclick="document.getElementById('update-banner').classList.remove('show')" aria-label="Close">✕</button>
-</div>
-
-<!-- MOBILE WALL -->
-<div id="mobile-wall">
-  <div class="mw-icon">💻</div>
-  <div class="mw-title">Tylko na komputerze — na razie</div>
-  <p class="mw-sub">
-    WavesConverter to aplikacja desktopowa działająca lokalnie na Twoim komputerze.
-    Wersja mobilna jeszcze nie jest dostępna, ale jest w planach.
-  </p>
-  <div class="mw-badge">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-    Pobierz na PC lub Maca
-  </div>
-  <div class="mw-platforms">
-    <div class="mw-platform">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
-      macOS 12+
-    </div>
-    <div class="mw-platform">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/></svg>
-      Windows 10+
-    </div>
-  </div>
-  <p class="mw-note">Wejdź na tę stronę z komputera, żeby pobrać aplikację</p>
 </div>
 
 <canvas id="particles"></canvas>
@@ -836,8 +821,10 @@
     <h2 class="s-title reveal reveal-delay-1">Wszystko czego potrzebujesz.<br/>Nic zbędnego.</h2>
     <p class="s-sub reveal reveal-delay-2">Zbudowane z myślą o szybkości, prywatności i pełnej kontroli. Żadnych subskrypcji. Żadnej chmury. Żadnego śledzenia.</p>
   </div>
-  <div class="fgrid" id="fgrid">
-    <div class="fcard reveal"><div class="ficon">📋</div><h3>Obsługa playlist</h3><p>Pobieraj całe playlisty lub wybieraj poszczególne filmy. Ustaw globalne ustawienia lub nadpisuj format i jakość dla każdego filmu osobno.</p></div>
+    <div class="fgrid" id="fgrid">
+    <div class="fcard reveal"><div class="ficon">📸</div><h3>Instagram</h3><p>Reels, posty, IGTV i Stories (z plikiem cookies). Ten sam przepływ co YouTube — wklej link i pobierz.</p></div>
+    <div class="fcard reveal reveal-delay-1"><div class="ficon">🔗</div><h3>Deep linking</h3><p>Protokół <code>wavesconverter://</code> otwiera aplikację z linkiem YouTube lub Instagram — idealne do skryptów i skrótów.</p></div>
+    <div class="fcard reveal reveal-delay-2"><div class="ficon">📋</div><h3>Obsługa playlist</h3><p>Pobieraj całe playlisty lub wybieraj poszczególne filmy. Ustaw globalne ustawienia lub nadpisuj format i jakość dla każdego filmu osobno.</p></div>
     <div class="fcard reveal reveal-delay-1"><div class="ficon">⚡</div><h3>Równoległa kolejka</h3><p>Dodaj wiele pobrań do kolejki i uruchom je jednocześnie. Pauzuj, wznawiaj lub ponawiaj nieudane — pełna kontrola jednym kliknięciem.</p></div>
     <div class="fcard reveal reveal-delay-2"><div class="ficon">🎛️</div><h3>Pełna kontrola jakości</h3><p>Wybieraj rozdzielczość od 360p do 4K i audio od 96 do 320 kbps. Ustawiaj globalnie lub osobno dla każdego filmu.</p></div>
     <div class="fcard reveal"><div class="ficon">🔄</div><h3>Konwerter plików lokalnych</h3><p>Konwertuj dowolny lokalny plik multimedialny na dowolny format. Zmień kontener, rozdzielczość, bitrate — 100% offline z ffmpeg.</p></div>
@@ -923,7 +910,7 @@
     <div class="section-head" id="cli-head">
       <div class="s-label" data-i18n="cli.label">⌨ Terminal</div>
       <h2 class="s-title" data-i18n="cli.title">Pobieraj z <span class="grad">terminala</span></h2>
-      <p class="s-sub" data-i18n="cli.sub">Bez okna aplikacji — zainstaluj <strong>wavesconv</strong> z npm, uruchom i wklejaj linki YouTube w konsoli.</p>
+      <p class="s-sub" data-i18n="cli.sub">Bez okna aplikacji — zainstaluj <strong>wavesconv</strong> z npm, uruchom i wklejaj linki YouTube lub Instagram w konsoli.</p>
     </div>
     <div class="cli-steps" id="cli-steps">
       <div class="cli-step">
@@ -959,6 +946,8 @@
     <div class="cli-links">
       <a class="cli-link-btn pri" href="https://www.npmjs.com/package/wavesconv" target="_blank" rel="noopener" data-i18n="cli.npm">Pakiet na npm ↗</a>
       <a class="cli-link-btn sec" href="/WavesConverter/docs.html#cli" data-i18n="cli.docs">Pełna dokumentacja CLI</a>
+      <a class="cli-link-btn sec" href="/WavesConverter/docs.html#instagram">Instagram</a>
+      <a class="cli-link-btn sec" href="/WavesConverter/docs.html#deeplink">Deep linking</a>
     </div>
     <p style="margin-top:20px;font-size:12px;color:var(--text3);" data-i18n="cli.update">Aktualizacja: <code style="font-size:11px;padding:2px 6px;background:rgba(124,58,237,.15);border-radius:4px;color:var(--p3);">npm install -g wavesconv@latest</code></p>
   </div>
@@ -1016,6 +1005,15 @@
       </div>
     </div>
 
+    <div class="mobile-download-note" id="mobileDownloadNote">
+      <h3 data-i18n="mob.download.title">Pobieranie tylko na komputerze</h3>
+      <p data-i18n="mob.download.sub">Na telefonie możesz czytać dokumentację i changelog. Aby pobrać instalator, wróć na tę stronę z komputera (Windows/macOS).</p>
+      <div class="mobile-download-links">
+        <a href="/WavesConverter/docs.html" data-i18n="mob.download.docs">Dokumentacja</a>
+        <a href="/WavesConverter/changelog.html" data-i18n="mob.download.changelog">Changelog</a>
+      </div>
+    </div>
+
     <p style="margin-top:32px;font-size:12px;color:var(--text3)">
       <span data-i18n="dl.allversions">Wszystkie wersje na</span> <a href="https://github.com/idunnowhytf/WavesConverter/releases" style="color:var(--p3)" target="_blank">GitHub Releases ↗</a>
     </p>
@@ -1064,7 +1062,7 @@ const TRANSLATIONS = {
     'formats.label': '✦ Formaty', 'formats.title': 'Każdy format jakiego potrzebujesz.', 'formats.sub': 'Pobieraj jako wideo, wyciągaj audio lub konwertuj dowolny plik lokalny.',
     'cli.label': '⌨ Terminal',
     'cli.title': 'Pobieraj z <span class="grad">terminala</span>',
-    'cli.sub': 'Bez okna aplikacji — zainstaluj <strong>wavesconv</strong> z npm, uruchom i wklejaj linki YouTube w konsoli.',
+    'cli.sub': 'Bez okna aplikacji — zainstaluj <strong>wavesconv</strong> z npm, uruchom i wklejaj linki YouTube lub Instagram w konsoli.',
     'cli.s1': 'Zainstaluj <strong>Node.js 18+</strong>, potem globalnie:',
     'cli.s2': 'Przy pierwszym uruchomieniu doinstaluj yt-dlp:',
     'cli.s3': 'Uruchom tryb interaktywny i wklej link:',
@@ -1080,7 +1078,10 @@ const TRANSLATIONS = {
     'ss.toggle': 'Windows może pokazać ostrzeżenie SmartScreen — oto jak je ominąć',
     'ss.inner': `<p>WavesConverter jest bezpieczny i open source, ale ponieważ nie jest jeszcze podpisany płatnym certyfikatem Microsoft, Windows Defender SmartScreen może oznaczyć go jako nieznaną aplikację. Jest to normalne dla nowego oprogramowania indie. Wykonaj poniższe kroki, żeby zainstalować:</p><div class="ss-steps"><div class="ss-step"><div class="ss-step-num">1</div><div class="ss-step-text">Pobierz plik <strong>.exe</strong> i kliknij go dwukrotnie, żeby uruchomić instalator.</div></div><div class="ss-step"><div class="ss-step-num">2</div><div class="ss-step-text">Pojawi się niebieskie okno SmartScreen z napisem <strong>„Ten komputer jest chroniony przez system Windows"</strong>. Nie zamykaj go.</div></div><div class="ss-step"><div class="ss-step-num">3</div><div class="ss-step-text">Kliknij <strong>„Więcej informacji"</strong> (mały link pod głównym tekstem). Okno się rozszerzy.</div></div><div class="ss-step"><div class="ss-step-num">4</div><div class="ss-step-text">Kliknij przycisk <strong>„Uruchom mimo to"</strong>, który pojawi się na dole. Instalacja rozpocznie się normalnie.</div></div></div><div class="ss-safe"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Możesz w każdej chwili zweryfikować kod źródłowy na GitHub — wszystko jest jawne i audytowalne.</div>`,
     'footer.built': 'Zbudowane z yt-dlp, ffmpeg i Electron', 'footer.src': 'Kod na GitHub', 'footer.copy': '© 2025 WavesConverter · Darmowe i Open Source',
-    'mob.title': 'Tylko na komputerze — na razie', 'mob.sub': 'WavesConverter to aplikacja desktopowa działająca lokalnie na Twoim komputerze. Wersja mobilna jeszcze nie jest dostępna, ale jest w planach.', 'mob.badge': 'Pobierz na PC lub Maca', 'mob.note': 'Wejdź na tę stronę z komputera, żeby pobrać aplikację',
+    'mob.download.title': 'Pobieranie tylko na komputerze',
+    'mob.download.sub': 'Na telefonie możesz czytać dokumentację i changelog. Aby pobrać instalator, wróć na tę stronę z komputera (Windows/macOS).',
+    'mob.download.docs': 'Dokumentacja',
+    'mob.download.changelog': 'Changelog',
     'fcard': [
       ['📋','Obsługa playlist','Pobieraj całe playlisty lub wybieraj poszczególne filmy. Ustaw globalne ustawienia lub nadpisuj format i jakość dla każdego filmu osobno.'],
       ['⚡','Równoległa kolejka','Dodaj wiele pobrań do kolejki i uruchom je jednocześnie. Pauzuj, wznawiaj lub ponawiaj nieudane — pełna kontrola jednym kliknięciem.'],
@@ -1123,7 +1124,7 @@ const TRANSLATIONS = {
     'formats.label': '✦ Formats', 'formats.title': 'Every format you\'ll ever need.', 'formats.sub': 'Download as video, rip as audio, or convert any local file.',
     'cli.label': '⌨ Terminal',
     'cli.title': 'Download from the <span class="grad">terminal</span>',
-    'cli.sub': 'No GUI needed — install <strong>wavesconv</strong> from npm, run it, and paste YouTube links in your console.',
+    'cli.sub': 'No GUI needed — install <strong>wavesconv</strong> from npm, run it, and paste YouTube or Instagram links in your console.',
     'cli.s1': 'Install <strong>Node.js 18+</strong>, then globally:',
     'cli.s2': 'On first run, install yt-dlp:',
     'cli.s3': 'Start interactive mode and paste a link:',
@@ -1139,7 +1140,10 @@ const TRANSLATIONS = {
     'ss.toggle': 'Windows may show a SmartScreen warning — here\'s how to get past it',
     'ss.inner': `<p>WavesConverter is safe and open source, but because it's not yet signed with a paid Microsoft certificate, Windows Defender SmartScreen may flag it as an unknown app. This is expected for new indie software. Follow these steps to install:</p><div class="ss-steps"><div class="ss-step"><div class="ss-step-num">1</div><div class="ss-step-text">Download the <strong>.exe</strong> and double-click it to run the installer.</div></div><div class="ss-step"><div class="ss-step-num">2</div><div class="ss-step-text">A blue SmartScreen window appears saying <strong>"Windows protected your PC"</strong>. Don't close it.</div></div><div class="ss-step"><div class="ss-step-num">3</div><div class="ss-step-text">Click <strong>"More info"</strong> (small link below the main text). The window will expand.</div></div><div class="ss-step"><div class="ss-step-num">4</div><div class="ss-step-text">Click the <strong>"Run anyway"</strong> button that appears at the bottom. Installation will start normally.</div></div></div><div class="ss-safe"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>You can verify the source code anytime on GitHub — everything is open and auditable.</div>`,
     'footer.built': 'Built with yt-dlp, ffmpeg & Electron', 'footer.src': 'Source on GitHub', 'footer.copy': '© 2025 WavesConverter · Free & Open Source',
-    'mob.title': 'Desktop only — for now', 'mob.sub': 'WavesConverter is a desktop app that runs locally on your computer. Mobile support isn\'t available yet, but it\'s on the roadmap.', 'mob.badge': 'Download on your PC or Mac', 'mob.note': 'Visit wavesconverter on your computer to download',
+    'mob.download.title': 'Download on desktop only',
+    'mob.download.sub': 'On mobile you can read the documentation and changelog. To download the installer, open this page on your computer (Windows/macOS).',
+    'mob.download.docs': 'Documentation',
+    'mob.download.changelog': 'Changelog',
     'fcard': [
       ['📋','Playlist Support','Download entire playlists or cherry-pick individual videos. Set global settings or override per-item format and quality.'],
       ['⚡','Concurrent Queue','Queue multiple downloads and run them simultaneously. Pause, resume, or retry failed items with a single click.'],
@@ -1204,11 +1208,6 @@ function applyLang(lang) {
   // ss inner
   const ssi = document.getElementById('ss-inner');
   if(ssi) ssi.innerHTML = t['ss.inner'];
-  // mobile wall
-  document.querySelector('.mw-title').textContent = t['mob.title'];
-  document.querySelector('.mw-sub').textContent = t['mob.sub'];
-  document.querySelector('.mw-badge').innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>${t['mob.badge']}`;
-  document.querySelector('.mw-note').textContent = t['mob.note'];
   // win dl button text
   const winBtn = document.querySelector('#dl-win .btn-dl.main');
   if(winBtn) {
@@ -1234,13 +1233,6 @@ function toggleLang() {
   const browserLang = navigator.language.startsWith('pl') ? 'pl' : 'en';
   currentLang = saved || browserLang;
   applyLang(currentLang);
-})();
-
-/* ── MOBILE DETECTION ── */
-(function(){
-  const isMobile = /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent)
-    || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); // iPad
-  if(isMobile) document.getElementById('mobile-wall').classList.add('show');
 })();
 
 /* ── PARTICLES ── */

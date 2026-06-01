@@ -410,7 +410,40 @@ ipcMain.handle('install-tools', async (event) => {
   return { success: true };
 });
 
-ipcMain.handle('fetch-info', async (_, url) => engine.fetchInfo(url));
+ipcMain.handle('fetch-info', async (_, url, options) => engine.fetchInfo(url, options || {}));
+ipcMain.handle('is-supported-url', (_, url) => engine.isSupportedMediaUrl(url));
+ipcMain.handle('get-url-platform', (_, url) => engine.getMediaPlatform(url));
+ipcMain.handle('choose-cookies-file', async () => {
+  const r = await dialog.showOpenDialog(mainWindow, {
+    properties: ['openFile'],
+    filters: [{ name: 'Cookies', extensions: ['txt'] }],
+  });
+  return r.canceled ? null : r.filePaths[0];
+});
+
+const cliInstall = require('./lib/cli-install');
+
+ipcMain.handle('check-cli', async () => cliInstall.checkCliEnvironment());
+
+ipcMain.handle('install-cli', async (event) => {
+  const env = await cliInstall.checkCliEnvironment();
+  if (!env.node) {
+    throw new Error('Node.js nie jest zainstalowany. Pobierz Node 18+ z nodejs.org i spróbuj ponownie.');
+  }
+  if (!env.npm) {
+    throw new Error('npm nie jest dostępny. Zainstaluj Node.js (zawiera npm) i spróbuj ponownie.');
+  }
+  return cliInstall.installCliGlobal(data => {
+    event.sender.send('cli-install-status', data);
+  });
+});
+
+ipcMain.handle('copy-text', (_, text) => {
+  clipboard.writeText(text || '');
+  return true;
+});
+
+ipcMain.handle('open-external', (_, url) => shell.openExternal(url));
 
 const active = new Map();
 

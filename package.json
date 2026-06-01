@@ -1,6 +1,6 @@
 {
   "name": "wavesconv",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "description": "CLI: pobieranie YouTube (yt-dlp) i konwersja mediów (ffmpeg) — WavesConverter",
   "main": "cli.js",
   "bin": {
